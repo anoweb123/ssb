@@ -2,9 +2,9 @@ package com.ali.ssb.Models;
 
 public class modellastrec {
     String price,qty;
-    int image;
+    String image;
 
-    public modellastrec(String price, String qty, int image) {
+    public modellastrec(String price, String qty, String image) {
         this.price = price;
         this.qty = qty;
         this.image = image;
@@ -26,11 +26,11 @@ public class modellastrec {
         this.qty = qty;
     }
 
-    public int getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(int image) {
+    public void setImage(String image) {
         this.image = image;
     }
 }

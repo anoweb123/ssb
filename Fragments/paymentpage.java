@@ -1,11 +1,15 @@
 package com.ali.ssb.Fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,9 +17,31 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 
+import com.ali.ssb.Models.modelcart;
+import com.ali.ssb.Models.modelreturnoforderinfo;
+import com.ali.ssb.Models.modelslider;
 import com.ali.ssb.R;
 import com.ali.ssb.creditcardprice;
+import com.ali.ssb.dbhandler;
+import com.ali.ssb.holderclasses.adaperslider;
+import com.ali.ssb.interfacesapi.orderinfoapi;
+import com.ali.ssb.interfacesapi.orderitemapi;
+import com.ali.ssb.interfacesapi.shopsapi;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static android.content.Context.MODE_PRIVATE;
+import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,6 +50,9 @@ import com.ali.ssb.creditcardprice;
  */
 public class paymentpage extends Fragment {
     ssbprice ssbprice;
+
+    String shopid,orderid;
+    public static String MY_PREFS_forcart="MY_PREFS_forcart";
     Button pay;
     creditcardprice creditcardprice;
     // TODO: Rename parameter arguments, choose names that match
@@ -78,11 +107,15 @@ public class paymentpage extends Fragment {
         pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                summary productfragment = new summary();
-                FragmentManager fragmentManagerpro = getChildFragmentManager();
-                FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
-                fragmentTransactionpro.replace(R.id.fragment, productfragment);
-                fragmentTransactionpro.commit();
+//                summary productfragment = new summary();
+//                FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
+//                FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+//                fragmentTransactionpro.replace(R.id.fragment, productfragment);
+//                fragmentTransactionpro.commit();
+
+                SharedPreferences preferences=getContext().getSharedPreferences(MY_PREFS_forcart, Context.MODE_PRIVATE);
+                shopid=preferences.getString("shopincartid","");
+                getinfoapi();
 
             }
         });
@@ -91,7 +124,7 @@ public class paymentpage extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
                     ssbprice = new ssbprice();
-                    FragmentManager fragmentManagerpro = getChildFragmentManager();
+                    FragmentManager fragmentManagerpro =getActivity().getSupportFragmentManager();
                     FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
                     fragmentTransactionpro.add(R.id.ssb, ssbprice);
                     fragmentTransactionpro.commit();
@@ -110,7 +143,7 @@ public class paymentpage extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
                     creditcardprice = new creditcardprice();
-                    FragmentManager fragmentManagerpro = getChildFragmentManager();
+                    FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
                     FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
                     fragmentTransactionpro.add(R.id.credit, creditcardprice);
                     fragmentTransactionpro.commit();
@@ -122,5 +155,65 @@ public class paymentpage extends Fragment {
             }
         });
         return view;
+    }
+
+    public void getinfoapi() {
+        SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://" + prefs.getString("ipv4", "10.0.2.2") + ":5000/orders/addorder/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        SharedPreferences preferences=getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+
+        orderinfoapi api = retrofit.create(orderinfoapi.class);
+        Call<modelreturnoforderinfo> listCall = api.response("haider",preferences.getString("customerid",""),"rehmancolony","0482932332","1200","300","200","1400",shopid,"100");
+
+        listCall.enqueue(new Callback<modelreturnoforderinfo>() {
+            @Override
+            public void onResponse(Call<modelreturnoforderinfo> call, Response<modelreturnoforderinfo> response) {
+                if (response.isSuccessful()) {
+                    orderid=response.body().get_id();
+                    orderitems(orderid);
+                }
+            }
+            @Override
+            public void onFailure(Call<modelreturnoforderinfo> call, Throwable t) {
+                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+    public void orderitems(String orderid){
+        SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://" + prefs.getString("ipv4", "10.0.2.2") + ":5000/orders/addorderitem/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        SharedPreferences preferences=getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+
+        dbhandler dbhandler=new dbhandler(getContext());
+        List<modelcart> list=dbhandler.retrievecart();
+        dbhandler.close();
+
+        orderitemapi api = retrofit.create(orderitemapi.class);
+
+        for (int i=0;i<list.size();i++){
+            Call<ResponseBody> listCall = api.response(orderid,list.get(i).getTitle(),list.get(i).getImage(),list.get(i).getQuantity(),list.get(i).getProid());
+            listCall.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    Toast.makeText(getContext(), String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
+                    if (response.isSuccessful()){
+                        Toast.makeText(getContext(), "Ordered", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                }
+            });
+        }
+
+
     }
 }

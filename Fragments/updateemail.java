@@ -138,7 +138,6 @@ public class updateemail extends Fragment {
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                 if (response.isSuccessful()) {
                                     Toast.makeText(getContext(), "Email updated", Toast.LENGTH_SHORT).show();
-
                                     SharedPreferences.Editor editor = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
                                     editor.putString("email", email.getText().toString());
                                     editor.apply();

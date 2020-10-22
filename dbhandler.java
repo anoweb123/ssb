@@ -195,6 +195,9 @@ public class dbhandler extends SQLiteOpenHelper {
     public long deleteincart(int id){
         return db.delete(CARTTABLE_NAME,ID_COLUMN+ "=?",new String[]{String.valueOf(id)});
     }
+    public void deleteallincart(){
+        db.execSQL("delete from "+ CARTTABLE_NAME);
+    }
     public int updateqty(String id, String qty){
         ContentValues cv=new ContentValues();
         cv.put(Quantity_COLUMN,qty);
@@ -276,8 +279,8 @@ public class dbhandler extends SQLiteOpenHelper {
         String colomn[]=new String[]{ID_COLUMN,Title_COLUMN,Price_COLUMN,Desc_COLUMN,DISCOUNTED_COLUMN,COLOR_COLUMN,SIZE_COLUMN,Image_COLUMN,Quantity_COLUMN,Leftitems_COLUMN};
         Cursor query= db.query(CARTTABLE_NAME,colomn,null,null,null,null,null,null);
         while (query.moveToNext()){
-            String a,b,c,d,e,f,g;
-            int i,h,j;
+            String a,b,c,d,e,f,g,i;
+            int h,j;
             a=query.getString(query.getColumnIndex(Title_COLUMN));
             b=query.getString(query.getColumnIndex(Desc_COLUMN));
             c=query.getString(query.getColumnIndex(Price_COLUMN));
@@ -286,13 +289,11 @@ public class dbhandler extends SQLiteOpenHelper {
             f=query.getString(query.getColumnIndex(COLOR_COLUMN));
             g=query.getString(query.getColumnIndex(SIZE_COLUMN));
             h=query.getInt(query.getColumnIndex(ID_COLUMN));
-            i=query.getInt(query.getColumnIndex(Image_COLUMN));
+            i=query.getString(query.getColumnIndex(Image_COLUMN));
             j=query.getInt(query.getColumnIndex(Leftitems_COLUMN));
             s.add(new modellastrec(c,e,i));
         }
         return s;
     }
-
-
 
 }

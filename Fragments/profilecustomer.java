@@ -10,17 +10,21 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.os.FileUtils;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +35,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ali.ssb.R;
+import com.ali.ssb.interfacesapi.imageupdateapi;
+import com.ali.ssb.interfacesapi.nameupdateapi;
 import com.google.android.gms.common.util.Base64Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -43,15 +49,25 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
 import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
+import static androidx.constraintlayout.motion.utils.Oscillator.TAG;
 import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
 
 /**
@@ -90,14 +106,6 @@ public class profilecustomer extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment profilecustomer.
-     */
     // TODO: Rename and change types and number of parameters
     public static profilecustomer newInstance(String param1, String param2) {
         profilecustomer fragment = new profilecustomer();
@@ -117,6 +125,7 @@ public class profilecustomer extends Fragment {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -132,23 +141,72 @@ public class profilecustomer extends Fragment {
             }
             final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            selectedImage.compress(Bitmap.CompressFormat.JPEG,100,baos);
-            byte[] b = baos.toByteArray();
-//            String encImage = Base64.encodeToString(b, Base64.DEFAULT);
-            String encImage=Base64Utils.encode(b);
 
-            UploadTask uploadTask= FirebaseStorage.getInstance().getReference().child(sid).putBytes(b);
-            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(getContext(), "Image updated", Toast.LENGTH_SHORT).show();
-                    bar.setVisibility(View.INVISIBLE);
-                }
-            });
+//            String inputFilePath = "test_image.jpg";
+//            File inputFile = new File(classLoader
+//                    .getResource(inputFilePath)
+//                    .getFile());
+//
+//            byte[] fileContent = FileUtils.readFileToByteArray(inputFile);
+//            String encodedString = Base64
+//                    .getEncoder()
+//                    .encodeToString(fileContent);
+
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            selectedImage.compress(Bitmap.CompressFormat.JPEG,100,baos);
+//            byte[] b = baos.toByteArray();
+//            Base64.Encoder encoder = Base64.getEncoder();
+//            String encImage= encoder.encodeToString(b);
+
+
+
+            SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+            sname = prefs.getString("name", "Null");//"No name defined" is the default value.
+            sid = prefs.getString("customerid", "Null");
+
+//            System.out.println(encodstring);
+
+//            Toast.makeText(getContext(), encImage, Toast.LENGTH_SHORT).show();
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("http://"+prefs.getString("ipv4","10.0.2.2")+":5000/customer/updateimage/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            imageupdateapi api=retrofit.create(imageupdateapi.class);
+//            Call<ResponseBody> listCall=api.updateimg(sid,"hello",encodstring);
+
+//            Toast.makeText(getContext(),String.valueOf(imageString.toString()), Toast.LENGTH_SHORT).show();
+//            Log.d(TAG, "imageresult:"+encodstring);
+
+//            listCall.enqueue(new Callback<ResponseBody>() {
+//                @Override
+//                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+////                    Toast.makeText(getContext(), response.code(), Toast.LENGTH_SHORT).show();
+//                    if (response.isSuccessful()){
+//                        Toast.makeText(getContext(), "updated", Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//                @Override
+//                public void onFailure(Call<ResponseBody> call, Throwable t) {
+//                    Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+//                }
+//            });
+
+
+//            UploadTask uploadTask= FirebaseStorage.getInstance().getReference().child(sid).putBytes(b);
+//            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                @Override
+//                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                    Toast.makeText(getContext(), "Image updated", Toast.LENGTH_SHORT).show();
+//                    bar.setVisibility(View.INVISIBLE);
+//                }
+//            });
 
 //            String encodedImage = encodeImage(selectedImage);
 //            String s=Base64Utils.encode(databytes);
+              //decode
+//            Base64.Decoder dencoder = Base64.getDecoder();
+//            byte[] bytes=dencoder.decode(encImage);
+
             profileimage.setImageURI(imageUri);
 //            Toast.makeText(getContext(), encImage, Toast.LENGTH_LONG).show();
         }
@@ -187,7 +245,6 @@ public class profilecustomer extends Fragment {
 
         try {
 
-
             address = view.findViewById(R.id.addressupdate);
             name = view.findViewById(R.id.nameupdate);
             phone = view.findViewById(R.id.phoneupdate);
@@ -215,20 +272,20 @@ public class profilecustomer extends Fragment {
             addresss.setText(saddress);
 
 
-            bar.setVisibility(View.VISIBLE);
-            FirebaseStorage.getInstance().getReference(sid).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    Picasso.get().load(uri).into(profileimage);
-                }
-            });
-            bar.setVisibility(View.INVISIBLE);
+//            bar.setVisibility(View.VISIBLE);
+//            FirebaseStorage.getInstance().getReference(sid).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                @Override
+//                public void onSuccess(Uri uri) {
+//                    Picasso.get().load(uri).into(profileimage);
+//                }
+//            });
+//            bar.setVisibility(View.INVISIBLE);
 
             name.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     updatename updatename = new updatename();
-                    FragmentManager fragmentManagerpro = getChildFragmentManager();
+                    FragmentManager fragmentManagerpro =getActivity().getSupportFragmentManager();
                     FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
                     fragmentTransactionpro.replace(R.id.fragment, updatename);
                     fragmentTransactionpro.commit();
@@ -238,7 +295,7 @@ public class profilecustomer extends Fragment {
                 @Override
                 public void onClick(View v) {
                     addressupdate updateaddress = new addressupdate();
-                    FragmentManager fragmentManagerpro =getChildFragmentManager();
+                    FragmentManager fragmentManagerpro =getActivity().getSupportFragmentManager();
                     FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
                     fragmentTransactionpro.replace(R.id.fragment, updateaddress);
                     fragmentTransactionpro.commit();
@@ -248,7 +305,7 @@ public class profilecustomer extends Fragment {
                 @Override
                 public void onClick(View v) {
                     updatephone enterpassword = new updatephone();
-                    FragmentManager fragmentManagerpro = getChildFragmentManager();
+                    FragmentManager fragmentManagerpro =getActivity().getSupportFragmentManager();
                     FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
                     fragmentTransactionpro.replace(R.id.fragment, enterpassword);
                     fragmentTransactionpro.commit();
@@ -258,7 +315,7 @@ public class profilecustomer extends Fragment {
                 @Override
                 public void onClick(View v) {
                     updatepassword enterpassword = new updatepassword();
-                    FragmentManager fragmentManagerpro = getChildFragmentManager();
+                    FragmentManager fragmentManagerpro =getActivity().getSupportFragmentManager();
                     FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
                     fragmentTransactionpro.replace(R.id.fragment, enterpassword);
                     fragmentTransactionpro.commit();
@@ -268,7 +325,7 @@ public class profilecustomer extends Fragment {
                 @Override
                 public void onClick(View v) {
                     updateemail enter = new updateemail();
-                    FragmentManager fragmentManagerpro = getChildFragmentManager();
+                    FragmentManager fragmentManagerpro =getActivity().getSupportFragmentManager();
                     FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
                     fragmentTransactionpro.replace(R.id.fragment, enter);
                     fragmentTransactionpro.commit();

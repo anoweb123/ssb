@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ali.ssb.Models.userId;
 import com.ali.ssb.R;
 import com.ali.ssb.holderclasses.holdercategoryinshop;
 import com.ali.ssb.holderclasses.holderproductbyshop;
@@ -24,10 +25,18 @@ import com.ali.ssb.interfacesapi.categoryinshopapi;
 import com.ali.ssb.interfacesapi.productsbycatinshopapi;
 import com.ali.ssb.Models.modelcategoryinshop;
 import com.ali.ssb.Models.modelproductbyshop;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -115,6 +124,10 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
         cat.setText(catt);
         name.setText(namee);
 
+
+
+
+
 //        Retrofit retrofitpro = new Retrofit.Builder()
 //                .baseUrl("http://192.168.43.19:5000/products/allproducts/"+idd+"/")
 //                .addConverterFactory(GsonConverterFactory.create())
@@ -153,10 +166,10 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
 //        });
 
 
-        SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences prefss = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
 
         Retrofit retrofitcat = new Retrofit.Builder()
-                .baseUrl("http://"+prefs.getString("ipv4","10.0.2.2")+":5000/categories/"+idd+"/")
+                .baseUrl("http://"+prefss.getString("ipv4","10.0.2.2")+":5000/categories/"+idd+"/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         
@@ -168,6 +181,7 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
             @Override
             public void onResponse(Call<List<modelcategoryinshop>> call, Response<List<modelcategoryinshop>> response) {
                 if (response.isSuccessful()) {
+
                     modellist = response.body();
                     adaptershop = new holdercategoryinshop(modellist,getContext());
                     recyclercat.setHasFixedSize(true);
@@ -175,6 +189,7 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
                     recyclercat.setAdapter(adaptershop);
                     adaptershop.notifyDataSetChanged();
                     adaptershop.setonshopclicklistener(shop.this);
+
                 }
             }
             @Override
@@ -209,6 +224,7 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
         bundle.putString("qtyleftkey",qtyleft);
         bundle.putString("proid",proid);
         bundle.putString("imagekey",image);
+        bundle.putString("shopid",idd);
         productfragment.setArguments(bundle);
         fragmentTransactionpro.replace(R.id.fragment, productfragment);
         fragmentTransactionpro.commit();
@@ -216,6 +232,7 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
 
     @Override
     public void onshopqclick(String id, String name, final String offrate) {
+        //cat in shop
         catname.setText(name);
 
         SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
@@ -227,6 +244,7 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
 
         productsbycatinshopapi api=retrofitcatinshop.create(productsbycatinshopapi.class);
         Call<List<modelproductbyshop>> listCall = api.response(idd,name);
+
 
         listCall.enqueue(new Callback<List<modelproductbyshop>>() {
             @Override
@@ -241,7 +259,6 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
                 recyclerView.setAdapter(adapterproduct);
                 adapterproduct.notifyDataSetChanged();
                 adapterproduct.setonproinshopclicklistener(shop.this);
-
             }
 
             @Override
@@ -249,7 +266,6 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
 
             }
         });
-
 
     }
 }

@@ -64,7 +64,7 @@ public class holderproslider extends RecyclerView.Adapter<holderproslider.holder
     }
     @Override
     public int getItemCount() {
-        return list.size();
+        return 0;
     }
 
     public class holder extends RecyclerView.ViewHolder{

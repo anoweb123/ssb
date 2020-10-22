@@ -1,5 +1,7 @@
 package com.ali.ssb.Fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -10,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.ali.ssb.R;
 
@@ -20,6 +23,10 @@ import com.ali.ssb.R;
  */
 public class checkoutpage extends Fragment {
 
+    public static final String MY_PREFS_NAME = "mydetails";
+    EditText name,email,address,city,postal,phone;
+    String sname,semail,saddress,scity,spostl,sphone;
+    String rname,remail,raddress,rcity,rpostl,rphone;
     Button payment;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -66,12 +73,30 @@ public class checkoutpage extends Fragment {
                              Bundle savedInstanceState) {
         View view= inflater.inflate(R.layout.fragment_checkoutpage, container, false);
 
+        name=view.findViewById(R.id.name);
+        email=view.findViewById(R.id.email);
+        address=view.findViewById(R.id.address);
+        city=view.findViewById(R.id.city);
+        postal=view.findViewById(R.id.postal);
+        phone=view.findViewById(R.id.phone);
+
+        SharedPreferences preferences=getContext().getSharedPreferences(MY_PREFS_NAME, Context.MODE_PRIVATE);
+        sname=preferences.getString("name","");
+        semail=preferences.getString("email","");
+        sphone=preferences.getString("phone","");
+        saddress=preferences.getString("address","");
+
+        name.setText(sname);
+        email.setText(semail);
+        phone.setText(sphone);
+        address.setText(saddress);
+
         payment=view.findViewById(R.id.payment);
         payment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 paymentpage productfragment = new paymentpage();
-                FragmentManager fragmentManagerpro = getChildFragmentManager();
+                FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
                 fragmentTransactionpro.replace(R.id.fragment, productfragment);
                 fragmentTransactionpro.commit();

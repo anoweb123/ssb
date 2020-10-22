@@ -1,10 +1,14 @@
 package com.ali.ssb.Models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class modelproductbyshop {
     String name,detail,price,image,promotionRate,promotionTill,categorytype,size,color,quantity,type,_id;
+    userId modeluserid;
 
-    public modelproductbyshop(String _id,String name, String detail, String price, String promotionRate, String image, String categorytype, String size, String color, String days, String quantity, String type) {
-
+    public modelproductbyshop(String _id, String name, String detail, String price, String promotionRate, String image, String categorytype, String size, String color, String days, String quantity, String type,userId modeluserid) {
+        this.modeluserid = modeluserid;
         this.name = name;
         this.detail = detail;
         this.price = price;
@@ -17,10 +21,17 @@ public class modelproductbyshop {
         this.color = color;
         this.quantity = quantity;
         this.type = type;
-
     }
 
     public modelproductbyshop() {
+    }
+
+    public userId getModeluserid() {
+        return modeluserid;
+    }
+
+    public void setModeluserid(userId modeluserid) {
+        this.modeluserid = modeluserid;
     }
 
     public String get_id() {
@@ -118,4 +129,23 @@ public class modelproductbyshop {
     public void setType(String type) {
         this.type = type;
     }
+
+
+    public static class userId{
+
+        String _id;
+
+        public userId(String _id) {
+            this._id = _id;
+        }
+
+        public String get_id() {
+            return _id;
+        }
+
+        public void set_id(String _id) {
+            this._id = _id;
+        }
+    }
+
 }

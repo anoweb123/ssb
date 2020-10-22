@@ -86,7 +86,7 @@ public class cart extends Fragment implements holdercart.ondel{
 
         checkout.setOnClickListener(v -> {
             checkoutpage productfragment = new checkoutpage();
-            FragmentManager fragmentManagerpro =getChildFragmentManager();
+            FragmentManager fragmentManagerpro =getActivity().getSupportFragmentManager();
             FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
             fragmentTransactionpro.replace(R.id.fragment, productfragment);
             fragmentTransactionpro.commit();
@@ -177,14 +177,13 @@ public class cart extends Fragment implements holdercart.ondel{
 
             totalpayable.setText("Rs. "+String.valueOf(tprice+200));
             payable.setText("Rs. "+String.valueOf(tprice+200));
-            if (modelcarts.isEmpty() && recyclerView.getChildCount()==0){
-                nullcart productfragment = new nullcart();
-                FragmentManager fragmentManagerpro = getChildFragmentManager();
-                FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
-                fragmentTransactionpro.replace(R.id.fragment, productfragment);
-                fragmentTransactionpro.commit();
-            }
-
+//            if (modelcarts.isEmpty() && recyclerView.getChildCount()==0){
+//                nullcart productfragment = new nullcart();
+//                FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
+//                FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+//                fragmentTransactionpro.replace(R.id.fragment, productfragment);
+//                fragmentTransactionpro.commit();
+//            }
 
         }
         else {
@@ -207,13 +206,13 @@ public class cart extends Fragment implements holdercart.ondel{
             dbhandler.close();
             totalpayable.setText("Rs. "+String.valueOf(tprice+200));
             payable.setText("Rs. "+String.valueOf(tprice+200));
-            if (modelcarts.isEmpty() && recyclerView.getChildCount()==0){
-                nullcart productfragment = new nullcart();
-                FragmentManager fragmentManagerpro = getChildFragmentManager();
-                FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
-                fragmentTransactionpro.replace(R.id.fragment, productfragment);
-                fragmentTransactionpro.commit();
-            }
+//            if (modelcarts.isEmpty() && recyclerView.getChildCount()==0){
+//                nullcart productfragment = new nullcart();
+//                FragmentManager fragmentManagerpro = getChildFragmentManager();
+//                FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+//                fragmentTransactionpro.replace(R.id.fragment, productfragment);
+//                fragmentTransactionpro.commit();
+//            }
         }
     }
 }

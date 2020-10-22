@@ -1,6 +1,8 @@
 package com.ali.ssb.holderclasses;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +20,21 @@ import java.util.List;
 public class holdercategory extends RecyclerView.Adapter<holdercategory.holder> {
     List<modelcateg> list;
     Context context;
+    oncatclicklistener monproclicklistener;
 
     public holdercategory(List<modelcateg> list, Context context) {
         this.list = list;
         this.context = context;
+    }
+
+
+    public void setoncatclicklistener(oncatclicklistener listener)
+    {
+        monproclicklistener=  listener;
+    }
+
+    public interface oncatclicklistener{
+        public void oncatclick(String cat);
     }
 
     @NonNull
@@ -36,6 +49,13 @@ public class holdercategory extends RecyclerView.Adapter<holdercategory.holder> 
     public void onBindViewHolder(@NonNull holder holder, int position) {
         holder.name.setText(list.get(position).getName());
         holder.img.setBackgroundResource(list.get(position).getIamge());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                monproclicklistener.oncatclick(list.get(position).getName());
+            }
+        });
     }
 
     @Override

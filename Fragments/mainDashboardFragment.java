@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -54,7 +53,7 @@ import ru.nikartm.support.ImageBadgeView;
 import static android.content.Context.MODE_PRIVATE;
 import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
 
-public class mainDashboardFragment extends Fragment implements holderclassproducts.onproclicklistener,adaperslider.onshopclicklistener,holderproslider.onproclicklistener {
+public class mainDashboardFragment extends Fragment implements holderclassproducts.onproclicklistener,adaperslider.onshopclicklistener,holderproslider.onproclicklistener,holdercategory.oncatclicklistener {
     ImageView menu;
     ImageBadgeView cart,notification;
     ProgressBar load;
@@ -190,28 +189,36 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
         recyclerView=view.findViewById(R.id.rec);
 //slider
         shopsapi();
-
 //categriesondashboard
         modelcat = new ArrayList<>();
         modelcat.add(new modelcateg("Food",R.drawable.food));
-        modelcat.add(new modelcateg("Clothes",R.drawable.clothes));
+        modelcat.add(new modelcateg("Clothing",R.drawable.clothes));
         modelcat.add(new modelcateg("Electronics",R.drawable.electro));
-        modelcat.add(new modelcateg("Fitness",R.drawable.sports));
+        modelcat.add(new modelcateg("Sports Fitness and Outdoors",R.drawable.sports));
         modelcat.add(new modelcateg("Health and safety",R.drawable.health));
-        modelcat.add(new modelcateg("Groceries and households",R.drawable.groceries));
+        modelcat.add(new modelcateg("Grocery Households nd Pets",R.drawable.groceries));
+        modelcat.add(new modelcateg("Beauty and Health",R.drawable.beautyandhealth));
+        modelcat.add(new modelcateg("Wholesales",R.drawable.wholesale));
+        modelcat.add(new modelcateg("Entertainment",R.drawable.enetrtainment));
+        modelcat.add(new modelcateg("Furniture",R.drawable.furniture));
+        modelcat.add(new modelcateg("Home Decor",R.drawable.homedecor));
+        modelcat.add(new modelcateg("Jewellery",R.drawable.jwellery));
+        modelcat.add(new modelcateg("Toys and Videos",R.drawable.toys));
+        modelcat.add(new modelcateg("Deal and More",R.drawable.deals));
 
         recyclerViewcat.setHasFixedSize(true);
         recyclerViewcat.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
         holdercategory = new holdercategory(modelcat, getContext());
         recyclerViewcat.setAdapter(holdercategory);
+        holdercategory.setoncatclicklistener(mainDashboardFragment.this);
         holdercategory.notifyDataSetChanged();
 
-        SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences prefss = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
 
 //productsondashboard
         modelpro = new ArrayList<>();
         Retrofit retrofitpro = new Retrofit.Builder()
-                .baseUrl("http://"+prefs.getString("ipv4","10.0.2.2")+":5000/")
+                .baseUrl("http://"+prefss.getString("ipv4","10.0.2.2")+":5000/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         allproductsapi apipro=retrofitpro.create(allproductsapi.class);
@@ -372,21 +379,13 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
                     models=response.body();
                     adapter = new adaperslider(models, getContext());
                     recyclerView.setHasFixedSize(true);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+                    final LinearLayoutManager manager=new GridLayoutManager(getContext(),2);
+                    recyclerView.setLayoutManager(manager);
                     recyclerView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                     adapter.setonshopclicklistener(mainDashboardFragment.this);
                     load.setVisibility(View.INVISIBLE);
-                    recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                        @Override
-                        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                            super.onScrollStateChanged(recyclerView, newState);
-                        }
-                        @Override
-                        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                            super.onScrolled(recyclerView, dx, dy);
-                        }
-                    });
+
 
                 }
             }
@@ -398,4 +397,68 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
         });
     }
 
+    @Override
+    public void oncatclick(String cat) {
+
+
+        models = new ArrayList<>();
+        SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://"+prefs.getString("ipv4","10.0.2.2")+":5000/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        final shopsapi api=retrofit.create(shopsapi.class);
+        Call<List<modelslider>> listCall=api.list();
+
+        listCall.enqueue(new Callback<List<modelslider>>() {
+            @Override
+            public void onResponse(Call<List<modelslider>> call, Response<List<modelslider>> response) {
+                if (response.isSuccessful()){
+                    models=response.body();
+
+                    load.setVisibility(View.VISIBLE);
+                    List<modelslider> modelsliders=new ArrayList<>();
+
+                    for (int i=0;i<models.size();i++) {
+                        if (models.get(i).getShopCategory().equals(cat)) {
+                            modelsliders.add(models.get(i));
+                        }
+                        else {
+                        }
+                    }
+                    if (modelsliders.size()==0||modelsliders==null){
+                        load.setVisibility(View.INVISIBLE);
+                    }
+                    else {
+
+                        adapter = new adaperslider(modelsliders, getContext());
+                        recyclerView.setHasFixedSize(true);
+                        final LinearLayoutManager manager=new GridLayoutManager(getContext(),2);
+                        recyclerView.setLayoutManager(manager);
+                        recyclerView.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+                        adapter.setonshopclicklistener(mainDashboardFragment.this);
+                        load.setVisibility(View.INVISIBLE);}
+
+                }
+            }
+            @Override
+            public void onFailure(Call<List<modelslider>> call, Throwable t) {
+                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+//                shopsapi();
+            }
+        });
+
+
+
+
+
+
+        Toast.makeText(getContext(), cat, Toast.LENGTH_SHORT).show();
+
+
+
+
+
+    }
 }

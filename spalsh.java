@@ -18,7 +18,7 @@ public class spalsh extends AppCompatActivity {
     ImageView next;
     int a=0;
     String status;
-    private Handler mWaitHandler = new Handler();
+    private final Handler mWaitHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +26,7 @@ public class spalsh extends AppCompatActivity {
         setContentView(R.layout.activity_spalsh);
 
         SharedPreferences.Editor editor =getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-        editor.putString("ipv4","192.168.0.108");
+        editor.putString("ipv4","192.168.0.106");
         editor.apply();
 
 //        status = prefs.getString("loginstatus", "Null");
@@ -38,7 +38,6 @@ public class spalsh extends AppCompatActivity {
             int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
             decorView.setSystemUiVisibility(uiOptions);
 
-
             findViewById(R.id.next)
                     .setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -46,7 +45,6 @@ public class spalsh extends AppCompatActivity {
                             a = 1;
                             startActivity(new Intent(spalsh.this, splashscreen.class));
                             finish();
-
                         }
                     });
             mWaitHandler.postDelayed(new Runnable() {
@@ -78,6 +76,5 @@ public class spalsh extends AppCompatActivity {
             a=1;
             startActivity(new Intent(spalsh.this, dashboardcustomer.class));
         }
-
     }
 }

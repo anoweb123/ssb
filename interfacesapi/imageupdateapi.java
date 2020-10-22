@@ -8,6 +8,6 @@ import retrofit2.http.PUT;
 
 public interface imageupdateapi {
     @FormUrlEncoded
-    @PUT("customer/forgetPassword")
-    Call<ResponseBody> forgetpassword(@Field("email") String email);
+    @PUT(".")
+    Call<ResponseBody> updateimg(@Field("id") String id,@Field("image") String image,@Field("blob") String blob);
 }

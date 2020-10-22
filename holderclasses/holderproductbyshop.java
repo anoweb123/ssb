@@ -18,6 +18,7 @@ import com.ali.ssb.Models.modelproductbyshop;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -108,7 +109,6 @@ public class holderproductbyshop extends RecyclerView.Adapter<holderproductbysho
         }
         else {
 
-
             Float d=(Float.parseFloat(price)-(Float.valueOf(price)/100)*Float.parseFloat(disrate));
             holder.price.setText("Rs "+String.valueOf(d.intValue()));
             holder.discount.setText("Rs "+list.get(position).getPrice());
@@ -125,13 +125,12 @@ public class holderproductbyshop extends RecyclerView.Adapter<holderproductbysho
 //            holder.discount.setPaintFlags(holder.discount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 //        }
 
-
         String finalPrice = price;
         String finalDiscount1 = discount;
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                        monproclicklistener.onproclick(proid,title,desc, finalPrice, finalDiscount1,image,color,size,days,qtyleft);
+              monproclicklistener.onproclick(proid,title,desc, finalPrice, finalDiscount1,image,color,size,days,qtyleft);
             }
         });
     }
