@@ -8,7 +8,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 
 public interface allproductsapi {
-    @GET("products/allproducts")
-    Call<List<modelproducts>> listCall();
+//    @GET("products/allproducts")
+//    Call<List<modelproducts>> listCall();
 
 }

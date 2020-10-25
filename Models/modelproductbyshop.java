@@ -5,10 +5,9 @@ import java.util.List;
 
 public class modelproductbyshop {
     String name,detail,price,image,promotionRate,promotionTill,categorytype,size,color,quantity,type,_id;
-    userId modeluserid;
 
-    public modelproductbyshop(String _id, String name, String detail, String price, String promotionRate, String image, String categorytype, String size, String color, String days, String quantity, String type,userId modeluserid) {
-        this.modeluserid = modeluserid;
+
+    public modelproductbyshop(String _id, String name, String detail, String price, String promotionRate, String image, String categorytype, String size, String color, String days, String quantity, String type) {
         this.name = name;
         this.detail = detail;
         this.price = price;
@@ -24,14 +23,6 @@ public class modelproductbyshop {
     }
 
     public modelproductbyshop() {
-    }
-
-    public userId getModeluserid() {
-        return modeluserid;
-    }
-
-    public void setModeluserid(userId modeluserid) {
-        this.modeluserid = modeluserid;
     }
 
     public String get_id() {

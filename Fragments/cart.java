@@ -108,7 +108,7 @@ public class cart extends Fragment implements holdercart.ondel{
         dbhandler dbhandler1=new dbhandler(getContext());
         int tprice=dbhandler1.totalprice();
         totalprice.setText("Rs. "+String.valueOf(tprice));
-//        totaldiscount.setText("Rs. "+String.valueOf(dbhandler1.totaldiscount()));
+        totaldiscount.setText("Rs. "+String.valueOf(dbhandler1.totaldiscount()));
         dbhandler1.close();
 //
         totalpayable.setText("Rs. "+String.valueOf(tprice+200));
@@ -121,13 +121,13 @@ public class cart extends Fragment implements holdercart.ondel{
         adapter.notifyDataSetChanged();
         adapter.onclick(this);
 
-//        if (modelcarts.isEmpty()){
-//            nullcart productfragment = new nullcart();
-//            FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
-//            FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
-//            fragmentTransactionpro.replace(R.id.fragment, productfragment);
-//            fragmentTransactionpro.commit();
-//        }
+        if (modelcarts.isEmpty()){
+            nullcart productfragment = new nullcart();
+            FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
+            FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+            fragmentTransactionpro.replace(R.id.fragment, productfragment);
+            fragmentTransactionpro.commit();
+        }
 
 
         ObjectAnimator fadeOut = ObjectAnimator.ofFloat(payable, "alpha", .7f, .2f);
@@ -172,18 +172,18 @@ public class cart extends Fragment implements holdercart.ondel{
             adapter.onclick(this);
             int tprice=dbhandler.totalprice();
             totalprice.setText("Rs. "+String.valueOf(tprice));
-//            totaldiscount.setText("Rs. "+String.valueOf(dbhandler.totaldiscount()));
+            totaldiscount.setText("Rs. "+String.valueOf(dbhandler.totaldiscount()));
             dbhandler.close();
 
             totalpayable.setText("Rs. "+String.valueOf(tprice+200));
             payable.setText("Rs. "+String.valueOf(tprice+200));
-//            if (modelcarts.isEmpty() && recyclerView.getChildCount()==0){
-//                nullcart productfragment = new nullcart();
-//                FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
-//                FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
-//                fragmentTransactionpro.replace(R.id.fragment, productfragment);
-//                fragmentTransactionpro.commit();
-//            }
+            if (modelcarts.isEmpty() && recyclerView.getChildCount()==0){
+                nullcart productfragment = new nullcart();
+                FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+                fragmentTransactionpro.replace(R.id.fragment, productfragment);
+                fragmentTransactionpro.commit();
+            }
 
         }
         else {
@@ -202,17 +202,17 @@ public class cart extends Fragment implements holdercart.ondel{
             adapter.onclick(this);
             int tprice=dbhandler.totalprice();
             totalprice.setText("Rs. "+String.valueOf(tprice));
-//            totaldiscount.setText("Rs. "+String.valueOf(dbhandler.totaldiscount()));
+            totaldiscount.setText("Rs. "+String.valueOf(dbhandler.totaldiscount()));
             dbhandler.close();
             totalpayable.setText("Rs. "+String.valueOf(tprice+200));
             payable.setText("Rs. "+String.valueOf(tprice+200));
-//            if (modelcarts.isEmpty() && recyclerView.getChildCount()==0){
-//                nullcart productfragment = new nullcart();
-//                FragmentManager fragmentManagerpro = getChildFragmentManager();
-//                FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
-//                fragmentTransactionpro.replace(R.id.fragment, productfragment);
-//                fragmentTransactionpro.commit();
-//            }
+            if (modelcarts.isEmpty() && recyclerView.getChildCount()==0){
+                nullcart productfragment = new nullcart();
+                FragmentManager fragmentManagerpro = getChildFragmentManager();
+                FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+                fragmentTransactionpro.replace(R.id.fragment, productfragment);
+                fragmentTransactionpro.commit();
+            }
         }
     }
 }

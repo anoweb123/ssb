@@ -1,9 +1,15 @@
 package com.ali.ssb.Fragments;
 
+import android.Manifest;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -13,8 +19,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.ali.ssb.R;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,7 +37,8 @@ public class checkoutpage extends Fragment {
     EditText name,email,address,city,postal,phone;
     String sname,semail,saddress,scity,spostl,sphone;
     String rname,remail,raddress,rcity,rpostl,rphone;
-    Button payment;
+    FusedLocationProviderClient fusedLocationProviderClient;
+    Button payment,pick;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -80,6 +91,8 @@ public class checkoutpage extends Fragment {
         postal=view.findViewById(R.id.postal);
         phone=view.findViewById(R.id.phone);
 
+        pick=view.findViewById(R.id.pick);
+
         SharedPreferences preferences=getContext().getSharedPreferences(MY_PREFS_NAME, Context.MODE_PRIVATE);
         sname=preferences.getString("name","");
         semail=preferences.getString("email","");
@@ -91,6 +104,35 @@ public class checkoutpage extends Fragment {
         phone.setText(sphone);
         address.setText(saddress);
 
+
+        fusedLocationProviderClient= LocationServices.getFusedLocationProviderClient(getActivity());
+        pick.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (getActivity().getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+                        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                if (location!=null){
+//                                    SupportMapFragment fragment=getChildFragmentManager().findFragmentById(R.id.fragment);
+
+
+                                    Toast.makeText(getContext(), String.valueOf(location.getAltitude()), Toast.LENGTH_SHORT).show();
+                                }
+
+                            }
+                        });
+
+                    }
+                    else { ActivityCompat.requestPermissions(getActivity(),
+                            new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                    }
+                }
+            }
+        });
         payment=view.findViewById(R.id.payment);
         payment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,6 +145,8 @@ public class checkoutpage extends Fragment {
 
             }
         });
+
+
 
 
         return view;

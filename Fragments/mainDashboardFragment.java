@@ -20,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.ali.ssb.Models.modelbaner;
 import com.ali.ssb.R;
 import com.ali.ssb.dbhandler;
 import com.ali.ssb.holderclasses.adaperslider;
@@ -27,6 +28,7 @@ import com.ali.ssb.holderclasses.holdercategory;
 import com.ali.ssb.holderclasses.holderclassproducts;
 import com.ali.ssb.holderclasses.holderproslider;
 import com.ali.ssb.interfacesapi.allproductsapi;
+import com.ali.ssb.interfacesapi.banerapi;
 import com.ali.ssb.interfacesapi.shopsapi;
 import com.ali.ssb.Models.modelbanner;
 import com.ali.ssb.Models.modelcateg;
@@ -53,7 +55,7 @@ import ru.nikartm.support.ImageBadgeView;
 import static android.content.Context.MODE_PRIVATE;
 import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
 
-public class mainDashboardFragment extends Fragment implements holderclassproducts.onproclicklistener,adaperslider.onshopclicklistener,holderproslider.onproclicklistener,holdercategory.oncatclicklistener {
+public class mainDashboardFragment extends Fragment implements holderclassproducts.onproclicklistener,adaperslider.onshopclicklistener,holderproslider.onproclicklistener,holdercategory.oncatclicklistener,sliderbanneradapter.onbanerclicklistener {
     ImageView menu;
     ImageBadgeView cart,notification;
     ProgressBar load;
@@ -84,7 +86,7 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
     Chip chip;
     Boolean isscrolling=false;
     com.ali.ssb.holderclasses.sliderbanneradapter sliderbanneradapter;
-    List<modelbanner> modelsliders;
+    List<modelbaner> modelsliders;
     int current_items,scrolled_items,total_items;
 
     @Override
@@ -167,7 +169,6 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
         recyclerViewcat=view.findViewById(R.id.reccat);
         modelcat=new ArrayList<>();
 
-
         SliderView sliderView =view.findViewById(R.id.imageSlider);
         recpoduct=view.findViewById(R.id.productrec);
 
@@ -176,6 +177,7 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
 
 //        searchView=view.findViewById(R.id.search);
 //        searchView.requestFocus();
+
             cart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -187,7 +189,7 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
             }
         });
         recyclerView=view.findViewById(R.id.rec);
-//slider
+//shopss
         shopsapi();
 //categriesondashboard
         modelcat = new ArrayList<>();
@@ -215,61 +217,42 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
 
         SharedPreferences prefss = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
 
-//productsondashboard
-        modelpro = new ArrayList<>();
+//bannerapi
+        modelsliders = new ArrayList<>();
         Retrofit retrofitpro = new Retrofit.Builder()
                 .baseUrl("http://"+prefss.getString("ipv4","10.0.2.2")+":5000/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        allproductsapi apipro=retrofitpro.create(allproductsapi.class);
-        Call<List<modelproducts>> listCallpro=apipro.listCall();
+        banerapi apipro=retrofitpro.create(banerapi.class);
+        Call<List<modelbaner>> listCallpro=apipro.listCall();
 
-        listCallpro.enqueue(new Callback<List<modelproducts>>() {
+        listCallpro.enqueue(new Callback<List<modelbaner>>() {
             @Override
-            public void onResponse(Call<List<modelproducts>> call, Response<List<modelproducts>> response) {
-                modelpro=response.body();
-                recpoduct.setHasFixedSize(true);
-                final LinearLayoutManager manager=new GridLayoutManager(getContext(),2);
-                recpoduct.setLayoutManager(manager);
-                adapterproduct = new holderclassproducts(modelpro, getContext());
-                recpoduct.setAdapter(adapterproduct);
+            public void onResponse(Call<List<modelbaner>> call, Response<List<modelbaner>> response) {
+                if (response.isSuccessful()){
 
-                adapterproduct.notifyDataSetChanged();
-                adapterproduct.setoncartclicklistener(mainDashboardFragment.this);
+                    modelsliders=response.body();
+                    sliderbanneradapter= new sliderbanneradapter(modelsliders,getContext());
+                    sliderView.setSliderAdapter(sliderbanneradapter);
+                    sliderbanneradapter.setonbanerclicklistener(mainDashboardFragment.this);
 
+                    sliderView.setIndicatorAnimation(IndicatorAnimationType.WORM);//set indicator animation by using IndicatorAnimationType. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
+                    sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
+                    sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_BACK_AND_FORTH);
+                    sliderView.setIndicatorSelectedColor(Color.WHITE);
+                    sliderView.setIndicatorUnselectedColor(Color.GRAY);
+                    sliderView.setScrollTimeInSec(4); //set scroll delay in seconds :
+                    sliderView.startAutoCycle();
+                }
             }
 
             @Override
-            public void onFailure(Call<List<modelproducts>> call, Throwable t) {
+            public void onFailure(Call<List<modelbaner>> call, Throwable t) {
 
             }
         });
 
-//        recpoduct.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-//                if (newState== AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
-//                    isscrolling=true;
-//                }
-//            }
-//            @Override
-//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//                current_items=manager.getChildCount();
-//                scrolled_items=manager.findFirstVisibleItemPosition();
-//                total_items=manager.getItemCount();
-//                if ((current_items+scrolled_items==total_items)){
-//                    modelpro.add(new modelproducts("loren ipsum","1000",R.drawable.about,"2000"));
-//                    modelpro.add(new modelproducts("loren ipsum","1000",R.drawable.banner,"2000"));
-//                    modelpro.add(new modelproducts("loren ipsum","200",R.drawable.color,"1000"));
-//                    modelpro.add(new modelproducts("loren ipsum","200",R.drawable.shop,"1000"));
-//                    modelpro.add(new modelproducts("loren ipsum","200",R.drawable.color,"1000"));
-//                    modelpro.add(new modelproducts("loren ipsum","200",R.drawable.color,"1000"));
-//                    adapterproduct.notifyDataSetChanged();
-//                }
-//            }
-//        });
+
 //productsondashboardslider
         list.add(new modelproductslider(R.drawable.shirt,"Brochur","1500","2000"));
         list.add(new modelproductslider(R.drawable.shirt,"Brochur","1500","2000"));
@@ -285,29 +268,29 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
         holderproslider.notifyDataSetChanged();
         holderproslider.setoncartclicklistener(this);
 //discount_banner
-        modelsliders = new ArrayList<>();
-        modelsliders.add(new modelbanner(R.drawable.shop));
-        modelsliders.add(new modelbanner(R.drawable.shop));
-        modelsliders.add(new modelbanner(R.drawable.shop));
-        modelsliders.add(new modelbanner(R.drawable.shop));
-        modelsliders.add(new modelbanner(R.drawable.shop));
-        modelsliders.add(new modelbanner(R.drawable.shop));
-        modelsliders.add(new modelbanner(R.drawable.shop));
-        modelsliders.add(new modelbanner(R.drawable.shop));
-        modelsliders.add(new modelbanner(R.drawable.shop));
-        modelsliders.add(new modelbanner(R.drawable.shop));
-
-        sliderbanneradapter= new sliderbanneradapter(modelsliders,getContext());
-
-        sliderView.setSliderAdapter(sliderbanneradapter);
-
-        sliderView.setIndicatorAnimation(IndicatorAnimationType.WORM);//set indicator animation by using IndicatorAnimationType. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
-        sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
-        sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_BACK_AND_FORTH);
-        sliderView.setIndicatorSelectedColor(Color.WHITE);
-        sliderView.setIndicatorUnselectedColor(Color.GRAY);
-        sliderView.setScrollTimeInSec(4); //set scroll delay in seconds :
-        sliderView.startAutoCycle();
+//        modelsliders = new ArrayList<>();
+//        modelsliders.add(new modelbanner(R.drawable.shop));
+//        modelsliders.add(new modelbanner(R.drawable.shop));
+//        modelsliders.add(new modelbanner(R.drawable.shop));
+//        modelsliders.add(new modelbanner(R.drawable.shop));
+//        modelsliders.add(new modelbanner(R.drawable.shop));
+//        modelsliders.add(new modelbanner(R.drawable.shop));
+//        modelsliders.add(new modelbanner(R.drawable.shop));
+//        modelsliders.add(new modelbanner(R.drawable.shop));
+//        modelsliders.add(new modelbanner(R.drawable.shop));
+//        modelsliders.add(new modelbanner(R.drawable.shop));
+//
+//        sliderbanneradapter= new sliderbanneradapter(modelsliders,getContext());
+//
+//        sliderView.setSliderAdapter(sliderbanneradapter);
+//
+//        sliderView.setIndicatorAnimation(IndicatorAnimationType.WORM);//set indicator animation by using IndicatorAnimationType. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
+//        sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
+//        sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_BACK_AND_FORTH);
+//        sliderView.setIndicatorSelectedColor(Color.WHITE);
+//        sliderView.setIndicatorUnselectedColor(Color.GRAY);
+//        sliderView.setScrollTimeInSec(4); //set scroll delay in seconds :
+//        sliderView.startAutoCycle();
         return view;
     }
 
@@ -450,15 +433,12 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
         });
 
 
-
-
-
-
         Toast.makeText(getContext(), cat, Toast.LENGTH_SHORT).show();
 
+    }
 
-
-
-
+    @Override
+    public void onbanerclick(String id, String name, String cat, String type) {
+        //here to continue
     }
 }

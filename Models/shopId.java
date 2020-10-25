@@ -1,12 +1,11 @@
 package com.ali.ssb.Models;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
-public class userId {
-    @SerializedName("_id")
-    @Expose
+public class shopId {
     String _id;
+
+    public shopId(String _id) {
+        this._id = _id;
+    }
 
     public String get_id() {
         return _id;

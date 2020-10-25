@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.Window;
@@ -32,7 +33,10 @@ import com.smarteist.autoimageslider.SliderView;
 import java.util.List;
 
 
-public class dashboardcustomer extends AppCompatActivity{
+
+public class dashboardcustomer extends AppCompatActivity implements profilecustomer.onexitclicklistener{
+
+
 
     ImageView cart;
     ActionBarDrawerToggle actionBarDrawerToggle;
@@ -52,12 +56,27 @@ public class dashboardcustomer extends AppCompatActivity{
     SliderView sliderView;
     com.ali.ssb.holderclasses.sliderbanneradapter sliderbanneradapter;
     List<modelbanner> modelsliders;
+    public static final String MY_PREFS_NAME = "mydetails";
 
 
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+
+        Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
+//        int count=getSupportFragmentManager().getBackStackEntryCount();
+//        getSupportFragmentManager().popBackStack();
+//        SharedPreferences preferences=getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE);
+//        if (preferences.getString("onback","").equals("profile")){
+//
+//        mainDashboardFragment mainDashboardFragment = new mainDashboardFragment();
+//        FragmentManager fragmentManagers = getSupportFragmentManager();
+//        FragmentTransaction fragmentTransactions = fragmentManagers.beginTransaction();
+//        fragmentTransactions.replace(R.id.fragment, mainDashboardFragment);
+//        fragmentTransactions.commit();
+//        }
+
 
 
 
@@ -69,7 +88,7 @@ public class dashboardcustomer extends AppCompatActivity{
 //            fragmentTransactions.commit();
 //        }
 
-        finishAffinity();
+//        finishAffinity();
 
     }
 
@@ -116,7 +135,7 @@ public class dashboardcustomer extends AppCompatActivity{
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         fragmentTransaction.replace(R.id.fragment, details);
                         fragmentTransaction.commit();
-                        count=3;
+
                         break;
                     case R.id.navigation_home:
                         mainDashboardFragment mainDashboardFragment = new mainDashboardFragment();
@@ -124,7 +143,6 @@ public class dashboardcustomer extends AppCompatActivity{
                         FragmentTransaction fragmentTransactions = fragmentManagers.beginTransaction();
                         fragmentTransactions.replace(R.id.fragment, mainDashboardFragment);
                         fragmentTransactions.commit();
-                        count=0;
                         break;
                     case R.id.navigation_search:
                         searchfragment searchfragment = new searchfragment();
@@ -132,8 +150,6 @@ public class dashboardcustomer extends AppCompatActivity{
                         FragmentTransaction fragmentTransactionssea = fragmentManagersea.beginTransaction();
                         fragmentTransactionssea.replace(R.id.fragment, searchfragment);
                         fragmentTransactionssea.commit();
-                        count=1;
-                        Toast.makeText(dashboardcustomer.this, String.valueOf(count), Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.navigation_more:
                         morefragment morefragment = new morefragment();
@@ -141,7 +157,6 @@ public class dashboardcustomer extends AppCompatActivity{
                         FragmentTransaction fragmentTransaction1 = fragmentManager1.beginTransaction();
                         fragmentTransaction1.replace(R.id.fragment, morefragment);
                         fragmentTransaction1.commit();
-                        count=4;
                         break;
                     case R.id.navigation_wish:
                         wishlist morefragmentwish = new wishlist();
@@ -149,7 +164,6 @@ public class dashboardcustomer extends AppCompatActivity{
                         FragmentTransaction fragmentTransactionwish1 = fragmentManagerwish.beginTransaction();
                         fragmentTransactionwish1.replace(R.id.fragment, morefragmentwish);
                         fragmentTransactionwish1.commit();
-                        count=2;
                         break;
                 }
                 return true;
@@ -232,4 +246,14 @@ public class dashboardcustomer extends AppCompatActivity{
 //        sliderView.startAutoCycle();
    }
 
+    @Override
+    public void onexitclick(String name) {
+//        if (name=="profile"){
+//            mainDashboardFragment mainDashboardFragment = new mainDashboardFragment();
+//            FragmentManager fragmentManagers = getSupportFragmentManager();
+//            FragmentTransaction fragmentTransactions = fragmentManagers.beginTransaction();
+//            fragmentTransactions.replace(R.id.fragment, mainDashboardFragment);
+//            fragmentTransactions.commit();
+//        }
+    }
 }

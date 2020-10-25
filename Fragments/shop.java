@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ali.ssb.Models.userId;
 import com.ali.ssb.R;
 import com.ali.ssb.holderclasses.holdercategoryinshop;
 import com.ali.ssb.holderclasses.holderproductbyshop;
@@ -25,18 +25,10 @@ import com.ali.ssb.interfacesapi.categoryinshopapi;
 import com.ali.ssb.interfacesapi.productsbycatinshopapi;
 import com.ali.ssb.Models.modelcategoryinshop;
 import com.ali.ssb.Models.modelproductbyshop;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -44,6 +36,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.content.Context.MODE_PRIVATE;
+import static androidx.constraintlayout.motion.utils.Oscillator.TAG;
 import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
 
 /**
@@ -249,6 +242,8 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
         listCall.enqueue(new Callback<List<modelproductbyshop>>() {
             @Override
             public void onResponse(Call<List<modelproductbyshop>> call, Response<List<modelproductbyshop>> response) {
+                Toast.makeText(getContext(),String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
+                if (response.isSuccessful()){
                 modelpro=response.body();
                 if (modelpro.isEmpty()){
                     Toast.makeText(getContext(), "No products", Toast.LENGTH_SHORT).show();
@@ -259,7 +254,7 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
                 recyclerView.setAdapter(adapterproduct);
                 adapterproduct.notifyDataSetChanged();
                 adapterproduct.setonproinshopclicklistener(shop.this);
-            }
+            }}
 
             @Override
             public void onFailure(Call<List<modelproductbyshop>> call, Throwable t) {

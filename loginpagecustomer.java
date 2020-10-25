@@ -130,7 +130,9 @@ public static final String MY_PREFS_NAME = "mydetails";
                             editor.putString("password", response.body().getPassword());
                             editor.putString("customerid", response.body().get_id());
                             editor.putString("address", response.body().getAddress());
+                            editor.putString("image", response.body().getAddress());
                             editor.putString("loginstatus","true");
+                            editor.putString("imagehave","no");
                             editor.putString("phone", response.body().getCell());
 
                             editor.apply();

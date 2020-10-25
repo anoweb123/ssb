@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,7 +35,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ali.ssb.Models.modelbaner;
+import com.ali.ssb.Models.modelgetresultofimageupdate;
 import com.ali.ssb.R;
+import com.ali.ssb.holderclasses.sliderbanneradapter;
+import com.ali.ssb.interfacesapi.banerapi;
 import com.ali.ssb.interfacesapi.imageupdateapi;
 import com.ali.ssb.interfacesapi.nameupdateapi;
 import com.google.android.gms.common.util.Base64Utils;
@@ -46,6 +51,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
+import com.smarteist.autoimageslider.SliderAnimations;
+import com.smarteist.autoimageslider.SliderView;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
@@ -56,6 +64,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.ResponseBody;
@@ -67,6 +76,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
+import static android.content.Context.PRINT_SERVICE;
 import static androidx.constraintlayout.motion.utils.Oscillator.TAG;
 import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
 
@@ -82,6 +92,17 @@ public class profilecustomer extends Fragment {
     Uri imageUri;
     ProgressBar bar;
     CircleImageView profileimage;
+    onexitclicklistener monexitclicklistener;
+
+    public void setonbanerclicklistener(onexitclicklistener listener){
+        monexitclicklistener=  listener;
+    }
+
+    public interface onexitclicklistener{
+        void onexitclick(String name);
+    }
+
+
 
     InputStream imageStream;
     int CAMERA_PERMISSION_CODE=100;
@@ -134,88 +155,64 @@ public class profilecustomer extends Fragment {
         {
             bar.setVisibility(View.VISIBLE);
             imageUri=data.getData();
+
+            final Uri imageUri = data.getData();
+            InputStream imageStream = null;
             try {
                 imageStream = getContext().getContentResolver().openInputStream(imageUri);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
             final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            byte[] b = baos.toByteArray();
+            String encImage ="data:image/jpeg;base64,data:image/jpeg;base64,/9j/4AAQSkZJRgABAQIAdgB2AAD/2wCEAAUFBQUFBQYGBgYICQgJCAwLCgoLDBINDg0ODRIbERQRERQRGxgdGBYYHRgrIh4eIisyKigqMjw2NjxMSExkZIYBBQUFBQUFBgYGBggJCAkIDAsKCgsMEg0ODQ4NEhsRFBERFBEbGB0YFhgdGCsiHh4iKzIqKCoyPDY2PExITGRkhv/CABEIARgBvwMBIgACEQEDEQH/xAAdAAEAAQUBAQEAAAAAAAAAAAAABgEDBAUHAggJ/9oACAEBAAAAAPssAAAAAAAAAAAAAAAAAADlnLwXttOemelPmTHKAlveGr4nzSM42dLOpdpu0+ddMqKjs87B84cBUKUJ99hbC38A4AB0n7I5z8k6oCS/Y1347ihVVU+n+3A+ZOGFKA6r9d4/57+QoOgfXHwphF/3Z8G/+jvn6KVFVVfpLvYPlri1KV0jPzPLL+78/wDPWjNj6tVZ/wB9+UjJheFtpZjHUecaW5kZ1hsJq9dr68D5Q4/RpYLSvS79Nh9TdN/PxTZ8h8+vXu5076c+Vi3CtHc6LsVZFxqmTsJpiV3HU2/+hag+Q+VmDGG33ZldO+ofgQy4j4V9e5p9CfOOIMXS4uJ5vSmC3Pe0nmG3XUr30NuQPjnmtClBlxCWfX3xsAN/1v552mODxq/Gj1N/zt+hYFdt1jr3RgHxbAFKClHmNfSnEqFASHpvyfIJJk4tKinPsL362/Rte2X0V3aoD4ghtLuNgMjZYiuhnGm8UzdUVV33S/lC5k5u82WfY8K6iD27+16Vrmw+9NgAfCsWZMKjNErkpsopufLY8n819V99G7Rw8i8dvZUu3GO8cz83pROtWzf0CvAHwZH2VBIvayp9sqMrQbWjYcmtV9e7nS+0cOV1fPrd7c9GxHjl/rI73pdVXK+9dsAp8CailfPgGXEd3for4BPNjz3FLev9bD3Vgc5uTno+m1i/95b0Ba+ANfShSil/XQfdyagKE8w4Rn45UM+ARzJ7/wAwl+trd+8ZCAx/gjFoUo9eY7FsfO6GUUCa6Ti8tkPjGo95mTCYY6ndgHU8V6+4pQAcM5PEo5pdbbWsvzpPFd1581r79dD506BmcTv5m2nGlx/Wmyofj7TtnFq7LbTacfWuYA0nxzHcLGsYut0GvuTTKpttUouxrSdQ5hvJhf0sMse+iR7d0uRONXO0QeL7uQbJWT9e+hs0Eb+DvNFBFodMpIoF+Gxnp3NZ7nkai1yfayS2sjm2tlk845vZorVVKvuHNCG/DFcmq7rV2EZclpmBd55HehxqaCxzjZ7msotOa2e68d1/WcWt3Psecd9EfSAQP4h9bHm2HlTG68aLfMrl3j3794+DMtzkq0QneRSRSuw5zPLXPpHO8R4xYb0jZ3Og/Xgc9+KGz5bqbMnmDJj23X9D5KwK1ueh2lu41HuBymX2EJ6rxTO2Evu+KseSz6Zdx3wcp+PGy5ZqMOQz+mZHtooUZHIrckmrzBp2amByiZY7c820+w9X5xexK1epv9i70OP/ACNTY8t0+JKJwydJsGdeFjjdvo2zUg3QsdGojKJrjLHN9pZt5fvc73ZsN6mP3L7HF/k2mdzDUYfS9q963OZPM/FfVdXc6l4UqLHNZJOcRAa2MXK6FZ9R/QbmXZll9wzkcI+W2x59g77eLuRqrzM55jq11UllbMzDWWvUFyJ5htBax6Z8qx64UCsSSf4FftnoI+fvmV5PKs08RbEUoMvm84uOkdCWePRuur0c9wytVzc67FrT17813X3pmj51+baKU97Wdy3Rc20VKBlR7cecnq0tYMF52uROaYgrW50rac21NVW7+suoBz/iuEe8vP8AXnzqLQCMyY1czauNbo5h08Btcm1o9LYyup9q2oFIPzfVilPPn1cAjcjrWDzL1pMKVo5jysFLda+q1mfTtmAFIjzXRilPK4CmgkCJSS9GdhuXNukg8+fVa1lvT9wAAI3zSM1UpTz7qGi3qObbKhkxuxPbbYPD1Wsm6hvgAAGnioUp6DxYysG9f0u7aLeh5VqkEiAAAACD7TGwtvqs3c6jZ6T3LrEJuW9TtdhstbLgAAAABrc3CZ+HZzsbJws+7TCsbXA8X6e8kAAP/8QAGgEAAgMBAQAAAAAAAAAAAAAAAAQCAwUGAf/aAAgBAhAAAAAAAAAAAAAAE+eCTu7lY4F3Sc/nxZ3qsYA6RkzuYlOEOgqxJ+lzmRdNf3XzIxts6RszOaufSV154rbMbYZdr1PjkUl9TU0Qyuc88PdGeUA/oY1Xgxqe5i2p0cgx+evdoRYsScv8ZimxUpXpuZie7ugYvP2urqszSZv8nHPbbz6dVxLM298DDwgLNFVMC7axKQZ2rMdLZ6ADOx6pNyV8rHLU7pxUhrXQzKHtpkOdyJQs1cWXpu281HX0MZLpbkMSwOuZObytivJaUeYNFLElf0GIj1BmZl7Nu22cxm7tvN3Ue+z6bnKXc/o8tDp/Fklqp9U8ctn7KucwrqueXczL2GpUhuWIo6ksjW6Q5NA90PcsPXkd9jnYtIg5Cg96fTFE65zjWAHti8j0Jyos0WAClWo9PAKyRIAubsAACvwADw989A9sAAAAAAAAAAA//8QAHAEAAgIDAQEAAAAAAAAAAAAAAAYFBwEDBAII/9oACAEDEAAAAAAAAAAAAAAY7hya1aq36xgI6k7ecN8HVHdZZgKVhBxvXVydXTUHfaPNp9R63YUfyS/mu3rftjuSlF8eLvjk9onK85bOXofbwdT1wKkp6XNzLMIiKmA/XVnJhL53/IKChZkhkh0Py7TyDTWgLGuOJWZVqiOJlXYn3DbWWG72LsR1t2ZKqqkCzLe4VuYnYPmZoaK98u5wXl9ukkJaZnmsKjAtO1jOOJNn2QCOrG0JHPmFrLishnranwHKyO7Qv6J/Z1i5wscby7mPfX0dveZRXrGFC5LH0b+RAtDR4xU/Dd+yu1CymekY5rtHizs+c4Uut+rfssNfYlaHExns/VE1DZzXRHp3eoeG4KvXy8naqeO64uW045KRueSWHCln1roz3NtE316KDVS+W6t59zhJ1EW/cbeGrzuRe1tq3iaWtE0WLX1KH0A358J3h6znyqtlPxFy7oFqxhe6JjGqiUkYmPs5dGztyAaeWZ0Hkxz6JbiSokAkp7vz4MmcdmNWNQGY5e4gAA69pjIHrPjODGdfGAAAAAAAAAAB/8QANxAAAAYCAAMHAgQFBAMAAAAAAAECAwQFBhEHEBITFBUWFyAhMDEiJDI0CCMlQEEzNkJRNVBg/9oACAEBAAEIAP8A5rrT/c8SM2s8PfhlD9bshHrdkI9bshHrfkI9bshHrfkARxxu0/qi8d3dEmVTcX8ZsnENvRZcWWwh+NyeWaGlqKVxnyKI+tg/W/IR635CPXDIR64ZCPXDIR64ZCPXDIR64ZCPXDIRhfFC9yO/gwXuVxkFTRsm5Pu+ODLZqbqLDipmE8zD2VZC+e3Cv7oj2GMvySMZG1XcXMvgmkl0HG+vkqQ1a1lrXWcYn4YUZJIzO84u3tZPfbZ9b8hHrfkI9b8hHrdkI9bshHrdkI9bshHrdkI9bshHrdkI4b5ZOyqBLkzfdxzWXfoCPdv2Yfn1tjEpGsevoF7XImxRMPUV8xZrJc99Sfo8KnUozCqSYz/P42Kxjjx7a6sbuSuRN9+OZXb4zLbfhYZmUDKq4n2svsfD6KT0ZWX5svp8DntVdgXv44r/AKzCT7NjY2Xs2OF+YuUFxFivCyPUCYYM/hHs2Njfs4Yf72ohkt21jtDPtXLCdJsZj8qVy2ER31lsjiSCC2nW/wBWxvljWQTMZuItnFzK9jW513c8rPcobG/fvlwMX+Us0e/jae8iaRzP7GLu2crJSGWzymSCymR/mHkUCU4lqYskktRI5QPxSkIGL23jGP10xd1pqlslg/sjnBQlbjvUeSoHmVseZGx5kbHmNseYmxwvuCl57jrRccJbjGOVsZI2Nhh2PGS/Jfl38+Us1KKykkeyh5DNYU";
+            Toast.makeText(getContext(), String.valueOf(encImage.length()), Toast.LENGTH_SHORT).show();
 
+            SharedPreferences prefss=getContext().getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE);
+            Retrofit retrofitpro = new Retrofit.Builder()
+                    .baseUrl("http://"+prefss.getString("ipv4","10.0.2.2")+":5000/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            imageupdateapi apipro=retrofitpro.create(imageupdateapi.class);
 
-//            String inputFilePath = "test_image.jpg";
-//            File inputFile = new File(classLoader
-//                    .getResource(inputFilePath)
-//                    .getFile());
-//
-//            byte[] fileContent = FileUtils.readFileToByteArray(inputFile);
-//            String encodedString = Base64
-//                    .getEncoder()
-//                    .encodeToString(fileContent);
+            Call<ResponseBody> listCallpro=apipro.updateimg(sid,semail,encImage);
+                    listCallpro.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    Toast.makeText(getContext(), String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
+                    if (response.isSuccessful()) {
+//                    SharedPreferences.Editor editor= (SharedPreferences.Editor) getContext().getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE);
+//                    editor.putString("image",response.body().getImage());
+//                    editor.putString("imagehave","yes");
+//                    editor.apply();
+                        bar.setVisibility(View.INVISIBLE);
+//                    Picasso.get().load(response.body().getImage()).into(profileimage);
+                    }
+                }
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
 
-//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//            selectedImage.compress(Bitmap.CompressFormat.JPEG,100,baos);
-//            byte[] b = baos.toByteArray();
-//            Base64.Encoder encoder = Base64.getEncoder();
-//            String encImage= encoder.encodeToString(b);
-
-
+            Toast.makeText(getContext(), "yes", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "onActivityResult: "+encImage);
+//            String encodedImage = encodeImage(selectedImage);
 
             SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
             sname = prefs.getString("name", "Null");//"No name defined" is the default value.
             sid = prefs.getString("customerid", "Null");
 
-//            System.out.println(encodstring);
-
-//            Toast.makeText(getContext(), encImage, Toast.LENGTH_SHORT).show();
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("http://"+prefs.getString("ipv4","10.0.2.2")+":5000/customer/updateimage/")
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            imageupdateapi api=retrofit.create(imageupdateapi.class);
-//            Call<ResponseBody> listCall=api.updateimg(sid,"hello",encodstring);
-
-//            Toast.makeText(getContext(),String.valueOf(imageString.toString()), Toast.LENGTH_SHORT).show();
-//            Log.d(TAG, "imageresult:"+encodstring);
-
-//            listCall.enqueue(new Callback<ResponseBody>() {
-//                @Override
-//                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-////                    Toast.makeText(getContext(), response.code(), Toast.LENGTH_SHORT).show();
-//                    if (response.isSuccessful()){
-//                        Toast.makeText(getContext(), "updated", Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//                @Override
-//                public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                    Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
-//                }
-//            });
-
-
-//            UploadTask uploadTask= FirebaseStorage.getInstance().getReference().child(sid).putBytes(b);
-//            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                @Override
-//                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                    Toast.makeText(getContext(), "Image updated", Toast.LENGTH_SHORT).show();
-//                    bar.setVisibility(View.INVISIBLE);
-//                }
-//            });
-
-//            String encodedImage = encodeImage(selectedImage);
-//            String s=Base64Utils.encode(databytes);
-              //decode
-//            Base64.Decoder dencoder = Base64.getDecoder();
-//            byte[] bytes=dencoder.decode(encImage);
-
+//            Base64Utils.encode(b);
+//            profileimage.setImageBitmap(selectedImage);
             profileimage.setImageURI(imageUri);
-//            Toast.makeText(getContext(), encImage, Toast.LENGTH_LONG).show();
         }
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             imageUri=data.getData();
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             byte[] databytes = baos.toByteArray();
             bar.setVisibility(View.VISIBLE);
 
@@ -243,6 +240,10 @@ public class profilecustomer extends Fragment {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_profilecustomer, container, false);
 
+        SharedPreferences.Editor editor =getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
+        editor.putString("ipv4","192.168.43.148");
+        editor.putString("onback","profile");
+        editor.apply();
         try {
 
             address = view.findViewById(R.id.addressupdate);
