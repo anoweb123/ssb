@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -26,6 +27,10 @@ import com.ali.ssb.Models.modelcart;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.Context.MODE_PRIVATE;
+import static com.ali.ssb.Fragments.paymentpage.MY_PREFS_forcart;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link cart#newInstance} factory method to
@@ -34,10 +39,11 @@ import java.util.List;
 public class cart extends Fragment implements holdercart.ondel{
 
     Button checkout;
+    String delcharges;
     RecyclerView recyclerView;
     List<modelcart> modelcarts;
     holdercart adapter;
-    TextView totalprice,totalpayable,totaldiscount,payable;
+    TextView totalprice,totalpayable,totaldiscount,payable,delcharge;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -83,6 +89,8 @@ public class cart extends Fragment implements holdercart.ondel{
         View view= inflater.inflate(R.layout.fragment_cart, container, false);
 
         checkout=view.findViewById(R.id.checkout);
+        delcharge=view.findViewById(R.id.delcharge);
+
 
         checkout.setOnClickListener(v -> {
             checkoutpage productfragment = new checkoutpage();
@@ -105,15 +113,24 @@ public class cart extends Fragment implements holdercart.ondel{
         modelcarts=dbhandler.retrievecart();
         dbhandler.close();
 //
+
+        SharedPreferences preferences=getContext().getSharedPreferences(MY_PREFS_forcart,MODE_PRIVATE);
+        delcharges=preferences.getString("deliverycharges","0");
+
+        delcharge.setText("Rs."+delcharges);
+
+
         dbhandler dbhandler1=new dbhandler(getContext());
         int tprice=dbhandler1.totalprice();
         totalprice.setText("Rs. "+String.valueOf(tprice));
         totaldiscount.setText("Rs. "+String.valueOf(dbhandler1.totaldiscount()));
         dbhandler1.close();
 //
-        totalpayable.setText("Rs. "+String.valueOf(tprice+200));
-        payable.setText("Rs. "+String.valueOf(tprice+200));
+        totalpayable.setText("Rs. "+String.valueOf(tprice+Integer.parseInt(delcharges)));
+        payable.setText("Rs. "+String.valueOf(tprice+Integer.parseInt(delcharges)));
 //
+
+
         adapter = new holdercart(modelcarts, getContext());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -127,6 +144,15 @@ public class cart extends Fragment implements holdercart.ondel{
             FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
             fragmentTransactionpro.replace(R.id.fragment, productfragment);
             fragmentTransactionpro.commit();
+
+            SharedPreferences.Editor editor = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE).edit();
+            editor.putString("shopincartid", "");
+            editor.apply();
+
+
+            delcharge.setText("Rs. 0");
+
+
         }
 
 
@@ -175,14 +201,26 @@ public class cart extends Fragment implements holdercart.ondel{
             totaldiscount.setText("Rs. "+String.valueOf(dbhandler.totaldiscount()));
             dbhandler.close();
 
-            totalpayable.setText("Rs. "+String.valueOf(tprice+200));
-            payable.setText("Rs. "+String.valueOf(tprice+200));
+
+            SharedPreferences preferences=getContext().getSharedPreferences(MY_PREFS_forcart,MODE_PRIVATE);
+            delcharges=preferences.getString("deliverycharges","0");
+
+
+            delcharge.setText("Rs."+delcharges);
+
+            totalpayable.setText("Rs. "+String.valueOf(tprice+Integer.parseInt(delcharges)));
+            payable.setText("Rs. "+String.valueOf(tprice+Integer.parseInt(delcharges)));
             if (modelcarts.isEmpty() && recyclerView.getChildCount()==0){
                 nullcart productfragment = new nullcart();
                 FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
                 fragmentTransactionpro.replace(R.id.fragment, productfragment);
                 fragmentTransactionpro.commit();
+
+                SharedPreferences.Editor editor = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE).edit();
+                editor.putString("shopincartid", "");
+                editor.apply();
+
             }
 
         }
@@ -204,14 +242,25 @@ public class cart extends Fragment implements holdercart.ondel{
             totalprice.setText("Rs. "+String.valueOf(tprice));
             totaldiscount.setText("Rs. "+String.valueOf(dbhandler.totaldiscount()));
             dbhandler.close();
-            totalpayable.setText("Rs. "+String.valueOf(tprice+200));
-            payable.setText("Rs. "+String.valueOf(tprice+200));
+
+            SharedPreferences preferences=getContext().getSharedPreferences(MY_PREFS_forcart,MODE_PRIVATE);
+            delcharges=preferences.getString("deliverycharges","0");
+
+            delcharge.setText("Rs."+delcharges);
+
+            totalpayable.setText("Rs. "+String.valueOf(tprice+Integer.parseInt(delcharges)));
+            payable.setText("Rs. "+String.valueOf(tprice+Integer.parseInt(delcharges)));
             if (modelcarts.isEmpty() && recyclerView.getChildCount()==0){
                 nullcart productfragment = new nullcart();
-                FragmentManager fragmentManagerpro = getChildFragmentManager();
+                FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
                 fragmentTransactionpro.replace(R.id.fragment, productfragment);
                 fragmentTransactionpro.commit();
+
+                SharedPreferences.Editor editor = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE).edit();
+                editor.putString("shopincartid", "");
+                editor.apply();
+
             }
         }
     }

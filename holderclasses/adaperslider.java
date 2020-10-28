@@ -29,7 +29,6 @@ public class adaperslider extends RecyclerView.Adapter<adaperslider.holder> {
     onshopclicklistener monshopclicklistener;
 
 
-
     public adaperslider(List<modelslider> models, Context context) {
         this.models =models;
         this.context = context;
@@ -40,7 +39,7 @@ public class adaperslider extends RecyclerView.Adapter<adaperslider.holder> {
     }
 
     public interface onshopclicklistener{
-        void onshopqclick(String id,String name,String cat);
+        void onshopqclick(String id,String name,String cat,String delcharges);
     }
 
 
@@ -53,7 +52,10 @@ public class adaperslider extends RecyclerView.Adapter<adaperslider.holder> {
     }
     @Override
     public void onBindViewHolder(@NonNull final adaperslider.holder holder, final int position) {
-//models.get(position).get_id();
+
+        final String delcharge;
+        String delcharge1;
+
         try {
             SharedPreferences prefs = context.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
             String path=models.get(position).getImage().replaceFirst("localhost",prefs.getString("ipv4","10.0.2.2"));
@@ -70,11 +72,18 @@ public class adaperslider extends RecyclerView.Adapter<adaperslider.holder> {
         if (models.get(position).getShopCategory().length()>20){
             holder.cat.setText(models.get(position).getShopCategory().substring(0,20).concat("..."));
         }
+
+        delcharge1 =models.get(position).getDeliveryCharges();
+        if (models.get(position).getDeliveryCharges().equals("N/A")){
+            delcharge1 ="0";
+        }
+
+
+        delcharge = delcharge1;
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, models.get(position).get_id().toString(), Toast.LENGTH_SHORT).show();
-                monshopclicklistener.onshopqclick(String.valueOf(models.get(position).get_id()),models.get(position).getShopName(),models.get(position).getShopCategory());
+                monshopclicklistener.onshopqclick(String.valueOf(models.get(position).get_id()),models.get(position).getShopName(),models.get(position).getShopCategory(),delcharge);
             }
         });
     }

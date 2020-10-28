@@ -53,7 +53,7 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
 
     holderproductbyshop adapterproduct;
     ImageView back;
-    String idd,namee,catt;
+    String idd,namee,catt,delcharges;
     TextView catname,cat,name;
     holdercategoryinshop adaptershop;
     List<modelproductbyshop> modelpro;
@@ -109,17 +109,14 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
         cat = view.findViewById(R.id.cat);
         modelpro = new ArrayList<>();
         modellist = new ArrayList<>();
-//
+
         idd=getArguments().getString("shopid");
         namee=getArguments().getString("shopname");
         catt=getArguments().getString("shopcat");
+        delcharges=getArguments().getString("delcharges");
 
         cat.setText(catt);
         name.setText(namee);
-
-
-
-
 
 //        Retrofit retrofitpro = new Retrofit.Builder()
 //                .baseUrl("http://192.168.43.19:5000/products/allproducts/"+idd+"/")
@@ -218,6 +215,7 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
         bundle.putString("proid",proid);
         bundle.putString("imagekey",image);
         bundle.putString("shopid",idd);
+        bundle.putString("delcharges",delcharges);
         productfragment.setArguments(bundle);
         fragmentTransactionpro.replace(R.id.fragment, productfragment);
         fragmentTransactionpro.commit();

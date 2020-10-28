@@ -54,7 +54,9 @@ public class paymentpage extends Fragment {
     String shopid,orderid;
     public static String MY_PREFS_forcart="MY_PREFS_forcart";
     Button pay;
+    String lat,lon,paymentstatud,paymentmethod;
     creditcardprice creditcardprice;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -165,13 +167,15 @@ public class paymentpage extends Fragment {
                 .build();
 
         SharedPreferences preferences=getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        Toast.makeText(getContext(), "ordering", Toast.LENGTH_SHORT).show();
 
         orderinfoapi api = retrofit.create(orderinfoapi.class);
-        Call<modelreturnoforderinfo> listCall = api.response("haider",preferences.getString("customerid",""),"rehmancolony","0482932332","1200","300","200","1400",shopid,"100");
+        Call<modelreturnoforderinfo> listCall = api.response("haider",preferences.getString("customerid",""),"rehmancolony","0482932332","1200","300","200","1400",shopid,"100","23.372","55.445","creditcard","paid");
 
         listCall.enqueue(new Callback<modelreturnoforderinfo>() {
             @Override
             public void onResponse(Call<modelreturnoforderinfo> call, Response<modelreturnoforderinfo> response) {
+                Toast.makeText(getContext(), String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
                 if (response.isSuccessful()) {
                     orderid=response.body().get_id();
                     orderitems(orderid);

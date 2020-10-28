@@ -3,6 +3,7 @@ package com.ali.ssb.holderclasses;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ali.ssb.R;
@@ -18,6 +20,8 @@ import com.ali.ssb.Models.modelproductbyshop;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +35,7 @@ public class holderproductbyshop extends RecyclerView.Adapter<holderproductbysho
     onproinshopclicklistener monproclicklistener;
 
     String finalDiscount,finalprice;
+
 
     public holderproductbyshop(List<modelproductbyshop> list, Context context,String disrate) {
         this.list = list;
@@ -55,10 +60,12 @@ public class holderproductbyshop extends RecyclerView.Adapter<holderproductbysho
         return new holderproductbyshop.holder(itemView);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBindViewHolder(@NonNull holder holder, final int position) {
 
         String title, desc, price, discount, image, color, size, days, qtyleft,proid;
+        Boolean promo=false;
 
         holder.price.setText("Rs "+list.get(position).getPrice());
         holder.title.setText(list.get(position).getName());
@@ -81,6 +88,39 @@ public class holderproductbyshop extends RecyclerView.Adapter<holderproductbysho
         days=list.get(position).getPromotionTill();
         proid=list.get(position).get_id();
         finalDiscount= discount;
+        if (days.isEmpty()||days.equals("none")){}
+        else {
+
+            LocalDate currentDate = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                currentDate = LocalDate.now(ZoneId.systemDefault());
+            }
+            Toast.makeText(context, String.valueOf(currentDate), Toast.LENGTH_SHORT).show();
+
+
+            LocalDate getDates=null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                if (list.get(position).getPromotionTill().isEmpty()||list.get(position).getPromotionTill().equals("none")){}
+                else {
+                    getDates = LocalDate.parse(list.get(position).getPromotionTill());
+                    Toast.makeText(context, String.valueOf(getDates), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            if (currentDate.isBefore(getDates)){
+                promo=true;
+                Toast.makeText(context, "yes promo", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Toast.makeText(context, "no promo", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+
+
+
+
+
 
 //        if (disrate.equals("none")){
 //        }
@@ -100,11 +140,21 @@ public class holderproductbyshop extends RecyclerView.Adapter<holderproductbysho
             else {
 
 
+
+                if (promo){
+
                 holder.price.setText("Rs "+list.get(position).getPromotionRate());
                 holder.discount.setText("Rs "+list.get(position).getPrice());
                 holder.discount.setPaintFlags(holder.discount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 price=list.get(position).getPromotionRate();
-                discount= list.get(position).getPrice();
+                discount= list.get(position).getPrice();}
+
+
+            else {
+                holder.discount.setText("0");
+                holder.discount.setVisibility(View.INVISIBLE);
+                discount="0";
+            }
             }
         }
         else {
@@ -124,6 +174,9 @@ public class holderproductbyshop extends RecyclerView.Adapter<holderproductbysho
 //            holder.discount.setText("Rs "+list.get(position).getPromotionRate());
 //            holder.discount.setPaintFlags(holder.discount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 //        }
+
+
+
 
         String finalPrice = price;
         String finalDiscount1 = discount;

@@ -67,7 +67,12 @@ public class holdercart extends RecyclerView.Adapter<holdercart.holder>
         Picasso.get().load(modelcarts.get(position).getImage().replaceFirst("localhost",prefs.getString("ipv4","10.0.2.2"))).into(holder.imageView);
         holder.title.setText(modelcarts.get(position).getTitle());
         holder.price.setText("Rs "+modelcarts.get(position).getPrice());
+        if (modelcarts.get(position).getDiscounted().equals("0")){
+            holder.discount.setVisibility(View.INVISIBLE);
+        }
+        else {
         holder.discount.setText("Rs "+modelcarts.get(position).getDiscounted());
+        }
         holder.discount.setPaintFlags(holder.discount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         holder.color.setText("Color: "+modelcarts.get(position).getColor());
         holder.size.setText("Size: "+modelcarts.get(position).getSize());

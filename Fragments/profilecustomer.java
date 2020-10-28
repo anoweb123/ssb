@@ -54,6 +54,7 @@ import com.google.firebase.storage.UploadTask;
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
@@ -94,6 +95,12 @@ public class profilecustomer extends Fragment {
     CircleImageView profileimage;
     onexitclicklistener monexitclicklistener;
 
+    InputStream imageStream;
+    int CAMERA_PERMISSION_CODE=100;
+    ImageView camera,gallary;
+    AlertDialog alertDialog;
+    private static final int REQUEST_IMAGE_CAPTURE = 1,imageGalary=2;
+    AlertDialog.Builder builder;
     public void setonbanerclicklistener(onexitclicklistener listener){
         monexitclicklistener=  listener;
     }
@@ -103,21 +110,12 @@ public class profilecustomer extends Fragment {
     }
 
 
-
-    InputStream imageStream;
-    int CAMERA_PERMISSION_CODE=100;
-    ImageView camera,gallary;
-    AlertDialog alertDialog;
-    private static final int REQUEST_IMAGE_CAPTURE = 1,imageGalary=2;
-    AlertDialog.Builder builder;
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     public static final String MY_PREFS_NAME = "mydetails";
     TextView names,emails,cells,addresss;
     int count;
-    String sname,semail,scell,saddress,sid,spass;
+    String sname,semail,scell,saddress,sid,spass,simage;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -156,59 +154,97 @@ public class profilecustomer extends Fragment {
             bar.setVisibility(View.VISIBLE);
             imageUri=data.getData();
 
-            final Uri imageUri = data.getData();
-            InputStream imageStream = null;
-            try {
-                imageStream = getContext().getContentResolver().openInputStream(imageUri);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            byte[] b = baos.toByteArray();
-            String encImage ="data:image/jpeg;base64,data:image/jpeg;base64,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";
-            Toast.makeText(getContext(), String.valueOf(encImage.length()), Toast.LENGTH_SHORT).show();
+//            final Uri imageUri = data.getData();
+//            InputStream imageStream = null;
+//            try {
+//                imageStream = getContext().getContentResolver().openInputStream(imageUri);
+//            } catch (FileNotFoundException e) {
+//                e.printStackTrace();
+//            }
+//            final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            selectedImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//            byte[] databytes = baos.toByteArray();
 
-            SharedPreferences prefss=getContext().getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE);
-            Retrofit retrofitpro = new Retrofit.Builder()
-                    .baseUrl("http://"+prefss.getString("ipv4","10.0.2.2")+":5000/")
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            imageupdateapi apipro=retrofitpro.create(imageupdateapi.class);
+//            String encImage ="data:image/png;base64,"+Base64Utils.encodeUrlSafe(databytes);
+//            Toast.makeText(getContext(), String.valueOf(encImage.length()), Toast.LENGTH_SHORT).show();
 
-            Call<ResponseBody> listCallpro=apipro.updateimg(sid,semail,encImage);
-                    listCallpro.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    Toast.makeText(getContext(), String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
-                    if (response.isSuccessful()) {
-//                    SharedPreferences.Editor editor= (SharedPreferences.Editor) getContext().getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE);
-//                    editor.putString("image",response.body().getImage());
-//                    editor.putString("imagehave","yes");
-//                    editor.apply();
-                        bar.setVisibility(View.INVISIBLE);
-//                    Picasso.get().load(response.body().getImage()).into(profileimage);
-                    }
-                }
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
+//            SharedPreferences prefss=getContext().getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE);
+//            Retrofit retrofitpro = new Retrofit.Builder()
+//                    .baseUrl("http://"+prefss.getString("ipv4","10.0.2.2")+":5000/customer/updateimage/")
+//                    .addConverterFactory(GsonConverterFactory.create())
+//                    .build();
+//            imageupdateapi apipro=retrofitpro.create(imageupdateapi.class);
 
-            Toast.makeText(getContext(), "yes", Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "onActivityResult: "+encImage);
+//            Call<modelgetresultofimageupdate> listCallpro=apipro.updateimg(sid,semail,encImage);
+//                    listCallpro.enqueue(new Callback<modelgetresultofimageupdate>() {
+//                @Override
+//                public void onResponse(Call<modelgetresultofimageupdate> call, Response<modelgetresultofimageupdate> response) {
+//                    Toast.makeText(getContext(), String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
+//                    if (response.isSuccessful()) {
+////                    SharedPreferences.Editor editor= (SharedPreferences.Editor) getContext().getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE);
+////                    editor.putString("image",response.body().getImage());
+////                    editor.putString("imagehave","yes");
+////                    editor.apply();
+//                        if (response.body().getImage().equals(null)){
+//                        Toast.makeText(getContext(), "yesnull", Toast.LENGTH_SHORT).show();
+//                        }
+//                        else {
+//                            Toast.makeText(getContext(), response.body().getImage(), Toast.LENGTH_SHORT).show();
+//                        }
+//                        bar.setVisibility(View.INVISIBLE);
+////                        assert response.body() != null;
+////                        Picasso.get().load(response.body().getImage().replaceFirst("localhost",prefss.getString("ipv4","10.0.2.2"))).networkPolicy(NetworkPolicy.NO_STORE).into(profileimage);
+//                    }
+//                }
+//                @Override
+//                public void onFailure(Call<modelgetresultofimageupdate> call, Throwable t) {
+//                    Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+//                }
+//            });
+
+//            Toast.makeText(getContext(), "yes", Toast.LENGTH_SHORT).show();
+//            Log.d(TAG, "onActivityResult: "+encImage);
 //            String encodedImage = encodeImage(selectedImage);
 
             SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
             sname = prefs.getString("name", "Null");//"No name defined" is the default value.
             sid = prefs.getString("customerid", "Null");
 
+            FirebaseStorage.getInstance().getReference().child(sid).putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    Toast.makeText(getContext(),"Image updated", Toast.LENGTH_SHORT).show();
+                    FirebaseStorage.getInstance().getReference().child(sid).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Picasso.get().load(uri).into(profileimage);
+                            SharedPreferences.Editor editor=getContext().getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE).edit();
+                            editor.putString("image",uri.toString());
+                            editor.apply();
+
+                            bar.setVisibility(View.INVISIBLE);
+                        }
+                    });
+                }
+            });
+
+//            UploadTask uploadTask= FirebaseStorage.getInstance().getReference().child(sid).putBytes(databytes);
+//            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                @Override
+//                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                    Toast.makeText(getContext(), "Image updated", Toast.LENGTH_SHORT).show();
+//                    Picasso.get().load().into(profileimage);
+//                    bar.setVisibility(View.INVISIBLE);
+//                }
+//            });
+
+
 //            Base64Utils.encode(b);
 //            profileimage.setImageBitmap(selectedImage);
-            profileimage.setImageURI(imageUri);
+//            profileimage.setImageURI(imageUri);
         }
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
             imageUri=data.getData();
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
@@ -219,17 +255,33 @@ public class profilecustomer extends Fragment {
 //            String s=Base64Utils.encode(databytes);
 //            Toast.makeText(getContext(), s, Toast.LENGTH_LONG).show();
 //            String encodedImage = Base64.encodeToString(databytes, Base64.DEFAULT);
-            profileimage.setImageBitmap(imageBitmap);
+//            profileimage.setImageBitmap(imageBitmap);
 
 
-            UploadTask uploadTask= FirebaseStorage.getInstance().getReference().child(sid).putBytes(databytes);
-            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
+            SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+            sname = prefs.getString("name", "Null");//"No name defined" is the default value.
+            sid = prefs.getString("customerid", "Null");
+
+
+            FirebaseStorage.getInstance().getReference().child(sid).putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(getContext(), "Image updated", Toast.LENGTH_SHORT).show();
-                    bar.setVisibility(View.INVISIBLE);
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    Toast.makeText(getContext(),"Image updated", Toast.LENGTH_SHORT).show();
+                    FirebaseStorage.getInstance().getReference().child(sid).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Picasso.get().load(uri).into(profileimage);
+                            SharedPreferences.Editor editor=getContext().getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE).edit();
+                            editor.putString("image", String.valueOf(uri));
+                            editor.apply();
+
+                            bar.setVisibility(View.INVISIBLE);
+                        }
+                    });
                 }
             });
+
 
         }
     }
@@ -240,11 +292,10 @@ public class profilecustomer extends Fragment {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_profilecustomer, container, false);
 
-        SharedPreferences.Editor editor =getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-        editor.putString("ipv4","192.168.43.148");
-        editor.putString("onback","profile");
-        editor.apply();
-        try {
+//        SharedPreferences.Editor editor =getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
+//        editor.putString("ipv4","192.168.43.148");
+//        editor.putString("onback","profile");
+//        editor.apply();
 
             address = view.findViewById(R.id.addressupdate);
             name = view.findViewById(R.id.nameupdate);
@@ -272,15 +323,6 @@ public class profilecustomer extends Fragment {
             cells.setText(scell);
             addresss.setText(saddress);
 
-
-//            bar.setVisibility(View.VISIBLE);
-//            FirebaseStorage.getInstance().getReference(sid).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                @Override
-//                public void onSuccess(Uri uri) {
-//                    Picasso.get().load(uri).into(profileimage);
-//                }
-//            });
-//            bar.setVisibility(View.INVISIBLE);
 
             name.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -337,7 +379,19 @@ public class profilecustomer extends Fragment {
             choseimg = view.findViewById(R.id.floatingActionButton);
             profileimage = view.findViewById(R.id.imageview_account_profile);
 
-            choseimg.setOnClickListener(new View.OnClickListener() {
+
+            bar.setVisibility(View.VISIBLE);
+            simage = prefs.getString("image", "no");//"No name defined" is the default value.
+            if (simage.equals("")||simage.equals("no")){
+
+            }
+            else {
+            Picasso.get().load(simage).into(profileimage);}
+
+            bar.setVisibility(View.INVISIBLE);
+
+
+        choseimg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     builder = new AlertDialog.Builder(getContext());
@@ -380,10 +434,6 @@ public class profilecustomer extends Fragment {
 
                 }
             });
-        }
-        catch (Exception e){
-            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
         return  view;
     }
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

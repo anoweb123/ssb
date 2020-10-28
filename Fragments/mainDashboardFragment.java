@@ -42,7 +42,11 @@ import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnima
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -83,6 +87,7 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
     List<modelproducts> modelpro;
     SliderView sliderView;
 
+    Calendar calendar;
     Chip chip;
     Boolean isscrolling=false;
     com.ali.ssb.holderclasses.sliderbanneradapter sliderbanneradapter;
@@ -98,6 +103,20 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
         count=dbhandler.countitems();
         Toast.makeText(getContext(),String.valueOf(count), Toast.LENGTH_SHORT).show();
         dbhandler.close();
+
+        String dateStr = "04/05/2010";
+
+        SimpleDateFormat curFormater = new SimpleDateFormat("yyyy/MM/dd");
+        Date dateObj = null;
+        try {
+            dateObj = curFormater.parse(dateStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        SimpleDateFormat postFormater = new SimpleDateFormat("yyyy MM, dd");
+
+        String newDateStr = postFormater.format(dateObj);
+
 
 //        chip=view.findViewById(R.id.chip);
 //
@@ -198,7 +217,7 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
         modelcat.add(new modelcateg("Electronics",R.drawable.electro));
         modelcat.add(new modelcateg("Sports Fitness and Outdoors",R.drawable.sports));
         modelcat.add(new modelcateg("Health and safety",R.drawable.health));
-        modelcat.add(new modelcateg("Grocery Households nd Pets",R.drawable.groceries));
+        modelcat.add(new modelcateg("Grocery, Households nd Pets",R.drawable.groceries));
         modelcat.add(new modelcateg("Beauty and Health",R.drawable.beautyandhealth));
         modelcat.add(new modelcateg("Wholesales",R.drawable.wholesale));
         modelcat.add(new modelcateg("Entertainment",R.drawable.enetrtainment));
@@ -295,7 +314,7 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
     }
 
     @Override
-    public void onshopqclick(String id,String name,String cat) {
+    public void onshopqclick(String id,String name,String cat,String delcharge) {
         shop shop = new shop();
         FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
@@ -303,6 +322,7 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
         bundle.putString("shopid",id);
         bundle.putString("shopname",name);
         bundle.putString("shopcat",cat);
+        bundle.putString("delcharges",delcharge);
         shop.setArguments(bundle);
         fragmentTransactionpro.replace(R.id.fragment,shop);
         fragmentTransactionpro.commit();
@@ -346,6 +366,7 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
         fragmentTransactionpro.commit();
     }
     public void shopsapi() {
+
         models = new ArrayList<>();
         SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
         Retrofit retrofit = new Retrofit.Builder()
@@ -368,8 +389,6 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
                     adapter.notifyDataSetChanged();
                     adapter.setonshopclicklistener(mainDashboardFragment.this);
                     load.setVisibility(View.INVISIBLE);
-
-
                 }
             }
             @Override

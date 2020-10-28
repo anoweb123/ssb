@@ -122,30 +122,6 @@ public class dbhandler extends SQLiteOpenHelper {
 
 
 
-//        while (query.moveToNext()){
-//            String a;
-//            a=query.getString(query.getColumnIndex(Proid_COLUMN));
-//            if (a.equals(proid)||proid==a){
-//                response= "no";
-//            }
-//             {
-//
-//                ContentValues contentValues=new ContentValues();
-//                contentValues.put(Title_COLUMN,title);
-//                contentValues.put(Image_COLUMN,image);
-//                contentValues.put(Desc_COLUMN,desc);
-//                contentValues.put(Price_COLUMN,price);
-//                contentValues.put(DISCOUNTED_COLUMN,discounted);
-//                contentValues.put(COLOR_COLUMN,color);
-//                contentValues.put(SIZE_COLUMN,size);
-//                contentValues.put(Quantity_COLUMN,qty);
-//                contentValues.put(Leftitems_COLUMN,left);
-//                contentValues.put(Proid_COLUMN,proid);
-//
-//                db.insert(CARTTABLE_NAME,null,contentValues);
-//                response="yes";
-//            }
-//        }
         return response;
     }
 
@@ -237,8 +213,10 @@ public class dbhandler extends SQLiteOpenHelper {
         String colomn[]=new String[]{ID_COLUMN,Title_COLUMN,Price_COLUMN,Desc_COLUMN,DISCOUNTED_COLUMN,COLOR_COLUMN,SIZE_COLUMN,Image_COLUMN,Quantity_COLUMN};
         Cursor query= db.query(CARTTABLE_NAME,colomn,null,null,null,null,null,null);
         while (query.moveToNext()){
+            if (query.getString(query.getColumnIndex(DISCOUNTED_COLUMN)).equals("0")){}
+            else {
             total=((Integer.parseInt(query.getString(query.getColumnIndex(DISCOUNTED_COLUMN)))-Integer.parseInt(query.getString(query.getColumnIndex(Price_COLUMN))))*Integer.parseInt(query.getString(query.getColumnIndex(Quantity_COLUMN))))+total;
-        }
+        }}
         return total;
     }
     public long addtowishlist(String title,String image,String desc,String price,String discounted,String color,String size){

@@ -19,20 +19,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.ali.ssb.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+
+import org.bouncycastle.jcajce.provider.symmetric.Poly1305;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link checkoutpage#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class checkoutpage extends Fragment {
+public class checkoutpage extends Fragment{
 
+    GoogleMap mMap;
+    LinearLayout lin;
     public static final String MY_PREFS_NAME = "mydetails";
     EditText name,email,address,city,postal,phone;
     String sname,semail,saddress,scity,spostl,sphone;
@@ -84,6 +95,9 @@ public class checkoutpage extends Fragment {
                              Bundle savedInstanceState) {
         View view= inflater.inflate(R.layout.fragment_checkoutpage, container, false);
 
+
+
+        lin=view.findViewById(R.id.maplin);
         name=view.findViewById(R.id.name);
         email=view.findViewById(R.id.email);
         address=view.findViewById(R.id.address);
@@ -113,19 +127,25 @@ public class checkoutpage extends Fragment {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (getActivity().getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-                        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-                            @Override
-                            public void onSuccess(Location location) {
-                                if (location!=null){
-//                                    SupportMapFragment fragment=getChildFragmentManager().findFragmentById(R.id.fragment);
+                        map productfragment = new map();
+                        FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
+                        FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+                        fragmentTransactionpro.replace(R.id.fragment, productfragment);
+                        fragmentTransactionpro.commit();
+
+//                        lin.setVisibility(View.INVISIBLE);
+//                        SupportMapFragment mapFragment=(SupportMapFragment)getChildFragmentManager().findFragmentById(R.id.googlemap);
+//                        mapFragment.getMapAsync(checkoutpage.this);
 
 
-                                    Toast.makeText(getContext(), String.valueOf(location.getAltitude()), Toast.LENGTH_SHORT).show();
-                                }
-
-                            }
-                        });
-
+//                        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+//                            @Override
+//                            public void onSuccess(Location location) {
+//                                if (location!=null){
+//                                    Toast.makeText(getContext(), String.valueOf(location.getAltitude()), Toast.LENGTH_SHORT).show();
+//                                }
+//                            }
+//                        });
                     }
                     else { ActivityCompat.requestPermissions(getActivity(),
                             new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, 1);
@@ -145,9 +165,6 @@ public class checkoutpage extends Fragment {
 
             }
         });
-
-
-
 
         return view;
     }

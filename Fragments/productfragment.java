@@ -49,6 +49,7 @@ public class productfragment extends Fragment {
 
     public static String MY_PREFS_forcart="MY_PREFS_forcart";
     ImageBadgeView cart;
+    String deliverycharges;
     int count;
 //    Button addtocart,buynow,addtowish;
     // TODO: Rename parameter arguments, choose names that match
@@ -139,6 +140,7 @@ public class productfragment extends Fragment {
                 size=getArguments().getString("sizekey");
                 proid=getArguments().getString("proid");
                 shopid=getArguments().getString("shopid");
+                deliverycharges=getArguments().getString("delcharges");
 
                 if (discount.equals("0")||discount.equals("none")){
                     discountedview.setVisibility(View.INVISIBLE);
@@ -169,7 +171,10 @@ public class productfragment extends Fragment {
 
                         SharedPreferences.Editor editor = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE).edit();
                         editor.putString("shopincartid", shopid);
+                        editor.putString("deliverycharges", deliverycharges);
                         editor.apply();
+
+
 
 
                             String a=dbhandler.addtocart(proid,title,image,desc,price,discount,color,size,"1",Integer.valueOf(leftinstoke));
@@ -218,7 +223,8 @@ public class productfragment extends Fragment {
                         }
                         }
                         else {
-                            view.setAlpha((float) 0.5);
+                            CardView cardView=view.findViewById(R.id.cardview);
+                            cardView.setAlpha((float) 0.5);
                             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(LAYOUT_INFLATER_SERVICE);
                             View popupView = inflater.inflate(R.layout.popupanothershop, null);
 
@@ -231,7 +237,7 @@ public class productfragment extends Fragment {
                             popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
                                 @Override
                                 public void onDismiss() {
-                                    view.setAlpha((float) 1.0);
+                                    cardView.setAlpha((float) 1.0);
                                 }
                             });
                             popupWindow.setAnimationStyle(R.style.Animation_Design_BottomSheetDialog);
@@ -256,8 +262,8 @@ public class productfragment extends Fragment {
 
                                     SharedPreferences.Editor editor = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE).edit();
                                     editor.putString("shopincartid", shopid);
+                                    editor.putString("deliverycharges", deliverycharges);
                                     editor.apply();
-
 
                                     popupWindow.dismiss();
 
