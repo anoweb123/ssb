@@ -84,7 +84,6 @@ public class morefragment extends Fragment {
         transactionhis=view.findViewById(R.id.transactionhis);
         completed=view.findViewById(R.id.completed);
         pending=view.findViewById(R.id.pending);
-        history=view.findViewById(R.id.history);
         logout=view.findViewById(R.id.logout);
         name=view.findViewById(R.id.name);
         email=view.findViewById(R.id.email);
@@ -136,16 +135,6 @@ public class morefragment extends Fragment {
                 FragmentManager fragmentManager1 = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction1 = fragmentManager1.beginTransaction();
                 fragmentTransaction1.replace(R.id.fragment,pending);
-                fragmentTransaction1.commit();
-            }
-        });
-        history.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                history history =new history();
-                FragmentManager fragmentManager1 = getActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction1 = fragmentManager1.beginTransaction();
-                fragmentTransaction1.replace(R.id.fragment,history);
                 fragmentTransaction1.commit();
             }
         });

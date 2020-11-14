@@ -1,15 +1,13 @@
 package com.ali.ssb.Fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,16 +19,12 @@ import android.widget.Toast;
 
 import com.ali.ssb.Models.modelcart;
 import com.ali.ssb.Models.modelreturnoforderinfo;
-import com.ali.ssb.Models.modelslider;
 import com.ali.ssb.R;
-import com.ali.ssb.creditcardprice;
+import com.ali.ssb.checkoutpaymentstipe;
 import com.ali.ssb.dbhandler;
-import com.ali.ssb.holderclasses.adaperslider;
 import com.ali.ssb.interfacesapi.orderinfoapi;
 import com.ali.ssb.interfacesapi.orderitemapi;
-import com.ali.ssb.interfacesapi.shopsapi;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -62,7 +56,7 @@ public class paymentpage extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    CheckBox checkBoxssb,checkBoxcredit;
+    CheckBox checkBoxssb,checkBoxcredit,cashondel;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -104,11 +98,17 @@ public class paymentpage extends Fragment {
         View view= inflater.inflate(R.layout.fragment_paymentpage, container, false);
         checkBoxssb=view.findViewById(R.id.ssbcheck);
         checkBoxcredit=view.findViewById(R.id.creditcardcheck);
+        cashondel=view.findViewById(R.id.cashondel);
+
 
         pay=view.findViewById(R.id.payment);
         pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+
+
 //                summary productfragment = new summary();
 //                FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
 //                FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
@@ -117,6 +117,7 @@ public class paymentpage extends Fragment {
 
                 SharedPreferences preferences=getContext().getSharedPreferences(MY_PREFS_forcart, Context.MODE_PRIVATE);
                 shopid=preferences.getString("shopincartid","");
+                Toast.makeText(getContext(), "ordering", Toast.LENGTH_SHORT).show();
                 getinfoapi();
 
             }
@@ -130,7 +131,6 @@ public class paymentpage extends Fragment {
                     FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
                     fragmentTransactionpro.add(R.id.ssb, ssbprice);
                     fragmentTransactionpro.commit();
-
                 }
                 if (!isChecked){
                     Fragment fragment =getChildFragmentManager().findFragmentById(R.id.ssb);
@@ -144,16 +144,21 @@ public class paymentpage extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
-                    creditcardprice = new creditcardprice();
-                    FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
-                    FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
-                    fragmentTransactionpro.add(R.id.credit, creditcardprice);
-                    fragmentTransactionpro.commit();
+//                    creditcardprice = new creditcardprice();
+//                    FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
+//                    FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+//                    fragmentTransactionpro.add(R.id.credit, creditcardprice);
+//                    fragmentTransactionpro.commit();
+//                }
+//                if (!isChecked){
+//                    Fragment fragment =getChildFragmentManager().findFragmentById(R.id.credit);
+//                    getChildFragmentManager().beginTransaction().remove(fragment).commit();
+//                }
+
+                Intent intent=new Intent(getActivity(),checkoutpaymentstipe.class);
+                startActivity(intent);
                 }
-                if (!isChecked){
-                    Fragment fragment =getChildFragmentManager().findFragmentById(R.id.credit);
-                    getChildFragmentManager().beginTransaction().remove(fragment).commit();
-                }
+
             }
         });
         return view;
@@ -166,11 +171,17 @@ public class paymentpage extends Fragment {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
+
+
+        SharedPreferences editor = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE);
+        lat=editor.getString("latitude","");
+        lon=editor.getString("longitude", "");
+
+
         SharedPreferences preferences=getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-        Toast.makeText(getContext(), "ordering", Toast.LENGTH_SHORT).show();
 
         orderinfoapi api = retrofit.create(orderinfoapi.class);
-        Call<modelreturnoforderinfo> listCall = api.response("haider",preferences.getString("customerid",""),"rehmancolony","0482932332","1200","300","200","1400",shopid,"100","23.372","55.445","creditcard","paid");
+        Call<modelreturnoforderinfo> listCall = api.response("haider",preferences.getString("customerid",""),"rehmancolony","0482932332","1200","300","200","1400",shopid,"100",lon,lat,"creditcard","paid");
 
         listCall.enqueue(new Callback<modelreturnoforderinfo>() {
             @Override
@@ -203,7 +214,7 @@ public class paymentpage extends Fragment {
         orderitemapi api = retrofit.create(orderitemapi.class);
 
         for (int i=0;i<list.size();i++){
-            Call<ResponseBody> listCall = api.response(orderid,list.get(i).getTitle(),list.get(i).getImage(),list.get(i).getQuantity(),list.get(i).getProid());
+            Call<ResponseBody> listCall = api.response(orderid,list.get(i).getTitle(),list.get(i).getImage(),list.get(i).getQuantity(),list.get(i).getDiscounted(),list.get(i).getProid());
             listCall.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

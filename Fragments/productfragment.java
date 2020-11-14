@@ -116,7 +116,6 @@ public class productfragment extends Fragment {
 
                 SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
 
-
                 dbhandler dbhandler=new dbhandler(getContext());
                 count=dbhandler.countitems();
                 dbhandler.close();
@@ -152,11 +151,10 @@ public class productfragment extends Fragment {
                 titleview.setText(title);
                 priceview.setText("Rs "+price);
                 descview.setText(desc);
-                leftinstockview.setText(leftinstoke);
-                daysleftview.setText(daysleft+" days left at this price");
+
+                daysleftview.setText("Sale before "+daysleft);
                 colorview.setText(color);
                 sizeview.setText(size);
-                //top pro idr ki wja sy crash kra ha
                 Picasso.get().load(image.replaceFirst("localhost",prefs.getString("ipv4","10.0.2.2"))).into(imageView);
 
         addtocart.setOnClickListener(new View.OnClickListener() {
@@ -164,7 +162,6 @@ public class productfragment extends Fragment {
                     public void onClick(View v) {
 
                         dbhandler dbhandler=new dbhandler(getContext());
-
                         SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE);
                         String shopidd= prefs.getString("shopincartid","");
                         if(shopidd.equals(shopid)||shopidd.equals("")){
@@ -173,9 +170,6 @@ public class productfragment extends Fragment {
                         editor.putString("shopincartid", shopid);
                         editor.putString("deliverycharges", deliverycharges);
                         editor.apply();
-
-
-
 
                             String a=dbhandler.addtocart(proid,title,image,desc,price,discount,color,size,"1",Integer.valueOf(leftinstoke));
                             dbhandler.close();
@@ -310,9 +304,7 @@ public class productfragment extends Fragment {
                                     popupWindow.dismiss();
                                 }
                             });
-
                         }
-
                     }
                 });
                 addtowish.setOnClickListener(new View.OnClickListener() {

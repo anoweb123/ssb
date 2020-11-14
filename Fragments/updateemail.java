@@ -11,9 +11,11 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.ali.ssb.R;
@@ -37,6 +39,7 @@ import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
 public class updateemail extends Fragment {
 
     CardView update;
+    RelativeLayout frag;
     EditText pass,email;
     String spass,sid;
     ProgressBar bar;
@@ -93,6 +96,7 @@ public class updateemail extends Fragment {
         update=view.findViewById(R.id.update);
         bar=view.findViewById(R.id.progress);
         back=view.findViewById(R.id.back);
+        frag=view.findViewById(R.id.fragment);
 
         bar.setVisibility(View.GONE);
 
@@ -100,7 +104,7 @@ public class updateemail extends Fragment {
             @Override
             public void onClick(View v) {
                 profilecustomer productfragment = new profilecustomer();
-                FragmentManager fragmentManagerpro = getChildFragmentManager();
+                FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
                 fragmentTransactionpro.replace(R.id.fragment, productfragment);
                 fragmentTransactionpro.commit();
@@ -109,6 +113,12 @@ public class updateemail extends Fragment {
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+                getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                frag.setAlpha((float) 0.5);
+
                 if (email.getText().toString().isEmpty()) {
                     email.setError("Enter Email");
                 }
@@ -116,6 +126,8 @@ public class updateemail extends Fragment {
                     pass.setError("Enter password");
                 }
                 if (email.getText().toString().isEmpty()||pass.getText().toString().isEmpty()){
+                    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    frag.setAlpha((float) 1.0);
 
                 }
                 else {
@@ -146,6 +158,9 @@ public class updateemail extends Fragment {
                                     pass.setText("");
 
                                     bar.setVisibility(View.INVISIBLE);
+                                    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                    frag.setAlpha((float) 1.0);
+
                                 }
                             }
                             @Override
@@ -155,6 +170,9 @@ public class updateemail extends Fragment {
                         });}
                     else {
                         bar.setVisibility(View.INVISIBLE);
+                        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        frag.setAlpha((float) 1.0);
+
                         Toast.makeText(getContext(), "Wrong password", Toast.LENGTH_SHORT).show();
                     }
 

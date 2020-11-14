@@ -6,11 +6,11 @@ public class modelwishlist {
     String price;
     String discounted;
     String color;
-    int id;
+    String id;
     String size;
-    int image;
+    String image;
 
-    public modelwishlist(String title, String desc, String price, String discounted, String color, String size, int image, int id) {
+    public modelwishlist(String title, String desc, String price, String discounted, String color, String size, String image, String id) {
         this.title = title;
         this.id = id;
         this.desc = desc;
@@ -21,12 +21,7 @@ public class modelwishlist {
         this.image = image;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+    public modelwishlist() {
     }
 
     public String getTitle() {
@@ -69,6 +64,14 @@ public class modelwishlist {
         this.color = color;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getSize() {
         return size;
     }
@@ -77,11 +80,11 @@ public class modelwishlist {
         this.size = size;
     }
 
-    public int getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(int image) {
+    public void setImage(String image) {
         this.image = image;
     }
 }

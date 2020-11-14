@@ -11,9 +11,11 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.ali.ssb.R;
@@ -46,6 +48,7 @@ public class updatename extends Fragment {
     ProgressBar bar;
     String sname,sid;
 
+    RelativeLayout frag;
     ImageView back;
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -91,14 +94,23 @@ public class updatename extends Fragment {
         name=view.findViewById(R.id.updatename);
         update=view.findViewById(R.id.update);
         bar=view.findViewById(R.id.progress);
+        frag=view.findViewById(R.id.fragment);
 
         bar.setVisibility(View.INVISIBLE);
 
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+                getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                frag.setAlpha((float) 0.5);
+
                 if (name.getText().toString().isEmpty()){
                     name.setError("Enter name");
+                    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    frag.setAlpha((float) 1.0);
                 }
                 else {
                     bar.setVisibility(View.VISIBLE);
@@ -125,6 +137,9 @@ public class updatename extends Fragment {
 
                                 name.setText("");
                                 bar.setVisibility(View.INVISIBLE);
+                                getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                frag.setAlpha((float) 1.0);
+
                             }
                         }
                         @Override
@@ -140,7 +155,7 @@ public class updatename extends Fragment {
             @Override
             public void onClick(View v) {
                 profilecustomer productfragment = new profilecustomer();
-                FragmentManager fragmentManagerpro = getChildFragmentManager();
+                FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
                 fragmentTransactionpro.replace(R.id.fragment, productfragment);
                 fragmentTransactionpro.commit();

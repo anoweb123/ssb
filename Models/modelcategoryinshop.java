@@ -1,13 +1,22 @@
 package com.ali.ssb.Models;
 
 public class modelcategoryinshop  {
-    String name,promotionRate,promotionTill,_id;
+    String name,promotionRate,promotionTill,_id,promotionStatus;
 
-    public modelcategoryinshop(String name, String promotionRate, String promotionTill, String _id) {
+    public modelcategoryinshop(String name, String promotionRate, String promotionTill, String _id, String promotionStatus) {
         this.name = name;
         this.promotionRate = promotionRate;
+        this.promotionStatus = promotionStatus;
         this.promotionTill = promotionTill;
         this._id = _id;
+    }
+
+    public String getPromotionStatus() {
+        return promotionStatus;
+    }
+
+    public void setPromotionStatus(String promotionStatus) {
+        this.promotionStatus = promotionStatus;
     }
 
     public String getName() {

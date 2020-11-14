@@ -1,11 +1,10 @@
 package com.ali.ssb.Fragments;
 
 import android.Manifest;
-import android.app.DownloadManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -20,20 +19,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.ali.ssb.R;
+import com.ali.ssb.checkoutpaymentstipe;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
-
-import org.bouncycastle.jcajce.provider.symmetric.Poly1305;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -157,6 +148,7 @@ public class checkoutpage extends Fragment{
         payment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                startActivity(new Intent(getActivity(), checkoutpaymentstipe.class));
                 paymentpage productfragment = new paymentpage();
                 FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();

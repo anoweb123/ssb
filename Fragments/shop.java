@@ -53,7 +53,7 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
 
     holderproductbyshop adapterproduct;
     ImageView back;
-    String idd,namee,catt,delcharges;
+    String idd,namee,catt,delcharges,promorate;
     TextView catname,cat,name;
     holdercategoryinshop adaptershop;
     List<modelproductbyshop> modelpro;
@@ -114,6 +114,7 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
         namee=getArguments().getString("shopname");
         catt=getArguments().getString("shopcat");
         delcharges=getArguments().getString("delcharges");
+        promorate=getArguments().getString("promorate");
 
         cat.setText(catt);
         name.setText(namee);
@@ -173,7 +174,7 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
                 if (response.isSuccessful()) {
 
                     modellist = response.body();
-                    adaptershop = new holdercategoryinshop(modellist,getContext());
+                    adaptershop = new holdercategoryinshop(modellist,getContext(),promorate);
                     recyclercat.setHasFixedSize(true);
                     recyclercat.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
                     recyclercat.setAdapter(adaptershop);
@@ -240,7 +241,6 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
         listCall.enqueue(new Callback<List<modelproductbyshop>>() {
             @Override
             public void onResponse(Call<List<modelproductbyshop>> call, Response<List<modelproductbyshop>> response) {
-                Toast.makeText(getContext(),String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
                 if (response.isSuccessful()){
                 modelpro=response.body();
                 if (modelpro.isEmpty()){

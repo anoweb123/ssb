@@ -11,9 +11,11 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.ali.ssb.R;
@@ -47,6 +49,7 @@ public class updatephone extends Fragment {
 
     CardView update;
     EditText phone,pass;
+    RelativeLayout frag;
     String sid,spass;
     ProgressBar bar;
     ImageView back;
@@ -95,6 +98,7 @@ public class updatephone extends Fragment {
         update=view.findViewById(R.id.update);
         bar=view.findViewById(R.id.progress);
         back=view.findViewById(R.id.back);
+        frag=view.findViewById(R.id.frag);
 
         bar.setVisibility(View.GONE);
 
@@ -102,7 +106,7 @@ public class updatephone extends Fragment {
             @Override
             public void onClick(View v) {
                 profilecustomer productfragment = new profilecustomer();
-                FragmentManager fragmentManagerpro = getChildFragmentManager();
+                FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
                 fragmentTransactionpro.replace(R.id.fragment, productfragment);
                 fragmentTransactionpro.commit();
@@ -112,8 +116,26 @@ public class updatephone extends Fragment {
             @Override
             public void onClick(View v) {
 
-                if (phone.getText().toString().isEmpty()) {
-                    phone.setError("Enter address");
+                getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                frag.setAlpha((float) 0.5);
+
+                if (phone.getText().toString().isEmpty()){
+                    phone.setError("Enter Phone NO");
+                }
+
+                if (pass.getText().toString().isEmpty()){
+                    pass.setError("Enter Phone NO");
+                }
+
+
+
+                if (phone.getText().toString().isEmpty()||pass.getText().toString().isEmpty()) {
+                    bar.setVisibility(View.INVISIBLE);
+                    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    frag.setAlpha((float) 1.0);
+
+
                 } else {
                     bar.setVisibility(View.VISIBLE);
 
@@ -141,6 +163,10 @@ public class updatephone extends Fragment {
                                 phone.setText("");
                                 pass.setText("");
 
+                                getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                frag.setAlpha((float) 1.0);
+
+
                                 bar.setVisibility(View.INVISIBLE);
                             }
                         }
@@ -152,6 +178,10 @@ public class updatephone extends Fragment {
                     });}
                     else {
                         bar.setVisibility(View.INVISIBLE);
+                        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        frag.setAlpha((float) 1.0);
+
+
                         Toast.makeText(getContext(), "Wrong password", Toast.LENGTH_SHORT).show();
                     }
 

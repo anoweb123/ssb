@@ -2,11 +2,12 @@ package com.ali.ssb.Models;
 
 public class modelslider
 {
-   String _id,shopName,image,shopCategory,promotionRate,promotionTill,deliveryCharges;
+   String _id,shopName,image,shopCategory,promotionRate,promotionTill,deliveryCharges,promotionStatus;
 
-   public modelslider(String _id, String shopName, String image, String shopCategory, String promotionRate, String promotionTill, String deliveryCharges) {
+   public modelslider(String _id, String shopName, String image, String shopCategory, String promotionRate, String promotionTill, String deliveryCharges,String promotionStatus) {
       this._id = _id;
       this.shopName = shopName;
+      this.promotionStatus = promotionStatus;
       this.image = image;
       this.shopCategory = shopCategory;
       this.promotionRate = promotionRate;
@@ -20,6 +21,14 @@ public class modelslider
 
    public void setDeliveryCharges(String deliveryCharges) {
       this.deliveryCharges = deliveryCharges;
+   }
+
+   public String getPromotionStatus() {
+      return promotionStatus;
+   }
+
+   public void setPromotionStatus(String promotionStatus) {
+      this.promotionStatus = promotionStatus;
    }
 
    public String get_id() {

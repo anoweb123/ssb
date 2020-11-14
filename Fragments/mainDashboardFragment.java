@@ -15,7 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -69,6 +71,7 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
     RecyclerView recyclerView;
     adaperslider adapter;
     List<modelslider> models;
+    LinearLayout frag;
 
     RecyclerView recyclerViewcat;
     holdercategory holdercategory;
@@ -99,9 +102,9 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
                              Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_main_dashboard, container, false);
 
+        frag=view.findViewById(R.id.fragment);
         dbhandler dbhandler=new dbhandler(getContext());
         count=dbhandler.countitems();
-        Toast.makeText(getContext(),String.valueOf(count), Toast.LENGTH_SHORT).show();
         dbhandler.close();
 
         String dateStr = "04/05/2010";
@@ -135,6 +138,18 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
         cart=view.findViewById(R.id.cart);
         notification=view.findViewById(R.id.notification);
 
+        notification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                notifications notify = new notifications();
+                FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+                fragmentTransactionpro.replace(R.id.fragment, notify);
+                fragmentTransactionpro.commit();
+
+            }
+        });
+
         cart.setBadgeValue(count)
                 .setBadgeOvalAfterFirst(true)
                 .setMaxBadgeValue(999)
@@ -148,40 +163,15 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
                 .setShowCounter(true)
                 .setBadgePadding(4);
 
-//        WifiManager wm = (WifiManager)getContext().getApplicationContext().getSystemService(WIFI_SERVICE);
-//        String ip = Formatter.formatIpAddress(wm.getDhcpInfo().dns1);
-//        Toast.makeText(getContext(), ip.toString(), Toast.LENGTH_SHORT).show();
-
-//        String head="Explore by categorieslayout";
-//        SpannableString spannableString=new SpannableString(head);
-//        ForegroundColorSpan foregroundColorSpan=new ForegroundColorSpan(Color.BLUE);
-//        spannableString.setSpan(foregroundColorSpan,2,10, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-//        final String[] spin1 = {String.valueOf(spannableString),"pents", "shirts"};
-
-//        categories = (Spinner)view.findViewById(R.id.categor);
-//        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, spin1){
-//            @Override
-//            public View getDropDownView(int position, View convertView, ViewGroup parent)
-//            {
-//                View v = null;
-//                v = super.getDropDownView(position, null, parent);
-//                // If this is the selected item position
-//                if (position == 0) {
-//                    v.setBackgroundColor(Color.parseColor("#D3D3D3"));
-//                }
-//                else {
-//                    // for other views
-//                    v.setBackgroundColor(Color.WHITE);
-//                }
-//                return v;
-//            }
-//        };
-//        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        categories.setAdapter(adapter1);
-
         load=view.findViewById(R.id.load);
         load.setVisibility(View.VISIBLE);
+//        to disable activity
+        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        frag.setAlpha((float) 0.5);
+
+
+
         recsliderpro=view.findViewById(R.id.recpro);
         list=new ArrayList<>();
 
@@ -314,7 +304,7 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
     }
 
     @Override
-    public void onshopqclick(String id,String name,String cat,String delcharge) {
+    public void onshopqclick(String id,String name,String cat,String delcharge,String promorate) {
         shop shop = new shop();
         FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
@@ -323,6 +313,7 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
         bundle.putString("shopname",name);
         bundle.putString("shopcat",cat);
         bundle.putString("delcharges",delcharge);
+        bundle.putString("promorate",promorate);
         shop.setArguments(bundle);
         fragmentTransactionpro.replace(R.id.fragment,shop);
         fragmentTransactionpro.commit();
@@ -389,12 +380,21 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
                     adapter.notifyDataSetChanged();
                     adapter.setonshopclicklistener(mainDashboardFragment.this);
                     load.setVisibility(View.INVISIBLE);
+                    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    frag.setAlpha((float) 1.0);
+
+                }
+                else {
+                    shopsapi();
+                }
+                if (response.code()==500){
+                    shopsapi();
                 }
             }
             @Override
             public void onFailure(Call<List<modelslider>> call, Throwable t) {
                 Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_LONG).show();
-//                shopsapi();
+                shopsapi();
             }
         });
     }
@@ -429,6 +429,7 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
                         }
                     }
                     if (modelsliders.size()==0||modelsliders==null){
+                        Toast.makeText(getContext(), "NO Products", Toast.LENGTH_SHORT).show();
                         load.setVisibility(View.INVISIBLE);
                     }
                     else {
@@ -452,7 +453,6 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
         });
 
 
-        Toast.makeText(getContext(), cat, Toast.LENGTH_SHORT).show();
 
     }
 

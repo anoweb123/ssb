@@ -11,9 +11,11 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.ali.ssb.R;
@@ -42,14 +44,16 @@ public class addressupdate extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     CardView update;
+    RelativeLayout frag;
     EditText address;
     String saddress,sid;
+    ImageView back;
+    ProgressBar bar;
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
-    ImageView back;
-    ProgressBar bar;
     public addressupdate() {
         // Required empty public constructor
     }
@@ -89,6 +93,7 @@ public class addressupdate extends Fragment {
         address=view.findViewById(R.id.updataddress);
         update=view.findViewById(R.id.address);
         bar=view.findViewById(R.id.progress);
+        frag=view.findViewById(R.id.frag);
 
 
 
@@ -101,6 +106,10 @@ public class addressupdate extends Fragment {
                     address.setError("Enter address");
                 } else {
                     bar.setVisibility(View.VISIBLE);
+
+                    getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    frag.setAlpha((float) 0.5);
 
                     SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
                     sid = prefs.getString("customerid", "Null");
@@ -123,6 +132,8 @@ public class addressupdate extends Fragment {
 
                                 address.setText("");
                                 bar.setVisibility(View.INVISIBLE);
+                                getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                frag.setAlpha((float) 1.0);
                             }
                         }
 

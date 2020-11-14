@@ -97,7 +97,6 @@ public class holderproductbyshop extends RecyclerView.Adapter<holderproductbysho
             }
             Toast.makeText(context, String.valueOf(currentDate), Toast.LENGTH_SHORT).show();
 
-
             LocalDate getDates=null;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 if (list.get(position).getPromotionTill().isEmpty()||list.get(position).getPromotionTill().equals("none")){}
@@ -129,7 +128,7 @@ public class holderproductbyshop extends RecyclerView.Adapter<holderproductbysho
 //            discount=String.valueOf(dis);
 //        }
 
-        if (disrate.equals("none")){
+        if (disrate.equals("none")||disrate.equals("0")){
 
             if (discount.equals("none")){
                 holder.discount.setText("0");
@@ -138,9 +137,6 @@ public class holderproductbyshop extends RecyclerView.Adapter<holderproductbysho
             }
 
             else {
-
-
-
                 if (promo){
 
                 holder.price.setText("Rs "+list.get(position).getPromotionRate());

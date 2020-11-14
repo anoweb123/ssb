@@ -64,7 +64,6 @@ public class dashboardcustomer extends AppCompatActivity implements profilecusto
     public void onBackPressed() {
         super.onBackPressed();
 
-        Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
 //        int count=getSupportFragmentManager().getBackStackEntryCount();
 //        getSupportFragmentManager().popBackStack();
 //        SharedPreferences preferences=getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE);

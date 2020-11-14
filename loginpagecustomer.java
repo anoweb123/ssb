@@ -17,6 +17,8 @@ import android.widget.Toast;
 import com.ali.ssb.Models.getdatabyloginmodel;
 import com.ali.ssb.interfacesapi.apilogin;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 import retrofit2.Call;
@@ -120,7 +122,7 @@ public static final String MY_PREFS_NAME = "mydetails";
                 Call<getdatabyloginmodel> listCall=api.response(semail,spass);
                 listCall.enqueue(new Callback<getdatabyloginmodel>() {
                     @Override
-                    public void onResponse(Call<getdatabyloginmodel> call, Response<getdatabyloginmodel> response) {
+                    public void onResponse(@NotNull Call<getdatabyloginmodel> call, @NotNull Response<getdatabyloginmodel> response) {
                         if (response.isSuccessful()){
 
                             SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
@@ -132,7 +134,7 @@ public static final String MY_PREFS_NAME = "mydetails";
                             editor.putString("address", response.body().getAddress());
                             editor.putString("image", response.body().getAddress());
                             editor.putString("loginstatus","true");
-                            editor.putString("image","");
+                            editor.putString("image",response.body().getImage());
                             editor.putString("phone", response.body().getCell());
 
                             editor.apply();

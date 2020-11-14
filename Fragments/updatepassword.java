@@ -11,9 +11,11 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.ali.ssb.R;
@@ -38,6 +40,7 @@ import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
 public class updatepassword extends Fragment {
 
 
+    RelativeLayout frag;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -90,6 +93,7 @@ public class updatepassword extends Fragment {
         View view= inflater.inflate(R.layout.fragment_updatepassword, container, false);
         prepass=view.findViewById(R.id.curpass);
         newpass=view.findViewById(R.id.newpass);
+        frag=view.findViewById(R.id.frag);
         conpass=view.findViewById(R.id.confirmpass);
         update=view.findViewById(R.id.update);
         bar=view.findViewById(R.id.progress);
@@ -99,7 +103,7 @@ public class updatepassword extends Fragment {
             @Override
             public void onClick(View v) {
                 profilecustomer productfragment = new profilecustomer();
-                FragmentManager fragmentManagerpro = getChildFragmentManager();
+                FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
                 fragmentTransactionpro.replace(R.id.fragment, productfragment);
                 fragmentTransactionpro.commit();
@@ -113,6 +117,10 @@ public class updatepassword extends Fragment {
             @Override
             public void onClick(View v) {
 
+                getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                frag.setAlpha((float) 0.5);
+
                 if (prepass.getText().toString().isEmpty()) {
                     prepass.setError("Enter Current Password");
                 }
@@ -123,7 +131,13 @@ public class updatepassword extends Fragment {
                 if (newpass.getText().toString().isEmpty()) {
                     newpass.setError("Enter new password");
                 }
-                if (conpass.getText().toString().isEmpty() || newpass.getText().toString().isEmpty() || prepass.getText().toString().isEmpty()){}
+                if (conpass.getText().toString().isEmpty() || newpass.getText().toString().isEmpty() || prepass.getText().toString().isEmpty()){
+
+                    bar.setVisibility(View.INVISIBLE);
+                    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    frag.setAlpha((float) 1.0);
+
+                }
                 else {
                     bar.setVisibility(View.VISIBLE);
 
@@ -154,6 +168,11 @@ public class updatepassword extends Fragment {
                                     newpass.setText("");
 
                                     bar.setVisibility(View.INVISIBLE);
+
+                                    bar.setVisibility(View.INVISIBLE);
+                                    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                    frag.setAlpha((float) 1.0);
+
                                 }
                             }
 
@@ -163,7 +182,10 @@ public class updatepassword extends Fragment {
                             }
                         });}
                     else {
+
                         bar.setVisibility(View.INVISIBLE);
+                        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        frag.setAlpha((float) 1.0);
                         Toast.makeText(getContext(), "Wrong password", Toast.LENGTH_SHORT).show();
                     }
 

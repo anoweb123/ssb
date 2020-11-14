@@ -29,19 +29,25 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ali.ssb.Models.modelbaner;
 import com.ali.ssb.Models.modelgetresultofimageupdate;
+import com.ali.ssb.Models.modelreturnoforderinfo;
 import com.ali.ssb.R;
 import com.ali.ssb.holderclasses.sliderbanneradapter;
 import com.ali.ssb.interfacesapi.banerapi;
+import com.ali.ssb.interfacesapi.completedorderapi;
 import com.ali.ssb.interfacesapi.imageupdateapi;
 import com.ali.ssb.interfacesapi.nameupdateapi;
+import com.ali.ssb.interfacesapi.orderinfoapi;
+import com.ali.ssb.interfacesapi.updateimageurl;
 import com.google.android.gms.common.util.Base64Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -89,16 +95,21 @@ import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
 public class profilecustomer extends Fragment {
 
     ImageView name,address,phone,password,email;
+    onexitclicklistener monexitclicklistener;
+
+    private static final int CAMERA_REQUEST = 1888;
+
+    private static final int MY_CAMERA_PERMISSION_CODE = 100;
+
     FloatingActionButton choseimg;
     Uri imageUri;
     ProgressBar bar;
     CircleImageView profileimage;
-    onexitclicklistener monexitclicklistener;
-
     InputStream imageStream;
     int CAMERA_PERMISSION_CODE=100;
     ImageView camera,gallary;
     AlertDialog alertDialog;
+    LinearLayout frag;
     private static final int REQUEST_IMAGE_CAPTURE = 1,imageGalary=2;
     AlertDialog.Builder builder;
     public void setonbanerclicklistener(onexitclicklistener listener){
@@ -154,58 +165,12 @@ public class profilecustomer extends Fragment {
             bar.setVisibility(View.VISIBLE);
             imageUri=data.getData();
 
-//            final Uri imageUri = data.getData();
-//            InputStream imageStream = null;
-//            try {
-//                imageStream = getContext().getContentResolver().openInputStream(imageUri);
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();
-//            }
-//            final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//            selectedImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//            byte[] databytes = baos.toByteArray();
 
-//            String encImage ="data:image/png;base64,"+Base64Utils.encodeUrlSafe(databytes);
-//            Toast.makeText(getContext(), String.valueOf(encImage.length()), Toast.LENGTH_SHORT).show();
 
-//            SharedPreferences prefss=getContext().getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE);
-//            Retrofit retrofitpro = new Retrofit.Builder()
-//                    .baseUrl("http://"+prefss.getString("ipv4","10.0.2.2")+":5000/customer/updateimage/")
-//                    .addConverterFactory(GsonConverterFactory.create())
-//                    .build();
-//            imageupdateapi apipro=retrofitpro.create(imageupdateapi.class);
+            getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            frag.setAlpha((float) 0.5);
 
-//            Call<modelgetresultofimageupdate> listCallpro=apipro.updateimg(sid,semail,encImage);
-//                    listCallpro.enqueue(new Callback<modelgetresultofimageupdate>() {
-//                @Override
-//                public void onResponse(Call<modelgetresultofimageupdate> call, Response<modelgetresultofimageupdate> response) {
-//                    Toast.makeText(getContext(), String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
-//                    if (response.isSuccessful()) {
-////                    SharedPreferences.Editor editor= (SharedPreferences.Editor) getContext().getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE);
-////                    editor.putString("image",response.body().getImage());
-////                    editor.putString("imagehave","yes");
-////                    editor.apply();
-//                        if (response.body().getImage().equals(null)){
-//                        Toast.makeText(getContext(), "yesnull", Toast.LENGTH_SHORT).show();
-//                        }
-//                        else {
-//                            Toast.makeText(getContext(), response.body().getImage(), Toast.LENGTH_SHORT).show();
-//                        }
-//                        bar.setVisibility(View.INVISIBLE);
-////                        assert response.body() != null;
-////                        Picasso.get().load(response.body().getImage().replaceFirst("localhost",prefss.getString("ipv4","10.0.2.2"))).networkPolicy(NetworkPolicy.NO_STORE).into(profileimage);
-//                    }
-//                }
-//                @Override
-//                public void onFailure(Call<modelgetresultofimageupdate> call, Throwable t) {
-//                    Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
-//                }
-//            });
-
-//            Toast.makeText(getContext(), "yes", Toast.LENGTH_SHORT).show();
-//            Log.d(TAG, "onActivityResult: "+encImage);
-//            String encodedImage = encodeImage(selectedImage);
 
             SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
             sname = prefs.getString("name", "Null");//"No name defined" is the default value.
@@ -214,69 +179,116 @@ public class profilecustomer extends Fragment {
             FirebaseStorage.getInstance().getReference().child(sid).putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                    Toast.makeText(getContext(),"Image updated", Toast.LENGTH_SHORT).show();
                     FirebaseStorage.getInstance().getReference().child(sid).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            Picasso.get().load(uri).into(profileimage);
                             SharedPreferences.Editor editor=getContext().getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE).edit();
                             editor.putString("image",uri.toString());
                             editor.apply();
 
+
+                            SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+                            Retrofit retrofit = new Retrofit.Builder()
+                                    .baseUrl("http://" + prefs.getString("ipv4", "10.0.2.2") + ":5000/customer/updateimage/")
+                                    .addConverterFactory(GsonConverterFactory.create())
+                                    .build();
+
+                            updateimageurl api = retrofit.create(updateimageurl.class);
+                            Call<ResponseBody> listCalls=api.call(sid,prefs.getString("image",""));
+
+                            listCalls.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    if (response.isSuccessful()){
+                                        Picasso.get().load(uri).into(profileimage);
+                                        Toast.makeText(getContext(),"Image updated", Toast.LENGTH_SHORT).show();
+                                        bar.setVisibility(View.INVISIBLE);}
+
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                }
+                            });
+
+
                             bar.setVisibility(View.INVISIBLE);
+                            getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                            frag.setAlpha((float) 1.0);
+
                         }
                     });
                 }
             });
 
-//            UploadTask uploadTask= FirebaseStorage.getInstance().getReference().child(sid).putBytes(databytes);
-//            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                @Override
-//                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                    Toast.makeText(getContext(), "Image updated", Toast.LENGTH_SHORT).show();
-//                    Picasso.get().load().into(profileimage);
-//                    bar.setVisibility(View.INVISIBLE);
-//                }
-//            });
-
-
-//            Base64Utils.encode(b);
 //            profileimage.setImageBitmap(selectedImage);
 //            profileimage.setImageURI(imageUri);
         }
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
-            imageUri=data.getData();
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            byte[] databytes = baos.toByteArray();
-            bar.setVisibility(View.VISIBLE);
-
-//            String s=Base64Utils.encode(databytes);
-//            Toast.makeText(getContext(), s, Toast.LENGTH_LONG).show();
-//            String encodedImage = Base64.encodeToString(databytes, Base64.DEFAULT);
-//            profileimage.setImageBitmap(imageBitmap);
 
 
+            getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            frag.setAlpha((float) 0.5);
 
-            SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-            sname = prefs.getString("name", "Null");//"No name defined" is the default value.
-            sid = prefs.getString("customerid", "Null");
+
+                Bitmap b= (Bitmap) data.getExtras().get("data");
+                profileimage.setImageBitmap(b);
+
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                b.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                String path = MediaStore.Images.Media.insertImage(getContext().getContentResolver(), b, "Title", null);
+                imageUri= Uri.parse(path);
+
+                SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+                sname = prefs.getString("name", "Null");//"No name defined" is the default value.
+                sid = prefs.getString("customerid", "Null");
+
+                bar.setVisibility(View.VISIBLE);
 
 
             FirebaseStorage.getInstance().getReference().child(sid).putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                    Toast.makeText(getContext(),"Image updated", Toast.LENGTH_SHORT).show();
                     FirebaseStorage.getInstance().getReference().child(sid).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            Picasso.get().load(uri).into(profileimage);
                             SharedPreferences.Editor editor=getContext().getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE).edit();
-                            editor.putString("image", String.valueOf(uri));
+                            editor.putString("image",uri.toString());
                             editor.apply();
 
+
+                            SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+                            Retrofit retrofit = new Retrofit.Builder()
+                                    .baseUrl("http://" + prefs.getString("ipv4", "10.0.2.2") + ":5000/customer/updateimage/")
+                                    .addConverterFactory(GsonConverterFactory.create())
+                                    .build();
+
+                            updateimageurl api = retrofit.create(updateimageurl.class);
+                            Call<ResponseBody> listCalls=api.call(sid,prefs.getString("image",""));
+
+                            listCalls.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    if (response.isSuccessful()){
+                                        Picasso.get().load(uri).into(profileimage);
+                                        Toast.makeText(getContext(),"Image updated", Toast.LENGTH_SHORT).show();
+                                        bar.setVisibility(View.INVISIBLE);}
+
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                }
+                            });
+
+
                             bar.setVisibility(View.INVISIBLE);
+                            getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                            frag.setAlpha((float) 1.0);
+
                         }
                     });
                 }
@@ -297,6 +309,7 @@ public class profilecustomer extends Fragment {
 //        editor.putString("onback","profile");
 //        editor.apply();
 
+            frag=view.findViewById(R.id.frag);
             address = view.findViewById(R.id.addressupdate);
             name = view.findViewById(R.id.nameupdate);
             phone = view.findViewById(R.id.phoneupdate);
@@ -380,6 +393,10 @@ public class profilecustomer extends Fragment {
             profileimage = view.findViewById(R.id.imageview_account_profile);
 
 
+        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        frag.setAlpha((float) 0.5);
+
             bar.setVisibility(View.VISIBLE);
             simage = prefs.getString("image", "no");//"No name defined" is the default value.
             if (simage.equals("")||simage.equals("no")){
@@ -389,6 +406,8 @@ public class profilecustomer extends Fragment {
             Picasso.get().load(simage).into(profileimage);}
 
             bar.setVisibility(View.INVISIBLE);
+        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        frag.setAlpha((float) 1.0);
 
 
         choseimg.setOnClickListener(new View.OnClickListener() {
@@ -445,6 +464,7 @@ public class profilecustomer extends Fragment {
             }
         }
     }
+
     private void requestStoragePermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
                 Manifest.permission.CAMERA)) {

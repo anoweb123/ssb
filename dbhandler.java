@@ -235,16 +235,16 @@ public class dbhandler extends SQLiteOpenHelper {
         String colomn[]=new String[]{WID_COLUMN,WTitle_COLUMN,WPrice_COLUMN,WDesc_COLUMN,WDISCOUNTED_COLUMN,WCOLOR_COLUMN,WSIZE_COLUMN,WImage_COLUMN};
         Cursor query= db.query(WISHLISTTABLE_NAME,colomn,null,null,null,null,null,null);
         while (query.moveToNext()){
-            String a,b,c,d,f,g;
-            int i,h;
+            String a,b,c,d,f,g,i,h;
+
             a=query.getString(query.getColumnIndex(WTitle_COLUMN));
             b=query.getString(query.getColumnIndex(WDesc_COLUMN));
             c=query.getString(query.getColumnIndex(WPrice_COLUMN));
             d=query.getString(query.getColumnIndex(WDISCOUNTED_COLUMN));
             f=query.getString(query.getColumnIndex(WCOLOR_COLUMN));
             g=query.getString(query.getColumnIndex(WSIZE_COLUMN));
-            h=query.getInt(query.getColumnIndex(WID_COLUMN));
-            i=query.getInt(query.getColumnIndex(WImage_COLUMN));
+            h=String.valueOf(query.getString(query.getColumnIndex(WID_COLUMN)));
+            i=query.getString(query.getColumnIndex(WImage_COLUMN));
             s.add(new modelwishlist(a,b,c,d,f,g,i,h));
         }
         return s;
