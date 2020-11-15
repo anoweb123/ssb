@@ -1,24 +1,41 @@
 package com.ali.ssb.holderclasses;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ali.ssb.Models.modelorderitems;
 import com.ali.ssb.R;
 import com.ali.ssb.Models.modelcompleted;
+import com.ali.ssb.interfacesapi.orderitemsapi;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static android.content.Context.MODE_PRIVATE;
+import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
+
 public class holdercompleted extends RecyclerView.Adapter<holdercompleted.holder>{
     List<modelcompleted> modelcompleteds;
     Context context;
+    List<modelorderitems> list;
+
+    onreordersclicklistener monre;
 
     onitemsclicklistener monitemsclicklistener;
 
@@ -32,6 +49,14 @@ public class holdercompleted extends RecyclerView.Adapter<holdercompleted.holder
     }
     public interface onitemsclicklistener{
         void onshowitems(String id);
+    }
+
+
+    public void onreordersclicklistener(onreordersclicklistener listener){
+        monre=  listener;
+    }
+    public interface onreordersclicklistener{
+        void onreorderitems(String id);
     }
 
 
@@ -60,6 +85,18 @@ public class holdercompleted extends RecyclerView.Adapter<holdercompleted.holder
                 monitemsclicklistener.onshowitems(modelcompleteds.get(position).get_id());
             }
         });
+
+        holder.reorder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences prefs=context.getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE);
+                String Orderid=modelcompleteds.get(position).get_id();
+
+                monre.onreorderitems(Orderid);
+
+            }
+        });
+
     }
     @Override
     public int getItemCount() {

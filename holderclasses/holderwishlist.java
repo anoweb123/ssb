@@ -41,7 +41,7 @@ public class holderwishlist extends RecyclerView.Adapter<holderwishlist.holder> 
     }
 
     public interface oncart{
-        public void onclicker(String title,String price,String dicounted,String size,String color,String image,String desc,String id);
+        public void onclicker(String title,String price,String dicounted,String size,String color,String image,String desc,String id,String officialid,String promotill, String promorate,String promostatus,String shopid);
     }
     public void oncartclick(oncart listener){
         moncart=listener;
@@ -86,6 +86,10 @@ public class holderwishlist extends RecyclerView.Adapter<holderwishlist.holder> 
         holder.addtocacrt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+
+
                 String a=list.get(position).getTitle();
                 String b=list.get(position).getPrice();
                 String c=list.get(position).getDiscounted();
@@ -94,7 +98,7 @@ public class holderwishlist extends RecyclerView.Adapter<holderwishlist.holder> 
                 String f=list.get(position).getImage();
                 String g=list.get(position).getColor();
                 String h=list.get(position).getSize();
-                moncart.onclicker(a,b,c,h,g,f,d,e);
+//                moncart.onclicker(a,b,c,h,g,f,d,e);
             }
         });
 

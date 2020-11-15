@@ -117,7 +117,6 @@ public class dbhandler extends SQLiteOpenHelper {
                 contentValues.put(Quantity_COLUMN,qty);
                 contentValues.put(Leftitems_COLUMN,left);
                 contentValues.put(Proid_COLUMN,proid);
-                contentValues.put(Proid_COLUMN,proid);
 
                 db.insert(CARTTABLE_NAME,null,contentValues);
                 response="inserted";
@@ -222,7 +221,7 @@ public class dbhandler extends SQLiteOpenHelper {
         }}
         return total;
     }
-    public long addtowishlist(String title,String image,String desc,String price,String discounted,String color,String size){
+    public long addtowishlist(String title,String image,String desc,String price,String discounted,String color,String size,String officailid){
         ContentValues contentValues=new ContentValues();
         contentValues.put(WTitle_COLUMN,title);
         contentValues.put(WImage_COLUMN,image);
@@ -231,6 +230,7 @@ public class dbhandler extends SQLiteOpenHelper {
         contentValues.put(WDISCOUNTED_COLUMN,discounted);
         contentValues.put(WCOLOR_COLUMN,color);
         contentValues.put(WSIZE_COLUMN,size);
+        contentValues.put(OfficialID_COLUMN,officailid);
         return db.insert(WISHLISTTABLE_NAME,null,contentValues);
     }
     public List<modelwishlist> retrievewishlist(){

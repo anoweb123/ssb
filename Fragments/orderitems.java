@@ -98,7 +98,7 @@ public class orderitems extends Fragment {
         recyclerView=view.findViewById(R.id.rec);
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://"+prefs.getString("ipv4","10.0.2.2")+":5000/delivery/orderitems/"+Orderid+"/")
+                .baseUrl("http://"+prefs.getString("ipv4","10.0.2.2")+":5000/delivery/orderItems/"+Orderid+"/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         orderitemsapi api = retrofit.create(orderitemsapi.class);

@@ -23,7 +23,7 @@ import java.util.List;
  * Use the {@link wishlist#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class wishlist extends Fragment implements holderwishlist.ondel,holderwishlist.oncart{
+public class wishlist extends Fragment implements holderwishlist.ondel{
 
     RecyclerView recyclerView;
     List<modelwishlist> list;
@@ -66,7 +66,8 @@ public class wishlist extends Fragment implements holderwishlist.ondel,holderwis
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         adapter.onclick(this);
-        adapter.oncartclick(this);
+//        adapter.oncartclick(this);
+
 //        if (recyclerView.getChildCount()==0 && list.isEmpty()){
 //            wishlistnull productfragment = new wishlistnull();
 //            FragmentManager fragmentManagerpro = getParentFragmentManager();
@@ -103,8 +104,4 @@ public class wishlist extends Fragment implements holderwishlist.ondel,holderwis
 
     }
 
-    @Override
-    public void onclicker(String title, String price, String dicounted, String size, String color, String image, String desc, String id) {
-
-    }
 }

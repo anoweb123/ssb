@@ -183,6 +183,7 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
         productfragment.setArguments(bundle);
         fragmentTransactionpro.replace(R.id.fragment, productfragment);
         fragmentTransactionpro.commit();
+        Toast.makeText(getContext(), proid, Toast.LENGTH_SHORT).show();
     }
     @Override
     public void onshopqclick(String id, String name, final String offrate) {
