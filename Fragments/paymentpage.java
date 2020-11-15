@@ -51,6 +51,7 @@ public class paymentpage extends Fragment {
     String lat,lon,paymentstatud,paymentmethod;
     creditcardprice creditcardprice;
 
+    String paymentstatusorder,paymentmethodorder;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -144,6 +145,8 @@ public class paymentpage extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
+                    paymentmethodorder="Creditcard";
+                    paymentstatusorder="Paid by creditcard";
 //                    creditcardprice = new creditcardprice();
 //                    FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
 //                    FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
@@ -159,6 +162,16 @@ public class paymentpage extends Fragment {
                 startActivity(intent);
                 }
 
+            }
+        });
+        cashondel.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    paymentmethodorder="COD";
+                    paymentstatusorder="COD";
+
+                }
             }
         });
         return view;
@@ -180,8 +193,18 @@ public class paymentpage extends Fragment {
 
         SharedPreferences preferences=getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
 
+        dbhandler dbhandler=new dbhandler(getContext());
+        String tot=String.valueOf(dbhandler.totalprice());
+        String dis=String.valueOf(dbhandler.totaldiscount());
+
+        SharedPreferences pref2 = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE);
+        String delcharge=pref2.getString("deliverycharges","nocharge");
+
+        String grand=String.valueOf(Integer.valueOf(tot)+Integer.valueOf(delcharge));
+
+
         orderinfoapi api = retrofit.create(orderinfoapi.class);
-        Call<modelreturnoforderinfo> listCall = api.response("haider",preferences.getString("customerid",""),"rehmancolony","0482932332","1200","300","200","1400",shopid,"100",lon,lat,"creditcard","paid");
+        Call<modelreturnoforderinfo> listCall = api.response(preferences.getString("name","name"),preferences.getString("customerid",""),preferences.getString("address","address"),preferences.getString("phone","123"),tot,dis,delcharge,grand,shopid,"0",lon,lat,paymentmethodorder,paymentstatusorder);
 
         listCall.enqueue(new Callback<modelreturnoforderinfo>() {
             @Override

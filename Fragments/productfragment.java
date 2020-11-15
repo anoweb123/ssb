@@ -5,8 +5,10 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -30,6 +32,9 @@ import com.ali.ssb.dbhandler;
 import com.dk.animation.circle.CircleAnimationUtil;
 import com.squareup.picasso.Picasso;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+
 import ru.nikartm.support.ImageBadgeView;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
@@ -45,7 +50,7 @@ public class productfragment extends Fragment {
 
     TextView discountedview,priceview,descview,daysleftview,leftinstockview,colorview,sizeview,titleview;
     ImageView imageView;
-    CardView addtocart,addtowish;
+    CardView addtocart,addtowish,buynow;
 
     public static String MY_PREFS_forcart="MY_PREFS_forcart";
     ImageBadgeView cart;
@@ -94,6 +99,7 @@ public class productfragment extends Fragment {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
@@ -102,6 +108,7 @@ public class productfragment extends Fragment {
 
                 addtocart=view.findViewById(R.id.addtocart);
                 addtowish=view.findViewById(R.id.addtowishlist);
+                buynow=view.findViewById(R.id.buynow);
 
                 discountedview=view.findViewById(R.id.discount);
                 priceview=view.findViewById(R.id.price);
@@ -113,6 +120,7 @@ public class productfragment extends Fragment {
                 leftinstockview=view.findViewById(R.id.leftinstock);
                 imageView=view.findViewById(R.id.img);
                 cart=view.findViewById(R.id.cart);
+
 
                 SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
 
@@ -141,6 +149,26 @@ public class productfragment extends Fragment {
                 shopid=getArguments().getString("shopid");
                 deliverycharges=getArguments().getString("delcharges");
 
+    if (daysleft.equals("")||daysleft.equals(null)||daysleft.equals("none")||daysleft.equals("0")){
+        daysleftview.setVisibility(View.INVISIBLE);
+    }
+    else {
+
+        LocalDate currentDate = null;
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            currentDate = LocalDate.now(ZoneId.systemDefault());
+        }
+
+        LocalDate getDates = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            getDates = LocalDate.parse(daysleft);
+        }
+
+        if (currentDate.isBefore(getDates)) {
+        } else {
+            daysleftview.setVisibility(View.INVISIBLE);
+        }
+    }
                 if (discount.equals("0")||discount.equals("none")){
                     discountedview.setVisibility(View.INVISIBLE);
                 }
@@ -156,6 +184,175 @@ public class productfragment extends Fragment {
                 colorview.setText(color);
                 sizeview.setText(size);
                 Picasso.get().load(image.replaceFirst("localhost",prefs.getString("ipv4","10.0.2.2"))).into(imageView);
+
+                buynow.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dbhandler dbhandler=new dbhandler(getContext());
+                        SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE);
+                        String shopidd= prefs.getString("shopincartid","");
+                        if(shopidd.equals(shopid)||shopidd.equals("")){
+
+                            SharedPreferences.Editor editor = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE).edit();
+                            editor.putString("shopincartid", shopid);
+                            editor.putString("deliverycharges", deliverycharges);
+                            editor.apply();
+
+                            String a=dbhandler.addtocart(proid,title,image,desc,price,discount,color,size,"1",Integer.valueOf(leftinstoke));
+                            dbhandler.close();
+                            if (a.equals("duplicateexists")||a=="duplicateexists"){
+                                cart cart = new cart();
+                                FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
+                                FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+                                Bundle bundle=new Bundle();
+                                cart.setArguments(bundle);
+                                fragmentTransactionpro.replace(R.id.fragment, cart);
+                                fragmentTransactionpro.commit();
+                                Toast.makeText(getContext(), "Already in cart you can add in quantity", Toast.LENGTH_LONG).show();
+                            }
+                            else {
+
+                                new CircleAnimationUtil().attachActivity(getActivity()).setTargetView(imageView).setMoveDuration(500).setDestView(cart).setAnimationListener(new Animator.AnimatorListener() {
+                                    @Override
+                                    public void onAnimationStart(Animator animation) {
+                                    }
+                                    @Override
+                                    public void onAnimationEnd(Animator animation) {
+                                        dbhandler dbhandlers=new dbhandler(getContext());
+                                        count=dbhandlers.countitems();
+                                        dbhandlers.close();
+
+                                        cart.setBadgeValue(count)
+                                                .setBadgeOvalAfterFirst(true)
+                                                .setMaxBadgeValue(999)
+                                                .setBadgeTextStyle(Typeface.NORMAL)
+                                                .setShowCounter(true);
+                                        imageView.setVisibility(View.VISIBLE);
+
+                                        cart cart = new cart();
+                                        FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
+                                        FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+                                        Bundle bundle=new Bundle();
+                                        cart.setArguments(bundle);
+                                        fragmentTransactionpro.replace(R.id.fragment, cart);
+                                        fragmentTransactionpro.commit();
+
+
+
+                                    }
+                                    @Override
+                                    public void onAnimationCancel(Animator animation) {
+                                    }
+
+                                    @Override
+                                    public void onAnimationRepeat(Animator animation) {
+
+                                    }
+                                }).startAnimation();
+
+                            }
+                        }
+                        else {
+                            CardView cardView=view.findViewById(R.id.cardview);
+                            cardView.setAlpha((float) 0.5);
+                            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+                            View popupView = inflater.inflate(R.layout.popupanothershop, null);
+
+                            // create the popup window
+                            int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+                            int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+                            boolean focusable = true; // lets taps outside the popup also dismiss it
+                            final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+                            popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                                @Override
+                                public void onDismiss() {
+                                    cardView.setAlpha((float) 1.0);
+                                }
+                            });
+                            popupWindow.setAnimationStyle(R.style.Animation_Design_BottomSheetDialog);
+
+                            // show the popup window
+                            // which view you pass in doesn't matter, it is only used for the window tolken
+                            popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+                            Button ok=popupView.findViewById(R.id.ok);
+                            ok.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dbhandler dbhandler1=new dbhandler(getContext());
+                                    dbhandler1.deleteallincart();
+
+                                    cart.setBadgeValue(dbhandler1.countitems())
+                                            .setBadgeOvalAfterFirst(true)
+                                            .setMaxBadgeValue(999)
+                                            .setBadgeTextStyle(Typeface.NORMAL)
+                                            .setShowCounter(true);
+                                    dbhandler1.close();
+
+                                    SharedPreferences.Editor editor = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE).edit();
+                                    editor.putString("shopincartid", shopid);
+                                    editor.putString("deliverycharges", deliverycharges);
+                                    editor.apply();
+
+                                    popupWindow.dismiss();
+
+                                    new CircleAnimationUtil().attachActivity(getActivity()).setTargetView(imageView).setMoveDuration(500).setDestView(cart).setAnimationListener(new Animator.AnimatorListener() {
+                                        @Override
+                                        public void onAnimationStart(Animator animation) {
+                                        }
+                                        @Override
+                                        public void onAnimationEnd(Animator animation) {
+                                            dbhandler dbhandlers=new dbhandler(getContext());
+                                            dbhandlers.addtocart(proid,title,image,desc,price,discount,color,size,"1",Integer.valueOf(leftinstoke));
+                                            count=dbhandlers.countitems();
+                                            dbhandlers.close();
+
+
+                                            cart.setBadgeValue(count)
+                                                    .setBadgeOvalAfterFirst(true)
+                                                    .setMaxBadgeValue(999)
+                                                    .setBadgeTextStyle(Typeface.NORMAL)
+                                                    .setShowCounter(true);
+                                            imageView.setVisibility(View.VISIBLE);
+                                            Toast.makeText(getContext(), "Added to cart", Toast.LENGTH_SHORT).show();
+
+                                            cart cart = new cart();
+                                            FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
+                                            FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+                                            Bundle bundle=new Bundle();
+                                            cart.setArguments(bundle);
+                                            fragmentTransactionpro.replace(R.id.fragment, cart);
+                                            fragmentTransactionpro.commit();
+
+
+                                        }
+                                        @Override
+                                        public void onAnimationCancel(Animator animation) {
+                                        }
+
+                                        @Override
+                                        public void onAnimationRepeat(Animator animation) {
+
+                                        }
+                                    }).startAnimation();
+
+
+
+                                }
+                            });
+
+                            Button cancel=popupView.findViewById(R.id.cancel);
+                            cancel.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    popupWindow.dismiss();
+                                }
+                            });
+                        }
+                    }
+                });
+
 
         addtocart.setOnClickListener(new View.OnClickListener() {
                     @Override

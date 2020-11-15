@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -153,6 +154,15 @@ public class morefragment extends Fragment {
             public void onClick(View v) {
                 PopupMenu popupMenu = new PopupMenu(getContext(),option);
                 popupMenu.getMenuInflater().inflate(R.menu.optionsetting, popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        if (item.getItemId()==R.id.help){
+
+                        }
+                        return false;
+                    }
+                });
                 popupMenu.show();
             }
         });

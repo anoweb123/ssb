@@ -58,6 +58,7 @@ public class dbhandler extends SQLiteOpenHelper {
     public static final String WDISCOUNTED_COLUMN = "DISCOUNT";
     public static final String WDesc_COLUMN = "DESCC";
     public static final String WImage_COLUMN = "IMAGE";
+    public static final String OfficialID_COLUMN = "OfficialID_COLUMN";
 
     public dbhandler(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -87,6 +88,7 @@ public class dbhandler extends SQLiteOpenHelper {
                 WDISCOUNTED_COLUMN + " TEXT, " +
                 WSIZE_COLUMN + " TEXT, " +
                 WPrice_COLUMN + " TEXT, " +
+                OfficialID_COLUMN + " TEXT, " +
                 WImage_COLUMN + " TEXT)";
         db.execSQL(wishlistCART);
     }
@@ -114,6 +116,7 @@ public class dbhandler extends SQLiteOpenHelper {
                 contentValues.put(SIZE_COLUMN,size);
                 contentValues.put(Quantity_COLUMN,qty);
                 contentValues.put(Leftitems_COLUMN,left);
+                contentValues.put(Proid_COLUMN,proid);
                 contentValues.put(Proid_COLUMN,proid);
 
                 db.insert(CARTTABLE_NAME,null,contentValues);

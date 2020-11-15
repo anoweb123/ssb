@@ -5,15 +5,18 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.ali.ssb.Models.modelbaner;
 import com.ali.ssb.Models.modelnotification;
 import com.ali.ssb.R;
+import com.ali.ssb.holderclasses.holdernoti;
 import com.ali.ssb.holderclasses.sliderbanneradapter;
 import com.ali.ssb.interfacesapi.banerapi;
 import com.ali.ssb.interfacesapi.notiapi;
@@ -42,6 +45,7 @@ public class notifications extends Fragment {
 
 
     List<modelnotification> list;
+    holdernoti holdernoti;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -102,17 +106,24 @@ public class notifications extends Fragment {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         notiapi apipro=retrofitpro.create(notiapi.class);
-        Call<List<modelnotification>> listCallpro=apipro.listCall();
+        Call<List<modelnotification>> listCallpro=apipro.list();
 
         listCallpro.enqueue(new Callback<List<modelnotification>>() {
             @Override
             public void onResponse(Call<List<modelnotification>> call, Response<List<modelnotification>> response) {
                 if (response.isSuccessful()){
+                    list=response.body();
+                    recyclerView.hasFixedSize();
+                    holdernoti=new holdernoti(list,getContext());
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    recyclerView.setAdapter(holdernoti);
+                    holdernoti.notifyDataSetChanged();
                 }
             }
 
             @Override
             public void onFailure(Call<List<modelnotification>> call, Throwable t) {
+                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
         });

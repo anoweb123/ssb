@@ -119,43 +119,6 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
         cat.setText(catt);
         name.setText(namee);
 
-//        Retrofit retrofitpro = new Retrofit.Builder()
-//                .baseUrl("http://192.168.43.19:5000/products/allproducts/"+idd+"/")
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//        productsbyshop apipro = retrofitpro.create(productsbyshop.class);
-//        Call<List<modelproductbyshop>> listCallpro = apipro.list();
-
-
-//        modelpro.add(new modelproducts("Brochur","1000",R.drawable.shirt,"2000"));
-//        modelpro.add(new modelproducts("loren ipsum","1000",R.drawable.jacket,"2000"));
-//        modelpro.add(new modelproducts("Brochur","1000",R.drawable.shirt,"2000"));
-//        modelpro.add(new modelproducts("loren ipsum","1000",R.drawable.jacket,"2000"));
-//        modelpro.add(new modelproducts("Brochur","1000",R.drawable.shirt,"2000"));
-//        modelpro.add(new modelproducts("loren ipsum","1000",R.drawable.jacket,"2000"));
-//        modelpro.add(new modelproducts("Brochur","1000",R.drawable.shirt,"2000"));
-//        modelpro.add(new modelproducts("loren ipsum","1000",R.drawable.jacket,"2000"));
-//        modelpro.add(new modelproducts("Brochur","1000",R.drawable.shirt,"2000"));
-//        modelpro.add(new modelproducts("loren ipsum","1000",R.drawable.jacket,"2000"));
-
-//        listCallpro.enqueue(new Callback<List<modelproductbyshop>>() {
-//            @Override
-//            public void onResponse(Call<List<modelproductbyshop>> call, Response<List<modelproductbyshop>> response) {
-//                modelpro = response.body();
-//                adapterproduct = new holderproductbyshop(modelpro, getContext());
-//                recyclerView.setHasFixedSize(true);
-//                recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-//                recyclerView.setAdapter(adapterproduct);
-//                adapterproduct.notifyDataSetChanged();
-//                adapterproduct.setonproinshopclicklistener(shop.this);
-//            }
-//            @Override
-//            public void onFailure(Call<List<modelproductbyshop>> call, Throwable t) {
-//                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
-//
-//            }
-//        });
-
 
         SharedPreferences prefss = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
 
@@ -221,7 +184,6 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
         fragmentTransactionpro.replace(R.id.fragment, productfragment);
         fragmentTransactionpro.commit();
     }
-
     @Override
     public void onshopqclick(String id, String name, final String offrate) {
         //cat in shop
@@ -246,7 +208,13 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
                 if (modelpro.isEmpty()){
                     Toast.makeText(getContext(), "No products", Toast.LENGTH_SHORT).show();
                 }
-                adapterproduct = new holderproductbyshop(modelpro, getContext(),offrate);
+                if (promorate.isEmpty()||promorate.equals("0")||promorate.equals("none")){
+                    adapterproduct = new holderproductbyshop(modelpro, getContext(),offrate);
+                }
+                else {
+                    adapterproduct = new holderproductbyshop(modelpro, getContext(),promorate);
+                }
+
                 recyclerView.setHasFixedSize(true);
                 recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
                 recyclerView.setAdapter(adapterproduct);

@@ -93,7 +93,7 @@ public class adaperslider extends RecyclerView.Adapter<adaperslider.holder> {
             }
 
             LocalDate getDates = null;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 if (models.get(position).getPromotionTill().isEmpty() || models.get(position).getPromotionTill().equals("none")) {
                 } else {
                     getDates = LocalDate.parse(models.get(position).getPromotionTill());
@@ -109,7 +109,6 @@ public class adaperslider extends RecyclerView.Adapter<adaperslider.holder> {
                 promos=false;
             }
         }
-
         if (promos){
 
         promorate=models.get(position).getPromotionRate();

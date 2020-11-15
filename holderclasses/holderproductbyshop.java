@@ -88,17 +88,18 @@ public class holderproductbyshop extends RecyclerView.Adapter<holderproductbysho
         days=list.get(position).getPromotionTill();
         proid=list.get(position).get_id();
         finalDiscount= discount;
+
         if (days.isEmpty()||days.equals("none")){}
         else {
 
             LocalDate currentDate = null;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 currentDate = LocalDate.now(ZoneId.systemDefault());
             }
             Toast.makeText(context, String.valueOf(currentDate), Toast.LENGTH_SHORT).show();
 
             LocalDate getDates=null;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 if (list.get(position).getPromotionTill().isEmpty()||list.get(position).getPromotionTill().equals("none")){}
                 else {
                     getDates = LocalDate.parse(list.get(position).getPromotionTill());
@@ -155,12 +156,12 @@ public class holderproductbyshop extends RecyclerView.Adapter<holderproductbysho
         }
         else {
 
-            Float d=(Float.parseFloat(price)-(Float.valueOf(price)/100)*Float.parseFloat(disrate));
-            holder.price.setText("Rs "+String.valueOf(d.intValue()));
+            float d=(Float.parseFloat(price)-(Float.parseFloat(price)/100)*Float.parseFloat(disrate));
+            holder.price.setText("Rs "+String.valueOf((int) d));
             holder.discount.setText("Rs "+list.get(position).getPrice());
             holder.discount.setPaintFlags(holder.discount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             discount= list.get(position).getPrice();
-            price=String.valueOf(d.intValue());
+            price=String.valueOf((int) d);
             //idr
         }
 

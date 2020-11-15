@@ -1,0 +1,116 @@
+package com.ali.ssb.Models;
+
+public class modelsinglepro {
+    String promotionRate,promotionStatus,promotionTill,brandName,_id,name,detail,image,price,size,color,quantity;
+
+    public modelsinglepro(String promotionRate, String promotionStatus, String promotionTill, String brandName, String _id, String name, String detail, String image, String price, String size, String color, String quantity) {
+        this.promotionRate = promotionRate;
+        this.promotionStatus = promotionStatus;
+        this.promotionTill = promotionTill;
+        this.brandName = brandName;
+        this._id = _id;
+        this.name = name;
+        this.detail = detail;
+        this.image = image;
+        this.price = price;
+        this.size = size;
+        this.color = color;
+        this.quantity = quantity;
+    }
+
+    public String getPromotionRate() {
+        return promotionRate;
+    }
+
+    public void setPromotionRate(String promotionRate) {
+        this.promotionRate = promotionRate;
+    }
+
+    public String getPromotionStatus() {
+        return promotionStatus;
+    }
+
+    public void setPromotionStatus(String promotionStatus) {
+        this.promotionStatus = promotionStatus;
+    }
+
+    public String getPromotionTill() {
+        return promotionTill;
+    }
+
+    public void setPromotionTill(String promotionTill) {
+        this.promotionTill = promotionTill;
+    }
+
+    public String getBrandName() {
+        return brandName;
+    }
+
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public String getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(String quantity) {
+        this.quantity = quantity;
+    }
+}

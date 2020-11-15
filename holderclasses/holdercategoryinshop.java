@@ -72,12 +72,12 @@ public class holdercategoryinshop extends RecyclerView.Adapter<holdercategoryins
         else {
 
             LocalDate currentDate = null;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 currentDate = LocalDate.now(ZoneId.systemDefault());
             }
 
             LocalDate getDates = null;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 if (list.get(position).getPromotionTill().isEmpty() || list.get(position).getPromotionTill().equals("none")) {
                 } else {
                     getDates = LocalDate.parse(list.get(position).getPromotionTill());
