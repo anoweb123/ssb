@@ -138,6 +138,10 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
         cart=view.findViewById(R.id.cart);
         notification=view.findViewById(R.id.notification);
 
+//        dbhandler dbhandler1=new dbhandler(getContext());
+//        dbhandler1.deleteallwishlist();
+//        dbhandler1.close();
+
         notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

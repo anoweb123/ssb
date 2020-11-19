@@ -8,20 +8,37 @@ public class modelwishlist {
     String color;
     String id;
     String size;
+    String proid;
+    String quan;
     String image;
 
-    public modelwishlist(String title, String desc, String price, String discounted, String color, String size, String image, String id) {
+    public modelwishlist(String title, String desc, String price, String discounted, String color, String id, String size, String proid, String quan, String image) {
         this.title = title;
-        this.id = id;
         this.desc = desc;
         this.price = price;
         this.discounted = discounted;
         this.color = color;
+        this.id = id;
         this.size = size;
+        this.proid = proid;
+        this.quan = quan;
         this.image = image;
     }
 
-    public modelwishlist() {
+    public String getQuan() {
+        return quan;
+    }
+
+    public void setQuan(String quan) {
+        this.quan = quan;
+    }
+
+    public String getProid() {
+        return proid;
+    }
+
+    public void setProid(String proid) {
+        this.proid = proid;
     }
 
     public String getTitle() {

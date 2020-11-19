@@ -164,7 +164,7 @@ public class productfragment extends Fragment {
             getDates = LocalDate.parse(daysleft);
         }
 
-        if (currentDate.isBefore(getDates)) {
+        if (currentDate.minusDays(1).isBefore(getDates)) {
         } else {
             daysleftview.setVisibility(View.INVISIBLE);
         }
@@ -508,9 +508,9 @@ public class productfragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         dbhandler dbhandler=new dbhandler(getContext());
-                        long a=dbhandler.addtowishlist(title,image,desc,price,discount,color,size,proid);
+                        String a=dbhandler.addtowishlist(proid,title,desc,color,size,leftinstoke,discount,image,price);
                         dbhandler.close();
-                        Toast.makeText(getContext(), "Added to Wishlist", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Added to Wishlist"+a, Toast.LENGTH_SHORT).show();
                     }
                 });
         return view;

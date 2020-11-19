@@ -217,7 +217,6 @@ public class completedorders extends Fragment implements holdercompleted.onitems
                             dbhandler.addtocart(list.get(i).getProductId().get_id(),list.get(i).getProductName(),list.get(i).getImage(),list.get(i).getProductId().getDetail(),list.get(i).getProductId().getPrice(),list.get(i).getProductId().getPromotionRate(),list.get(i).getProductId().getColor(),list.get(i).getProductId().getSize(),"1", Integer.parseInt(list.get(i).getProductId().getQuantity()));
                         }
 
-
                     shopincartid=list.get(i).getProductId().getUserId();
                     }
                     dbhandler.close();

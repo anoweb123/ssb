@@ -1,14 +1,14 @@
 package com.ali.ssb.Models;
 
 public class modelsinglepro {
-    String promotionRate,promotionStatus,promotionTill,brandName,_id,name,detail,image,price,size,color,quantity;
+    String promotionRate,promotionStatus,promotionTill,brandName,_idlocal,name,detail,image,price,size,color,quantity,_id;
 
-    public modelsinglepro(String promotionRate, String promotionStatus, String promotionTill, String brandName, String _id, String name, String detail, String image, String price, String size, String color, String quantity) {
+    public modelsinglepro(String promotionRate, String promotionStatus, String promotionTill, String brandName, String name, String detail, String image, String price, String size, String color, String quantity, String _id) {
         this.promotionRate = promotionRate;
         this.promotionStatus = promotionStatus;
         this.promotionTill = promotionTill;
         this.brandName = brandName;
-        this._id = _id;
+        this._idlocal = _idlocal;
         this.name = name;
         this.detail = detail;
         this.image = image;
@@ -16,6 +16,15 @@ public class modelsinglepro {
         this.size = size;
         this.color = color;
         this.quantity = quantity;
+        this._id = _id;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     public String getPromotionRate() {
@@ -50,12 +59,12 @@ public class modelsinglepro {
         this.brandName = brandName;
     }
 
-    public String get_id() {
-        return _id;
+    public String get_idlocal() {
+        return _idlocal;
     }
 
-    public void set_id(String _id) {
-        this._id = _id;
+    public void set_idlocal(String _idlocal) {
+        this._idlocal = _idlocal;
     }
 
     public String getName() {
@@ -113,4 +122,5 @@ public class modelsinglepro {
     public void setQuantity(String quantity) {
         this.quantity = quantity;
     }
+
 }

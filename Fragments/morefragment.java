@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ali.ssb.R;
+import com.ali.ssb.dbhandler;
 import com.ali.ssb.loginpagecustomer;
 import com.squareup.picasso.Picasso;
 
@@ -82,6 +83,8 @@ public class morefragment extends Fragment {
     {
         View view= inflater.inflate(R.layout.fragment_morefragment, container, false);
         option=view.findViewById(R.id.option);
+
+
         transactionhis=view.findViewById(R.id.transactionhis);
         completed=view.findViewById(R.id.completed);
         pending=view.findViewById(R.id.pending);

@@ -5,11 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.wifi.WifiManager;
 
 import androidx.annotation.Nullable;
 
 import com.ali.ssb.Models.modelcart;
 import com.ali.ssb.Models.modellastrec;
+import com.ali.ssb.Models.modelsinglepro;
 import com.ali.ssb.Models.modelwishlist;
 
 import java.util.ArrayList;
@@ -49,16 +51,18 @@ public class dbhandler extends SQLiteOpenHelper {
     public static final String Image_COLUMN = "IMAGE";
     public static final String Proid_COLUMN = "PROID";
 
-    public static final String WISHLISTTABLE_NAME = "WISHLIST_table";
+    public static final String WISHLISTTABLE = "WISHLIST_table";
     public static final String WID_COLUMN = "ID";
-    public static final String WTitle_COLUMN = "TITLE";
-    public static final String WCOLOR_COLUMN = "COLOR";
-    public static final String WSIZE_COLUMN = "SIZE";
-    public static final String WPrice_COLUMN = "PRICE";
-    public static final String WDISCOUNTED_COLUMN = "DISCOUNT";
-    public static final String WDesc_COLUMN = "DESCC";
-    public static final String WImage_COLUMN = "IMAGE";
-    public static final String OfficialID_COLUMN = "OfficialID_COLUMN";
+    public static final String WOfficialID = "OfficialID_COLUMN";
+    public static final String WPRICE = "PRICE";
+    public static final String WDISCOUNTED = "DISCOUNTED";
+    public static final String WIMAGE = "IMAGE";
+    public static final String WDETAIL = "_DETAIL";
+    public static final String WQUAN = "QUAN";
+    public static final String WCOLOR = "COLOR";
+    public static final String WSIZE = "SIZE";
+    public static final String WTITLE = "title";
+
 
     public dbhandler(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -80,17 +84,19 @@ public class dbhandler extends SQLiteOpenHelper {
                 Quantity_COLUMN + " TEXT)";
         db.execSQL(tableCART);
 
-        String wishlistCART = "CREATE TABLE " + WISHLISTTABLE_NAME + " (" +
+        String tableWish = "CREATE TABLE " + WISHLISTTABLE + " (" +
                 WID_COLUMN + " INTEGER PRIMARY KEY AUTOINCREMENT ,"+
-                WTitle_COLUMN + " TEXT, " +
-                WCOLOR_COLUMN + " TEXT, " +
-                WDesc_COLUMN + " TEXT, " +
-                WDISCOUNTED_COLUMN + " TEXT, " +
-                WSIZE_COLUMN + " TEXT, " +
-                WPrice_COLUMN + " TEXT, " +
-                OfficialID_COLUMN + " TEXT, " +
-                WImage_COLUMN + " TEXT)";
-        db.execSQL(wishlistCART);
+                WOfficialID + " TEXT, " +
+                WPRICE + " TEXT, " +
+                WDISCOUNTED + " TEXT, " +
+                WIMAGE + " TEXT, " +
+                WDETAIL + " TEXT, " +
+                WQUAN + " TEXT, " +
+                WCOLOR + " TEXT, " +
+                WSIZE + " TEXT, " +
+                WTITLE + " TEXT)";
+        db.execSQL(tableWish);
+
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -209,7 +215,6 @@ public class dbhandler extends SQLiteOpenHelper {
         return total;
     }
 
-
     public int totaldiscount(){
         int total=0;
         String colomn[]=new String[]{ID_COLUMN,Title_COLUMN,Price_COLUMN,Desc_COLUMN,DISCOUNTED_COLUMN,COLOR_COLUMN,SIZE_COLUMN,Image_COLUMN,Quantity_COLUMN};
@@ -221,39 +226,41 @@ public class dbhandler extends SQLiteOpenHelper {
         }}
         return total;
     }
-    public long addtowishlist(String title,String image,String desc,String price,String discounted,String color,String size,String officailid){
+        public String addtowishlist(String officailid,String name,String desc,String color,String size,String quan,String discount,String image,String price){
         ContentValues contentValues=new ContentValues();
-        contentValues.put(WTitle_COLUMN,title);
-        contentValues.put(WImage_COLUMN,image);
-        contentValues.put(WDesc_COLUMN,desc);
-        contentValues.put(WPrice_COLUMN,price);
-        contentValues.put(WDISCOUNTED_COLUMN,discounted);
-        contentValues.put(WCOLOR_COLUMN,color);
-        contentValues.put(WSIZE_COLUMN,size);
-        contentValues.put(OfficialID_COLUMN,officailid);
-        return db.insert(WISHLISTTABLE_NAME,null,contentValues);
+            contentValues.put(officailid,WOfficialID);
+            contentValues.put(name,WTITLE);
+            contentValues.put(desc,WDETAIL);
+            contentValues.put(color,WCOLOR);
+            contentValues.put(size,WSIZE);
+            contentValues.put(quan,WQUAN);
+            contentValues.put(discount,WDISCOUNTED);
+            contentValues.put(image,WIMAGE);
+            contentValues.put(price,WPRICE);
+            db.insert(WISHLISTTABLE,null,contentValues);
+        return "inserted";
     }
+
     public List<modelwishlist> retrievewishlist(){
         List<modelwishlist> s=new ArrayList<>();
-        String colomn[]=new String[]{WID_COLUMN,WTitle_COLUMN,WPrice_COLUMN,WDesc_COLUMN,WDISCOUNTED_COLUMN,WCOLOR_COLUMN,WSIZE_COLUMN,WImage_COLUMN};
-        Cursor query= db.query(WISHLISTTABLE_NAME,colomn,null,null,null,null,null,null);
+        String colomn[]=new String[]{WID_COLUMN,WTITLE,WDETAIL,WDISCOUNTED,WCOLOR,WSIZE,WQUAN,WIMAGE,WPRICE,WOfficialID};
+        Cursor query= db.query(WISHLISTTABLE,colomn,null,null,null,null,null,null);
         while (query.moveToNext()){
-            String a,b,c,d,f,g,i,h;
+            String a,b,c,d,e,f,g,i,h,j;
 
-            a=query.getString(query.getColumnIndex(WTitle_COLUMN));
-            b=query.getString(query.getColumnIndex(WDesc_COLUMN));
-            c=query.getString(query.getColumnIndex(WPrice_COLUMN));
-            d=query.getString(query.getColumnIndex(WDISCOUNTED_COLUMN));
-            f=query.getString(query.getColumnIndex(WCOLOR_COLUMN));
-            g=query.getString(query.getColumnIndex(WSIZE_COLUMN));
-            h=String.valueOf(query.getString(query.getColumnIndex(WID_COLUMN)));
-            i=query.getString(query.getColumnIndex(WImage_COLUMN));
-            s.add(new modelwishlist(a,b,c,d,f,g,i,h));
+            a=query.getString(query.getColumnIndex(WTITLE));
+            b=query.getString(query.getColumnIndex(WDETAIL));
+            c=query.getString(query.getColumnIndex(WPRICE));
+            d=query.getString(query.getColumnIndex(WDISCOUNTED));
+            e=query.getString(query.getColumnIndex(WQUAN));
+            f=query.getString(query.getColumnIndex(WCOLOR));
+            g=query.getString(query.getColumnIndex(WSIZE));
+            h=query.getString(query.getColumnIndex(WID_COLUMN));
+            i=query.getString(query.getColumnIndex(WIMAGE));
+            j=query.getString(query.getColumnIndex(WOfficialID));
+            s.add(new modelwishlist(a,b,c,d,f,h,g,j,e,i));
         }
         return s;
-    }
-    public long deleteinwish(int id){
-        return db.delete(WISHLISTTABLE_NAME,WID_COLUMN+ "=?",new String[]{String.valueOf(id)});
     }
     public List<modellastrec> retrievecartforsum(){
         List<modellastrec> s=new ArrayList<>();

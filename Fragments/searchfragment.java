@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.ali.ssb.R;
+import com.ali.ssb.dbhandler;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -69,6 +70,12 @@ public class searchfragment extends Fragment {
         View view= inflater.inflate(R.layout.fragment_searchfragment, container, false);
         search=view.findViewById(R.id.search);
         search.requestFocus();
+
+
+//        dbhandler dbhandler1=new dbhandler(getContext());
+//        dbhandler1.deleteallwishlist();
+//        dbhandler1.close();
+
         return view;
     }
 }

@@ -143,8 +143,6 @@ public class addressupdate extends Fragment {
                             Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
-
-
                 }
             }
         });

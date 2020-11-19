@@ -84,7 +84,7 @@ public class holdercategoryinshop extends RecyclerView.Adapter<holdercategoryins
                 }
             }
 
-        if (currentDate.isBefore(getDates)){
+        if (currentDate.minusDays(1).isBefore(getDates)){
             promos="true";
         }
 

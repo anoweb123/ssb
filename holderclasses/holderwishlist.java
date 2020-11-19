@@ -9,11 +9,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ali.ssb.Models.modelsinglepro;
 import com.ali.ssb.R;
 import com.ali.ssb.Models.modelwishlist;
 import com.chauthai.swipereveallayout.SwipeRevealLayout;
@@ -37,7 +39,7 @@ public class holderwishlist extends RecyclerView.Adapter<holderwishlist.holder> 
     public holderwishlist(List<modelwishlist> list, Context context) {
         this.list = list;
         this.context = context;
-//        viewBinderHelper.setOpenOnlyOne(true);
+        viewBinderHelper.setOpenOnlyOne(true);
     }
 
     public interface oncart{
@@ -48,7 +50,7 @@ public class holderwishlist extends RecyclerView.Adapter<holderwishlist.holder> 
     }
 
     public interface ondel{
-        public void onclicker(int position);
+        public void onclicker(String id);
     }
     public void onclick(ondel listener){
         monclicklistener=listener;
@@ -64,7 +66,6 @@ public class holderwishlist extends RecyclerView.Adapter<holderwishlist.holder> 
     @Override
     public void onBindViewHolder(@NonNull holder holder, final int position) {
 
-
         viewBinderHelper.bind(holder.swipeRevealLayout, String.valueOf(list.get(position).getId()));
 
         SharedPreferences prefs =context.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
@@ -79,28 +80,25 @@ public class holderwishlist extends RecyclerView.Adapter<holderwishlist.holder> 
         holder.del.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                monclicklistener.onclicker(Integer.valueOf(list.get(position).getId()));
+                monclicklistener.onclicker(list.get(position).getId());
             }
         });
-
-        holder.addtocacrt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-
-
-                String a=list.get(position).getTitle();
-                String b=list.get(position).getPrice();
-                String c=list.get(position).getDiscounted();
-                String d=list.get(position).getDesc();
-                String e=list.get(position).getId();
-                String f=list.get(position).getImage();
-                String g=list.get(position).getColor();
-                String h=list.get(position).getSize();
-//                moncart.onclicker(a,b,c,h,g,f,d,e);
-            }
-        });
+//
+//        holder.addtocacrt.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+////                String a=list.get(position).getTitle();
+////                String b=list.get(position).getPrice();
+////                String c=list.get(position).getDiscounted();
+////                String d=list.get(position).getDesc();
+////                String e=list.get(position).getId();
+////                String f=list.get(position).getImage();
+////                String g=list.get(position).getColor();
+////                String h=list.get(position).getSize();
+////                moncart.onclicker(a,b,c,h,g,f,d,e);
+//            }
+//        });
 
     }
     @Override

@@ -41,6 +41,7 @@ import com.ali.ssb.Models.modelbaner;
 import com.ali.ssb.Models.modelgetresultofimageupdate;
 import com.ali.ssb.Models.modelreturnoforderinfo;
 import com.ali.ssb.R;
+import com.ali.ssb.dbhandler;
 import com.ali.ssb.holderclasses.sliderbanneradapter;
 import com.ali.ssb.interfacesapi.banerapi;
 import com.ali.ssb.interfacesapi.completedorderapi;
@@ -303,6 +304,11 @@ public class profilecustomer extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_profilecustomer, container, false);
+
+
+//        dbhandler dbhandler1=new dbhandler(getContext());
+//        dbhandler1.deleteallwishlist();
+//        dbhandler1.close();
 
 //        SharedPreferences.Editor editor =getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
 //        editor.putString("ipv4","192.168.43.148");

@@ -96,23 +96,17 @@ public class holderproductbyshop extends RecyclerView.Adapter<holderproductbysho
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 currentDate = LocalDate.now(ZoneId.systemDefault());
             }
-            Toast.makeText(context, String.valueOf(currentDate), Toast.LENGTH_SHORT).show();
 
             LocalDate getDates=null;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 if (list.get(position).getPromotionTill().isEmpty()||list.get(position).getPromotionTill().equals("none")){}
                 else {
                     getDates = LocalDate.parse(list.get(position).getPromotionTill());
-                    Toast.makeText(context, String.valueOf(getDates), Toast.LENGTH_SHORT).show();
                 }
             }
 
-            if (currentDate.isBefore(getDates)){
+            if (currentDate.minusDays(1).isBefore(getDates)){
                 promo=true;
-                Toast.makeText(context, "yes promo", Toast.LENGTH_SHORT).show();
-            }
-            else {
-                Toast.makeText(context, "no promo", Toast.LENGTH_SHORT).show();
             }
 
         }

@@ -22,6 +22,7 @@ import com.squareup.picasso.Picasso;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -92,6 +93,7 @@ public class adaperslider extends RecyclerView.Adapter<adaperslider.holder> {
                 currentDate = LocalDate.now(ZoneId.systemDefault());
             }
 
+
             LocalDate getDates = null;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 if (models.get(position).getPromotionTill().isEmpty() || models.get(position).getPromotionTill().equals("none")) {
@@ -100,7 +102,7 @@ public class adaperslider extends RecyclerView.Adapter<adaperslider.holder> {
                 }
             }
 
-            if (currentDate.isBefore(getDates)){
+            if (currentDate.minusDays(1).isBefore(getDates)){
                 if (prostatus.equals("accepted")){
                     promos=true;
                 }

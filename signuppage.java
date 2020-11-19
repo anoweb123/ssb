@@ -71,8 +71,8 @@ String sname,semail,spassword,sconpass,saddres,scell;
                 semail=email.getText().toString();
                 spassword=password.getText().toString();
                 sconpass=conpass.getText().toString();
-                saddres="";
-                scell="";
+                saddres="none";
+                scell="+92";
 
                 SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
 
