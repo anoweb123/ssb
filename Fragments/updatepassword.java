@@ -21,6 +21,10 @@ import android.widget.Toast;
 import com.ali.ssb.R;
 import com.ali.ssb.interfacesapi.updatepasswordapi;
 import com.ali.ssb.interfacesapi.updatephoneapi;
+import com.ali.ssb.signuppage;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -31,6 +35,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
+import static com.ali.ssb.signuppage.VALID_EMAIL_ADDRESS_REGEX;
+import static com.ali.ssb.signuppage.validatepass;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,6 +46,8 @@ import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
 public class updatepassword extends Fragment {
 
 
+    public static final Pattern VALID_password =
+            Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=.])(?=\\S+$).{7,}$", Pattern.CASE_INSENSITIVE);
     RelativeLayout frag;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -139,56 +147,64 @@ public class updatepassword extends Fragment {
 
                 }
                 else {
-                    bar.setVisibility(View.VISIBLE);
 
-                    SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-                    sid = prefs.getString("customerid", "Null");
-                    sprepass = prefs.getString("password", "Null");
-
-                    if (prepass.getText().toString().equals(sprepass) && newpass.getText().toString().equals(conpass.getText().toString())){
-
-                        Retrofit retrofit = new Retrofit.Builder()
-                                .baseUrl("http://"+prefs.getString("ipv4","10.0.2.2")+":5000/customer/updateprofile/")
-                                .addConverterFactory(GsonConverterFactory.create())
-                                .build();
-                        updatepasswordapi api = retrofit.create(updatepasswordapi.class);
-                        Call<ResponseBody> listCall = api.updatepassword(sid, newpass.getText().toString());
-                        listCall.enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                if (response.isSuccessful()) {
-                                    Toast.makeText(getContext(), "Password updated", Toast.LENGTH_SHORT).show();
-
-                                    SharedPreferences.Editor editor = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-                                    editor.putString("password", newpass.getText().toString());
-                                    editor.apply();
-
-                                    prepass.setText("");
-                                    conpass.setText("");
-                                    newpass.setText("");
-
-                                    bar.setVisibility(View.INVISIBLE);
-
-                                    bar.setVisibility(View.INVISIBLE);
-                                    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                                    frag.setAlpha((float) 1.0);
-
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });}
+                    Boolean ad=validatepass(newpass.getText().toString());
+                    if (!ad){
+                        Toast.makeText(getContext(), "Password should contain 1 digit,1 uppercase,1 lowercase and 1 special character", Toast.LENGTH_SHORT).show();
+                    }
                     else {
 
-                        bar.setVisibility(View.INVISIBLE);
-                        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                        frag.setAlpha((float) 1.0);
-                        Toast.makeText(getContext(), "Wrong password", Toast.LENGTH_SHORT).show();
-                    }
 
+                        bar.setVisibility(View.VISIBLE);
+
+                        SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+                        sid = prefs.getString("customerid", "Null");
+                        sprepass = prefs.getString("password", "Null");
+
+                        if (prepass.getText().toString().equals(sprepass) && newpass.getText().toString().equals(conpass.getText().toString())) {
+
+                            Retrofit retrofit = new Retrofit.Builder()
+                                    .baseUrl("http://" + prefs.getString("ipv4", "10.0.2.2") + ":5000/customer/updateprofile/")
+                                    .addConverterFactory(GsonConverterFactory.create())
+                                    .build();
+                            updatepasswordapi api = retrofit.create(updatepasswordapi.class);
+                            Call<ResponseBody> listCall = api.updatepassword(sid, newpass.getText().toString());
+                            listCall.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    if (response.isSuccessful()) {
+                                        Toast.makeText(getContext(), "Password updated", Toast.LENGTH_SHORT).show();
+
+                                        SharedPreferences.Editor editor = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
+                                        editor.putString("password", newpass.getText().toString());
+                                        editor.apply();
+
+                                        prepass.setText("");
+                                        conpass.setText("");
+                                        newpass.setText("");
+
+                                        bar.setVisibility(View.INVISIBLE);
+
+                                        bar.setVisibility(View.INVISIBLE);
+                                        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                        frag.setAlpha((float) 1.0);
+
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else {
+
+                            bar.setVisibility(View.INVISIBLE);
+                            getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                            frag.setAlpha((float) 1.0);
+                            Toast.makeText(getContext(), "Both passwords not match", Toast.LENGTH_SHORT).show();
+                        }
+                    }
 
                 }
             }
@@ -197,4 +213,9 @@ public class updatepassword extends Fragment {
 
         return view;
     }
+    public static boolean validatepass(String pass) {
+        Matcher matcher = VALID_password.matcher(pass);
+        return matcher.find();
+    }
+
 }

@@ -26,6 +26,9 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.ali.ssb.Fragments.paymentpage.MY_PREFS_forcart;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link checkoutpage#newInstance} factory method to
@@ -96,6 +99,8 @@ public class checkoutpage extends Fragment{
         postal=view.findViewById(R.id.postal);
         phone=view.findViewById(R.id.phone);
 
+
+
         pick=view.findViewById(R.id.pick);
 
         SharedPreferences preferences=getContext().getSharedPreferences(MY_PREFS_NAME, Context.MODE_PRIVATE);
@@ -103,11 +108,21 @@ public class checkoutpage extends Fragment{
         semail=preferences.getString("email","");
         sphone=preferences.getString("phone","");
         saddress=preferences.getString("address","");
+        scity="";
+        spostl="";
+
 
         name.setText(sname);
         email.setText(semail);
         phone.setText(sphone);
         address.setText(saddress);
+        city.setText("");
+        postal.setText("");
+
+        SharedPreferences.Editor editor = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE).edit();
+        editor.putString("latitude", "11.0");
+        editor.putString("longitude", "11.0");
+        editor.apply();
 
 
         fusedLocationProviderClient= LocationServices.getFusedLocationProviderClient(getActivity());
@@ -148,13 +163,43 @@ public class checkoutpage extends Fragment{
         payment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                startActivity(new Intent(getActivity(), checkoutpaymentstipe.class));
-                paymentpage productfragment = new paymentpage();
-                FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
-                fragmentTransactionpro.replace(R.id.fragment, productfragment);
-                fragmentTransactionpro.commit();
 
+
+                SharedPreferences preferences=getContext().getSharedPreferences(MY_PREFS_NAME, Context.MODE_PRIVATE);
+                sname=name.getText().toString();
+                semail=email.getText().toString();
+                sphone=phone.getText().toString();
+                saddress=address.getText().toString();
+                scity=city.getText().toString();
+                spostl=postal.getText().toString();
+
+                if (sname.isEmpty()){
+                    name.setError("Enter name");
+                }
+                if (semail.isEmpty()){
+                    email.setError("Enter email");
+                }
+                if (saddress.isEmpty()){
+                    address.setError("Enter address");
+                }
+                if (sphone.isEmpty()){
+                    phone.setError("Enter phone");
+                }
+                if (scity.isEmpty()){
+                    city.setError("Enter city");
+                }
+                if (spostl.isEmpty()){
+                    postal.setError("Enter postal code");
+                }
+                if (sname.isEmpty()||semail.isEmpty()||sphone.isEmpty()||saddress.isEmpty()||scity.isEmpty()||spostl.isEmpty()){}
+                else {
+
+                    paymentpage productfragment = new paymentpage();
+                    FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
+                    FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+                    fragmentTransactionpro.replace(R.id.fragment, productfragment);
+                    fragmentTransactionpro.commit();
+                }
             }
         });
 

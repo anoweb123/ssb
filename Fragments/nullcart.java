@@ -3,10 +3,13 @@ package com.ali.ssb.Fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.ali.ssb.R;
 
@@ -17,6 +20,7 @@ import com.ali.ssb.R;
  */
 public class nullcart extends Fragment {
 
+    Button button;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -61,6 +65,20 @@ public class nullcart extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_nullcart, container, false);
+        View view= inflater.inflate(R.layout.fragment_nullcart, container, false);
+
+        button=view.findViewById(R.id.but);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainDashboardFragment cart = new mainDashboardFragment();
+                FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+                fragmentTransactionpro.replace(R.id.fragment, cart);
+                fragmentTransactionpro.commit();
+
+            }
+        });
+        return view;
     }
 }

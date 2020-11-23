@@ -111,7 +111,6 @@ public class dbhandler extends SQLiteOpenHelper {
         String check=checkforduplicateincart(proid);
         if (check.equals("yes")){}
         else {
-
                 ContentValues contentValues=new ContentValues();
                 contentValues.put(Title_COLUMN,title);
                 contentValues.put(Image_COLUMN,image);
@@ -226,19 +225,41 @@ public class dbhandler extends SQLiteOpenHelper {
         }}
         return total;
     }
-        public String addtowishlist(String officailid,String name,String desc,String color,String size,String quan,String discount,String image,String price){
+
+    public List<modellastrec> retrievecartforsum(){
+        List<modellastrec> s=new ArrayList<>();
+        String colomn[]=new String[]{ID_COLUMN,Title_COLUMN,Price_COLUMN,Desc_COLUMN,DISCOUNTED_COLUMN,COLOR_COLUMN,SIZE_COLUMN,Image_COLUMN,Quantity_COLUMN,Leftitems_COLUMN};
+        Cursor query= db.query(CARTTABLE_NAME,colomn,null,null,null,null,null,null);
+        while (query.moveToNext()){
+            String a,b,c,d,e,f,g,i;
+            int h,j;
+            a=query.getString(query.getColumnIndex(Title_COLUMN));
+            b=query.getString(query.getColumnIndex(Desc_COLUMN));
+            c=query.getString(query.getColumnIndex(Price_COLUMN));
+            d=query.getString(query.getColumnIndex(DISCOUNTED_COLUMN));
+            e=query.getString(query.getColumnIndex(Quantity_COLUMN));
+            f=query.getString(query.getColumnIndex(COLOR_COLUMN));
+            g=query.getString(query.getColumnIndex(SIZE_COLUMN));
+            h=query.getInt(query.getColumnIndex(ID_COLUMN));
+            i=query.getString(query.getColumnIndex(Image_COLUMN));
+            j=query.getInt(query.getColumnIndex(Leftitems_COLUMN));
+            s.add(new modellastrec(c,e,i));
+        }
+        return s;
+    }
+
+    public long addtowishlist(String officailid,String name,String desc,String color,String size,String quan,String discount,String image,String price){
         ContentValues contentValues=new ContentValues();
-            contentValues.put(officailid,WOfficialID);
-            contentValues.put(name,WTITLE);
-            contentValues.put(desc,WDETAIL);
-            contentValues.put(color,WCOLOR);
-            contentValues.put(size,WSIZE);
-            contentValues.put(quan,WQUAN);
-            contentValues.put(discount,WDISCOUNTED);
-            contentValues.put(image,WIMAGE);
-            contentValues.put(price,WPRICE);
-            db.insert(WISHLISTTABLE,null,contentValues);
-        return "inserted";
+            contentValues.put(WOfficialID,officailid);
+            contentValues.put(WTITLE,name);
+            contentValues.put(WDETAIL,desc);
+            contentValues.put(WCOLOR,color);
+            contentValues.put(WSIZE,size);
+            contentValues.put(WQUAN,quan);
+            contentValues.put(WDISCOUNTED,discount);
+            contentValues.put(WIMAGE,image);
+            contentValues.put(WPRICE,price);
+           return db.insert(WISHLISTTABLE,null,contentValues);
     }
 
     public List<modelwishlist> retrievewishlist(){
@@ -262,26 +283,7 @@ public class dbhandler extends SQLiteOpenHelper {
         }
         return s;
     }
-    public List<modellastrec> retrievecartforsum(){
-        List<modellastrec> s=new ArrayList<>();
-        String colomn[]=new String[]{ID_COLUMN,Title_COLUMN,Price_COLUMN,Desc_COLUMN,DISCOUNTED_COLUMN,COLOR_COLUMN,SIZE_COLUMN,Image_COLUMN,Quantity_COLUMN,Leftitems_COLUMN};
-        Cursor query= db.query(CARTTABLE_NAME,colomn,null,null,null,null,null,null);
-        while (query.moveToNext()){
-            String a,b,c,d,e,f,g,i;
-            int h,j;
-            a=query.getString(query.getColumnIndex(Title_COLUMN));
-            b=query.getString(query.getColumnIndex(Desc_COLUMN));
-            c=query.getString(query.getColumnIndex(Price_COLUMN));
-            d=query.getString(query.getColumnIndex(DISCOUNTED_COLUMN));
-            e=query.getString(query.getColumnIndex(Quantity_COLUMN));
-            f=query.getString(query.getColumnIndex(COLOR_COLUMN));
-            g=query.getString(query.getColumnIndex(SIZE_COLUMN));
-            h=query.getInt(query.getColumnIndex(ID_COLUMN));
-            i=query.getString(query.getColumnIndex(Image_COLUMN));
-            j=query.getInt(query.getColumnIndex(Leftitems_COLUMN));
-            s.add(new modellastrec(c,e,i));
-        }
-        return s;
+    public long deleteinwish(int id){
+        return db.delete(WISHLISTTABLE,WID_COLUMN+ "=?",new String[]{String.valueOf(id)});
     }
-
 }

@@ -20,6 +20,10 @@ import android.widget.Toast;
 
 import com.ali.ssb.R;
 import com.ali.ssb.interfacesapi.updateemailapi;
+import com.ali.ssb.signuppage;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -37,6 +41,8 @@ import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
  * create an instance of this fragment.
  */
 public class updateemail extends Fragment {
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     CardView update;
     RelativeLayout frag;
@@ -131,6 +137,11 @@ public class updateemail extends Fragment {
 
                 }
                 else {
+                    Boolean ab=validate(email.getText().toString());
+                    if (!ab){
+                        Toast.makeText(getContext(), "Enter Valid email", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
                     bar.setVisibility(View.VISIBLE);
 
                     SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
@@ -175,6 +186,7 @@ public class updateemail extends Fragment {
 
                         Toast.makeText(getContext(), "Wrong password", Toast.LENGTH_SHORT).show();
                     }
+                    }
 
 
                 }
@@ -183,5 +195,9 @@ public class updateemail extends Fragment {
 
 
         return view;
+    }
+    public static boolean validate(String emailStr) {
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
+        return matcher.find();
     }
 }

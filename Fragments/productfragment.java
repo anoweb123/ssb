@@ -199,6 +199,7 @@ public class productfragment extends Fragment {
                             editor.apply();
 
 
+
                             String a=dbhandler.addtocart(proid,title,image,desc,price,discount,color,size,"1",Integer.valueOf(leftinstoke));
                             dbhandler.close();
                             if (a.equals("duplicateexists")||a=="duplicateexists"){
@@ -508,9 +509,9 @@ public class productfragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         dbhandler dbhandler=new dbhandler(getContext());
-                        String a=dbhandler.addtowishlist(proid,title,desc,color,size,leftinstoke,discount,image,price);
+                        long a=dbhandler.addtowishlist(proid,title,desc,color,size,leftinstoke,discount,image,price);
                         dbhandler.close();
-                        Toast.makeText(getContext(), "Added to Wishlist"+a, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Added to Wishlist"+String.valueOf(a), Toast.LENGTH_SHORT).show();
                     }
                 });
         return view;

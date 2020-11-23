@@ -122,11 +122,19 @@ public class pendingorders extends Fragment {
             @Override
             public void onResponse(Call<List<modelpending>> call, Response<List<modelpending>> response) {
 
+                List<modelpending> list1=new ArrayList<>();
                 Toast.makeText(getContext(), String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
                 if (response.isSuccessful()){
                 list = response.body();
+                for (int i=0;i<list.size();i++){
+                    if (!list.get(i).getStatus().equals("delivered")){
+                        list1.add(list.get(i));
+                    }
+                    else {
+                    }
+                }
 
-                adapter = new holderpending(list, getContext());
+                adapter = new holderpending(list1, getContext());
                 recyclerView.setHasFixedSize(true);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false));
                 recyclerView.setAdapter(adapter);

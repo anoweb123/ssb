@@ -35,7 +35,6 @@ import static android.content.Context.MODE_PRIVATE;
 public class morefragment extends Fragment {
 
     CircleImageView profileimage;
-    ImageView option;
     String sname,semail,simage;
 
     RelativeLayout transactionhis,logout;
@@ -52,15 +51,8 @@ public class morefragment extends Fragment {
     public morefragment() {
         // Required empty public constructor
     }
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment morefragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
+
     public static morefragment newInstance(String param1, String param2) {
         morefragment fragment = new morefragment();
         Bundle args = new Bundle();
@@ -82,7 +74,6 @@ public class morefragment extends Fragment {
                              Bundle savedInstanceState)
     {
         View view= inflater.inflate(R.layout.fragment_morefragment, container, false);
-        option=view.findViewById(R.id.option);
 
 
         transactionhis=view.findViewById(R.id.transactionhis);
@@ -152,23 +143,7 @@ public class morefragment extends Fragment {
                 fragmentTransaction1.commit();
             }
         });
-        option.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PopupMenu popupMenu = new PopupMenu(getContext(),option);
-                popupMenu.getMenuInflater().inflate(R.menu.optionsetting, popupMenu.getMenu());
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        if (item.getItemId()==R.id.help){
 
-                        }
-                        return false;
-                    }
-                });
-                popupMenu.show();
-            }
-        });
         return  view;
     }
 }

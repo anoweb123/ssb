@@ -44,7 +44,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class checkoutpaymentstipe extends AppCompatActivity {
-    private static final String BACKEND_URL = "http://192.168.0.104:3000/";
+    private static final String BACKEND_URL = "http://192.168.0.107:3000/";
     private OkHttpClient httpClient = new OkHttpClient();
     private String paymentIntentClientSecret;
     private Stripe stripe;
@@ -73,34 +73,44 @@ public class checkoutpaymentstipe extends AppCompatActivity {
 
     private void startCheckout() {
         // Create a PaymentIntent by calling the server's endpoint.
-
-        MediaType mediaType = MediaType.get("application/json; charset=utf-8");
-        String json = "{"
-                + "\"currency\":\"usd\","
-                + "\"items\":["
-                + "{\"id\":\"photo_subscription\"}"
-                + "]"
-                + "}";
-        RequestBody body = RequestBody.create(json, mediaType);
-        Request request = new Request.Builder()
-                .url(BACKEND_URL + "create-payment-intent")
-                .post(body)
-                .build();
-        httpClient.newCall(request)
-                .enqueue(new PayCallback(this));
-        PaymentConfiguration.init(getApplicationContext(), "pk_test_51HTDUvLEXeAwmixgZmjx10jEZNbt5eJiAVpkNdxNBefQGJJZ6YL3YVjggygPKSNRKYhwYlUVyOrxVGKzgpxq1RtU00QLP6r5MB");
-//         Hook up the pay button to the card widget and stripe instance
         Button payButton = findViewById(R.id.payButton);
-        payButton.setOnClickListener((View view) -> {
-            CardInputWidget cardInputWidget = findViewById(R.id.cardInputWidget);
-            PaymentMethodCreateParams params = cardInputWidget.getPaymentMethodCreateParams();
-            if (params != null) {
-//                startActivity(new Intent(checkoutpaymentstipe.this, summary.class));
-                ConfirmPaymentIntentParams confirmParams = ConfirmPaymentIntentParams
-                        .createWithPaymentMethodCreateParams(params, paymentIntentClientSecret);
-                stripe.confirmPayment(this, confirmParams);
+
+        payButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                MediaType mediaType = MediaType.get("application/json; charset=utf-8");
+                String json = "{"
+                        + "\"currency\":\"usd\","
+                        + "\"items\":["
+                        + "{\"id\":\"photo_subscription\"}"
+                        + "]"
+                        + "}";
+                RequestBody body = RequestBody.create(json, mediaType);
+                Request request = new Request.Builder()
+                        .url(BACKEND_URL + "create-payment-intent")
+                        .post(body)
+                        .build();
+                httpClient.newCall(request)
+                        .enqueue(new PayCallback(checkoutpaymentstipe.this));
+                PaymentConfiguration.init(getApplicationContext(), "pk_test_51HTDUvLEXeAwmixgZmjx10jEZNbt5eJiAVpkNdxNBefQGJJZ6YL3YVjggygPKSNRKYhwYlUVyOrxVGKzgpxq1RtU00QLP6r5MB");
+
+
+
+
+//                CardInputWidget cardInputWidget = findViewById(R.id.cardInputWidgets);
+//                PaymentMethodCreateParams params = cardInputWidget.getPaymentMethodCreateParams();
+//                if (params != null) {
+////                startActivity(new Intent(checkoutpaymentstipe.this, summary.class));
+//                    ConfirmPaymentIntentParams confirmParams = ConfirmPaymentIntentParams
+//                            .createWithPaymentMethodCreateParams(params, paymentIntentClientSecret);
+//                    stripe.confirmPayment(checkoutpaymentstipe.this, confirmParams);
+//                }
+
+
             }
         });
+//         Hook up the pay button to the card widget and stripe instance
     }
 
 

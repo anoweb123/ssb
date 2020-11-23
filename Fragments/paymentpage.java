@@ -44,7 +44,7 @@ import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
  */
 public class paymentpage extends Fragment {
     ssbprice ssbprice;
-
+int d=0;
     String shopid,orderid;
     public static String MY_PREFS_forcart="MY_PREFS_forcart";
     Button pay;
@@ -118,8 +118,12 @@ public class paymentpage extends Fragment {
 
                 SharedPreferences preferences=getContext().getSharedPreferences(MY_PREFS_forcart, Context.MODE_PRIVATE);
                 shopid=preferences.getString("shopincartid","");
-                Toast.makeText(getContext(), "ordering", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Ordering please wait", Toast.LENGTH_SHORT).show();
                 getinfoapi();
+
+
+
+
 
             }
         });
@@ -127,16 +131,15 @@ public class paymentpage extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
+
+                    paymentmethodorder="Creditcard";
+                    paymentstatusorder="Paid by ssb";
+
                     ssbprice = new ssbprice();
                     FragmentManager fragmentManagerpro =getActivity().getSupportFragmentManager();
                     FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
-                    fragmentTransactionpro.add(R.id.ssb, ssbprice);
+                    fragmentTransactionpro.replace(R.id.ssb, ssbprice);
                     fragmentTransactionpro.commit();
-                }
-                if (!isChecked){
-                    Fragment fragment =getChildFragmentManager().findFragmentById(R.id.ssb);
-                    getChildFragmentManager().beginTransaction().remove(fragment).commit();
-
                 }
             }
         });
@@ -209,10 +212,10 @@ public class paymentpage extends Fragment {
         listCall.enqueue(new Callback<modelreturnoforderinfo>() {
             @Override
             public void onResponse(Call<modelreturnoforderinfo> call, Response<modelreturnoforderinfo> response) {
-                Toast.makeText(getContext(), String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
                 if (response.isSuccessful()) {
                     orderid=response.body().get_id();
                     orderitems(orderid);
+
                 }
             }
             @Override
@@ -228,7 +231,6 @@ public class paymentpage extends Fragment {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        SharedPreferences preferences=getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
 
         dbhandler dbhandler=new dbhandler(getContext());
         List<modelcart> list=dbhandler.retrievecart();
@@ -237,13 +239,21 @@ public class paymentpage extends Fragment {
         orderitemapi api = retrofit.create(orderitemapi.class);
 
         for (int i=0;i<list.size();i++){
+            d=i;
             Call<ResponseBody> listCall = api.response(orderid,list.get(i).getTitle(),list.get(i).getImage(),list.get(i).getQuantity(),list.get(i).getDiscounted(),list.get(i).getProid());
             listCall.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    Toast.makeText(getContext(), String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
                     if (response.isSuccessful()){
                         Toast.makeText(getContext(), "Ordered", Toast.LENGTH_SHORT).show();
+                        }
+
+                    if (response.isSuccessful()&&d==list.size()-1){
+                        summary productfragment = new summary();
+                        FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
+                        FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+                        fragmentTransactionpro.replace(R.id.fragment, productfragment);
+                        fragmentTransactionpro.commit();
                     }
                 }
                 @Override

@@ -1,8 +1,10 @@
 package com.ali.ssb.Fragments;
 
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,6 +22,8 @@ import com.ali.ssb.dbhandler;
 import com.ali.ssb.holderclasses.holderwishlist;
 import com.ali.ssb.interfacesapi.singleforwishapi;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +41,7 @@ import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
  * Use the {@link wishlist#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class wishlist extends Fragment{
+public class wishlist extends Fragment implements holderwishlist.ondel,holderwishlist.oncart{
 
     RecyclerView recyclerView;
     List<modelwishlist> list;
@@ -80,63 +84,79 @@ public class wishlist extends Fragment{
         adapter=new holderwishlist(list,getContext());
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
+        adapter.onclick(this);
+        adapter.oncartclick(this);
         adapter.notifyDataSetChanged();
 
 
-
-//        dbhandler dbhandler1=new dbhandler(getContext());
-//        dbhandler1.deleteallwishlist();
-//        dbhandler1.close();
-
-
-
-//        for (i=0;i<lists.size();i++){
-//            SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-//
-//            String proid=lists.get(i);
-//                Retrofit retrofit = new Retrofit.Builder()
-//                        .baseUrl("http://"+prefs.getString("ipv4","10.0.2.2")+":5000/products/product/"+proid+"/")
-//                        .addConverterFactory(GsonConverterFactory.create())
-//                        .build();
-//                singleforwishapi api = retrofit.create(singleforwishapi.class);
-//                Call<modelsinglepro> listCall = api.list();
-//
-//                listCall.enqueue(new Callback<modelsinglepro>() {
-//                    @Override
-//                    public void onResponse(Call<modelsinglepro> call, Response<modelsinglepro> response) {
-//                        if (response.isSuccessful()){
-//                        dbhandler dbhandler1=new dbhandler(getContext());
-//                        dbhandler1.addtowishlistfordisplay(response.body().getPromotionRate(),response.body().getPromotionStatus(),response.body().getPromotionTill(),response.body().getBrandName(),response.body().get_id(),response.body().getName(),response.body().getDetail(),response.body().getImage(),response.body().getPrice(),response.body().getSize(),response.body().getColor(),response.body().getQuantity());
-//                        dbhandler1.close();
-//                        }
-//                    }
-//                    @Override
-//                    public void onFailure(Call<modelsinglepro> call, Throwable t) {
-//                    }
-//                });
-//        }
-
-
-
-
-
-//        if (recyclerView.getChildCount()==0 && list.isEmpty()){
-//            wishlistnull productfragment = new wishlistnull();
-//            FragmentManager fragmentManagerpro = getParentFragmentManager();
-//            FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
-//            fragmentTransactionpro.replace(R.id.fragment, productfragment);
-//            fragmentTransactionpro.commit();
-//        }
         return view;
     }
 
-//        if (recyclerView.getChildCount()==0 && list.isEmpty()){
-//            wishlistnull productfragment = new wishlistnull();
-//            FragmentManager fragmentManagerpro = getParentFragmentManager();
-//            FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
-//            fragmentTransactionpro.replace(R.id.fragment, productfragment);
-//            fragmentTransactionpro.commit();
-//
-//
-//    }
+    @Override
+    public void onclicker(int id) {
+        dbhandler dbhandler=new dbhandler(getContext());
+        dbhandler.deleteinwish(id);
+        list=dbhandler.retrievewishlist();
+        dbhandler.close();
+        recyclerView.hasFixedSize();
+
+        adapter=new holderwishlist(list,getContext());
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(adapter);
+        adapter.onclick(this);
+        adapter.oncartclick(this);
+        adapter.notifyDataSetChanged();
+
+    }
+
+    @Override
+    public void onclicker(String proid) {
+            SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+                        Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl("http://"+prefs.getString("ipv4","10.0.2.2")+":5000/products/product/"+proid+"/")
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+                singleforwishapi api = retrofit.create(singleforwishapi.class);
+                Call<modelsinglepro> listCall = api.list();
+
+                listCall.enqueue(new Callback<modelsinglepro>() {
+
+                    @RequiresApi(api = Build.VERSION_CODES.O)
+                    @Override
+                    public void onResponse(Call<modelsinglepro> call, Response<modelsinglepro> response) {
+                        if (response.isSuccessful()){
+
+                            dbhandler dbhandler=new dbhandler(getContext());
+                            if (response.body().getPromotionStatus().equals("accepted")){
+                                LocalDate currentDate = null;
+                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                                    currentDate = LocalDate.now(ZoneId.systemDefault());
+                                }
+
+                                LocalDate getDates = LocalDate.parse(response.body().getPromotionTill());
+
+                                if (currentDate.minusDays(1).isBefore(getDates)){
+                                    if (response.body().getPromotionRate().equals("none")||response.body().getPromotionRate().equals("0")){
+                                        dbhandler.addtocart(proid,response.body().getName(),response.body().getImage(),response.body().getDetail(),response.body().getPromotionRate(),"0",response.body().getColor(),response.body().getSize(),"1",Integer.valueOf(response.body().getQuantity()));
+                                    }
+                                    dbhandler.addtocart(proid,response.body().getName(),response.body().getImage(),response.body().getDetail(),response.body().getPromotionRate(),response.body().getPrice(),response.body().getColor(),response.body().getSize(),"1",Integer.valueOf(response.body().getQuantity()));
+                                }
+                                else {
+                                    dbhandler.addtocart(proid,response.body().getName(),response.body().getImage(),response.body().getDetail(),response.body().getPrice(),"0",response.body().getColor(),response.body().getSize(),"1",Integer.valueOf(response.body().getQuantity()));
+                                }
+                            }
+                            else {
+                            dbhandler.addtocart(proid,response.body().getName(),response.body().getImage(),response.body().getDetail(),response.body().getPrice(),"0",response.body().getColor(),response.body().getSize(),"1",Integer.valueOf(response.body().getQuantity()));}
+                            dbhandler.close();
+
+                            Toast.makeText(getContext(), "Added to cart", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), response.body().getPromotionRate(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<modelsinglepro> call, Throwable t) {
+                    }
+                });
+
+    }
 }

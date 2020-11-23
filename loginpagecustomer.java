@@ -135,6 +135,7 @@ public static final String MY_PREFS_NAME = "mydetails";
                             editor.putString("image", response.body().getAddress());
                             editor.putString("loginstatus","true");
                             editor.putString("image",response.body().getImage());
+                            editor.putString("ssbbalance","300");
                             editor.putString("phone", response.body().getCell());
 
                             editor.apply();

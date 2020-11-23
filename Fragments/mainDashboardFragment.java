@@ -31,6 +31,7 @@ import com.ali.ssb.holderclasses.holderclassproducts;
 import com.ali.ssb.holderclasses.holderproslider;
 import com.ali.ssb.interfacesapi.allproductsapi;
 import com.ali.ssb.interfacesapi.banerapi;
+import com.ali.ssb.interfacesapi.notificationcount;
 import com.ali.ssb.interfacesapi.shopsapi;
 import com.ali.ssb.Models.modelbanner;
 import com.ali.ssb.Models.modelcateg;
@@ -51,6 +52,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -142,6 +144,34 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
 //        dbhandler1.deleteallwishlist();
 //        dbhandler1.close();
 
+//countnotiapi
+        SharedPreferences prefsss = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+
+        Retrofit retrofitpros = new Retrofit.Builder()
+                .baseUrl("http://"+prefsss.getString("ipv4","10.0.2.2")+":5000/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        notificationcount apipros=retrofitpros.create(notificationcount.class);
+        Call<String> listCallpros=apipros.list("notifications/countCustomer");
+
+        listCallpros.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+//                Toast.makeText(getContext(), String.valueOf(response.body()),Toast.LENGTH_SHORT).show();
+                notification.setBadgeValue(Integer.valueOf(response.body()))
+                        .setBadgeOvalAfterFirst(true)
+                        .setMaxBadgeValue(999)
+                        .setBadgeTextStyle(Typeface.NORMAL)
+                        .setShowCounter(true)
+                        .setBadgePadding(4);
+
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+
+            }
+        });
         notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -155,12 +185,6 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
         });
 
         cart.setBadgeValue(count)
-                .setBadgeOvalAfterFirst(true)
-                .setMaxBadgeValue(999)
-                .setBadgeTextStyle(Typeface.NORMAL)
-                .setShowCounter(true)
-                .setBadgePadding(4);
-        notification.setBadgeValue(27)
                 .setBadgeOvalAfterFirst(true)
                 .setMaxBadgeValue(999)
                 .setBadgeTextStyle(Typeface.NORMAL)
