@@ -107,7 +107,6 @@ public class orderitems extends Fragment {
         listCall.enqueue(new Callback<List<modelorderitems>>() {
             @Override
             public void onResponse(Call<List<modelorderitems>> call, Response<List<modelorderitems>> response) {
-                Toast.makeText(getContext(), String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
 
                 if (response.isSuccessful()){
                     list=response.body();
@@ -117,6 +116,7 @@ public class orderitems extends Fragment {
                     recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false));
                     recyclerView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
+                    Toast.makeText(getContext(), "Items recieved By you", Toast.LENGTH_SHORT).show();
                 }
             }
 

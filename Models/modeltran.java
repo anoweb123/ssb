@@ -1,53 +1,80 @@
 package com.ali.ssb.Models;
 
 public class modeltran {
-    String price,date,type,name,time;
+    String total,paymentMethod,name,discount,status,paymentStatus,shipping,_id;
 
-    public modeltran(String price, String date, String type, String name, String time) {
-        this.price = price;
-        this.date = date;
-        this.type = type;
+    public modeltran(String total, String paymentMethod, String name, String discount, String status, String paymentStatus, String shipping, String _id) {
+        this.total = total;
+        this.paymentMethod = paymentMethod;
         this.name = name;
-        this.time = time;
+        this.discount = discount;
+        this.status = status;
+        this.paymentStatus = paymentStatus;
+        this.shipping = shipping;
+        this._id = _id;
     }
 
-    public String getPrice() {
-        return price;
+    public String get_id() {
+        return _id;
     }
 
-    public String getDate() {
-        return date;
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
-    public String getType() {
-        return type;
+    public String getTotal() {
+        return total;
+    }
+
+    public void setTotal(String total) {
+        this.total = total;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getTime() {
-        return time;
-    }
-
-    public void setPrice(String price) {
-        this.price = price;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public String getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(String discount) {
+        this.discount = discount;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
+    public String getShipping() {
+        return shipping;
+    }
+
+    public void setShipping(String shipping) {
+        this.shipping = shipping;
     }
 }

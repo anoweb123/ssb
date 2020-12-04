@@ -183,7 +183,6 @@ public class completedorders extends Fragment implements holdercompleted.onitems
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onResponse(Call<List<modelorderitems>> call, Response<List<modelorderitems>> response) {
-                Toast.makeText(getContext(), String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
 
                 List<modelorderitems> list;
                 if (response.isSuccessful()){
@@ -193,9 +192,8 @@ public class completedorders extends Fragment implements holdercompleted.onitems
                     dbhandler.deleteallincart();
                     for (int i=0;i<list.size();i++){
 
+                        if (Integer.parseInt(list.get(i).getProductId().getQuantity())>0){
                         if (list.get(i).getProductId().getPromotionStatus().equals("accepted")){
-
-
 
                                 LocalDate currentDate = null;
                                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -205,19 +203,23 @@ public class completedorders extends Fragment implements holdercompleted.onitems
                                 LocalDate getDates = LocalDate.parse(list.get(i).getProductId().getPromotionTill());
 
                                 if (currentDate.isBefore(getDates)){
-                                    dbhandler.addtocart(list.get(i).getProductId().get_id(),list.get(i).getProductName(),list.get(i).getImage(),"desc",list.get(i).getProductId().getPrice(),list.get(i).getProductId().getPromotionRate(),list.get(i).getProductId().getColor(),list.get(i).getProductId().getSize(),"1", Integer.parseInt(list.get(i).getProductId().getQuantity()));
+                                    dbhandler.addtocart(list.get(i).getProductId().get_id(),list.get(i).getProductName(),list.get(i).getImage(),list.get(i).getProductId().getDetail(),list.get(i).getProductId().getPromotionRate(),list.get(i).getProductId().getPrice(),list.get(i).getProductId().getColor(),list.get(i).getProductId().getSize(),"1", Integer.parseInt(list.get(i).getProductId().getQuantity()));
                                 }
 
                                 else {
-                                    dbhandler.addtocart(list.get(i).getProductId().get_id(),list.get(i).getProductName(),list.get(i).getImage(),list.get(i).getProductId().getDetail(),list.get(i).getProductId().getPrice(),list.get(i).getProductId().getPromotionRate(),list.get(i).getProductId().getColor(),list.get(i).getProductId().getSize(),"1", Integer.parseInt(list.get(i).getProductId().getQuantity()));
+                                    dbhandler.addtocart(list.get(i).getProductId().get_id(),list.get(i).getProductName(),list.get(i).getImage(),list.get(i).getProductId().getDetail(),list.get(i).getProductId().getPrice(),"0",list.get(i).getProductId().getColor(),list.get(i).getProductId().getSize(),"1", Integer.parseInt(list.get(i).getProductId().getQuantity()));
                                 }
                             }
 
                         else {
-                            dbhandler.addtocart(list.get(i).getProductId().get_id(),list.get(i).getProductName(),list.get(i).getImage(),list.get(i).getProductId().getDetail(),list.get(i).getProductId().getPrice(),list.get(i).getProductId().getPromotionRate(),list.get(i).getProductId().getColor(),list.get(i).getProductId().getSize(),"1", Integer.parseInt(list.get(i).getProductId().getQuantity()));
+                            dbhandler.addtocart(list.get(i).getProductId().get_id(),list.get(i).getProductName(),list.get(i).getImage(),list.get(i).getProductId().getDetail(),list.get(i).getProductId().getPrice(),"0",list.get(i).getProductId().getColor(),list.get(i).getProductId().getSize(),"1", Integer.parseInt(list.get(i).getProductId().getQuantity()));
                         }
 
                     shopincartid=list.get(i).getProductId().getUserId();
+                        }
+                        else {
+                            Toast.makeText(getContext(), "Product "+String.valueOf(i+1)+" is out of stock", Toast.LENGTH_SHORT).show();
+                        }
                     }
                     dbhandler.close();
                        SharedPreferences.Editor editor = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE).edit();

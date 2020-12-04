@@ -220,9 +220,7 @@ public class cart extends Fragment implements holdercart.ondel{
                 SharedPreferences.Editor editor = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE).edit();
                 editor.putString("shopincartid", "");
                 editor.apply();
-
             }
-
         }
         else {
             modelcarts.remove(position);
@@ -250,6 +248,7 @@ public class cart extends Fragment implements holdercart.ondel{
 
             totalpayable.setText("Rs. "+String.valueOf(tprice+Integer.parseInt(delcharges)));
             payable.setText("Rs. "+String.valueOf(tprice+Integer.parseInt(delcharges)));
+
             if (modelcarts.isEmpty() && recyclerView.getChildCount()==0){
                 nullcart productfragment = new nullcart();
                 FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();

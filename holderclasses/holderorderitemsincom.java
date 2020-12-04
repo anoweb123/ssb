@@ -49,7 +49,7 @@ public class holderorderitemsincom extends RecyclerView.Adapter<holderorderitems
         holder.title.setText(list.get(position).getProductName());
         holder.color.setText("Color: "+list.get(position).getProductId().getColor());
         holder.size.setText("Size:" +list.get(position).getProductId().getSize());
-        holder.quan.setText("Qty: "+list.get(position).getProductId().getQuantity());
+        holder.quan.setText("Qty: "+list.get(position).getQuantity());
         holder.discount.setText("Rs. "+list.get(position).getProductId().getPrice());
         holder.discount.setPaintFlags(holder.discount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         holder.price.setText("Rs. "+list.get(position).getProductId().getPromotionRate());

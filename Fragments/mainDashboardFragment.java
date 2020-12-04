@@ -267,9 +267,17 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
             @Override
             public void onResponse(Call<List<modelbaner>> call, Response<List<modelbaner>> response) {
                 if (response.isSuccessful()){
-
                     modelsliders=response.body();
-                    sliderbanneradapter= new sliderbanneradapter(modelsliders,getContext());
+
+                    List<modelbaner> modelsliders2 = new ArrayList<>();
+
+                    for (int i=0;i<modelsliders.size();i++){
+                    if (!response.body().get(i).getStatus().equals("Approved")){}
+                    else {
+                        modelsliders2.add(modelsliders.get(i));
+                    }
+                    }
+                    sliderbanneradapter= new sliderbanneradapter(modelsliders2,getContext());
                     sliderView.setSliderAdapter(sliderbanneradapter);
                     sliderbanneradapter.setonbanerclicklistener(mainDashboardFragment.this);
 

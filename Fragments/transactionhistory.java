@@ -1,5 +1,7 @@
 package com.ali.ssb.Fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -13,12 +15,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.ali.ssb.Models.modelcompleted;
 import com.ali.ssb.R;
+import com.ali.ssb.holderclasses.holdercompleted;
 import com.ali.ssb.holderclasses.holdertrans;
 import com.ali.ssb.Models.modeltran;
+import com.ali.ssb.interfacesapi.apifortrans;
+import com.ali.ssb.interfacesapi.completedorderapi;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.ali.ssb.Fragments.profilecustomer.MY_PREFS_NAME;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -90,20 +104,45 @@ public class transactionhistory extends Fragment {
             }
         });
 
+        SharedPreferences prefss=getContext().getSharedPreferences(MY_PREFS_NAME, Context.MODE_PRIVATE);
+
+        String userid=prefss.getString("customerid","");
+
+        Retrofit retrofitpro = new Retrofit.Builder()
+                .baseUrl("http://"+prefss.getString("ipv4","10.0.2.2")+":5000/orders/completedOrder/"+userid+"/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        apifortrans apipro=retrofitpro.create(apifortrans.class);
+        Call<List<modeltran>> listCallpro=apipro.list();
 
 
-        recyclerView=view.findViewById(R.id.rectran);
-        recyclerView.hasFixedSize();
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        list=new ArrayList<>();
-        list.add(new modeltran("3000","2-sep-2020","Credit card payment","Aleena amir","02:03:30"));
-        list.add(new modeltran("3000","2-sep-2020","Credit card payment","Aleena amir","02:03:30"));
-        list.add(new modeltran("3000","2-sep-2020","Credit card payment","Aleena amir","02:03:30"));
-        list.add(new modeltran("3000","2-sep-2020","Credit card payment","Aleena amir","02:03:30"));
+        listCallpro.enqueue(new Callback<List<modeltran>>() {
+            @Override
+            public void onResponse(Call<List<modeltran>> call, Response<List<modeltran>> response) {
 
-        holdertrans=new holdertrans(list,getContext());
-        recyclerView.setAdapter(holdertrans);
-        holdertrans.notifyDataSetChanged();
+                list=response.body();
+                recyclerView=view.findViewById(R.id.rectran);
+                recyclerView.hasFixedSize();
+                recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+                holdertrans=new holdertrans(list,getContext());
+                recyclerView.setAdapter(holdertrans);
+                holdertrans.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onFailure(Call<List<modeltran>> call, Throwable t) {
+
+            }
+        });
+
+
+
+
+
+
+
 
         return view;
     }

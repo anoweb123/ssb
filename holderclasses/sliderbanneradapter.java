@@ -16,6 +16,7 @@ import com.ali.ssb.Models.modelbaner;
 import com.ali.ssb.Models.modelbanner;
 import com.ali.ssb.R;
 import com.smarteist.autoimageslider.SliderViewAdapter;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -49,14 +50,15 @@ public class sliderbanneradapter extends SliderViewAdapter<sliderbanneradapter.h
     @Override
     public void onBindViewHolder(holder holder, int position) {
         SharedPreferences s=context.getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE);
-        Picasso.get().load(modelbaner.get(position).getImage().replaceFirst("localhost",s.getString("ipv4","10.0.2.2"))).into(holder.imageView);
+
+        Picasso.get().load(modelbaner.get(position).getImage().replaceFirst("localhost",s.getString("ipv4","10.0.2.2"))).networkPolicy(NetworkPolicy.NO_STORE).into(holder.imageView);
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try{
                     monbanerclicklistener.onbanerclick(modelbaner.get(position).getShopId().get_id(),"","","");
-                Toast.makeText(context, String.valueOf(modelbaner.get(position).getShopId().get_id()), Toast.LENGTH_SHORT).show();}
+                }
                 catch (Exception e){
                     Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }

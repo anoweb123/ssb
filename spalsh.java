@@ -30,10 +30,6 @@ public class spalsh extends AppCompatActivity {
         editor.putString("onback","");
         editor.apply();
 
-//        status = prefs.getString("loginstatus", "Null");
-//        if (status.equals("true")) {
-//            startActivity(new Intent(spalsh.this, dashboardcustomer.class));
-//        } else {
             View decorView = getWindow().getDecorView();
 // Hide the status bar.
             int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
@@ -54,7 +50,7 @@ public class spalsh extends AppCompatActivity {
                     //The following code will execute after the 5 seconds.
                     try {
                         if (a == 0) {
-                            //Go to next page i.e, start the next activity.
+//                            Go to next page i.e, start the next activity.
                             Intent intent = new Intent(getApplicationContext(), splashscreen.class);
                             startActivity(intent);
                         }
@@ -74,8 +70,17 @@ public class spalsh extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
         status = prefs.getString("loginstatus", "Null");
         if (status.equals("true")) {
+
+            findViewById(R.id.next).setVisibility(View.INVISIBLE);
             a=1;
-            startActivity(new Intent(spalsh.this, dashboardcustomer.class));
+            mWaitHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startActivity(new Intent(spalsh.this, dashboardcustomer.class));
+                }
+            }, 1000);
+
+
         }
     }
 }

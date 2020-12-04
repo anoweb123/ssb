@@ -198,6 +198,13 @@ public class checkoutpage extends Fragment{
                     FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
                     FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
                     fragmentTransactionpro.replace(R.id.fragment, productfragment);
+                    Bundle bundle=new Bundle();
+                    bundle.putString("name",sname);
+                    bundle.putString("address",saddress);
+                    bundle.putString("city",scity);
+                    bundle.putString("pastal",spostl);
+                    bundle.putString("phone",sphone);
+                    productfragment.setArguments(bundle);
                     fragmentTransactionpro.commit();
                 }
             }

@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ali.ssb.Models.modelslider;
 import com.ali.ssb.R;
+import com.google.android.material.chip.Chip;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -119,7 +120,7 @@ public class adaperslider extends RecyclerView.Adapter<adaperslider.holder> {
             holder.promo.setVisibility(View.INVISIBLE);
         }
         else{
-            holder.promo.setText("Flat "+promorate.concat("%"));
+            holder.promo.setText(" Flat "+promorate.concat("% off "));
         }
 
         }
@@ -149,7 +150,7 @@ public class adaperslider extends RecyclerView.Adapter<adaperslider.holder> {
     public class holder extends RecyclerView.ViewHolder {
         ImageView imageView;
         TextView title,cat;
-        ExtendedFloatingActionButton promo;
+        Chip promo;
         public holder(@NonNull View itemView) {
             super(itemView);
             imageView=itemView.findViewById(R.id.img);

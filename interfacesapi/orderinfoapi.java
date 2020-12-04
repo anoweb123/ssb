@@ -26,6 +26,7 @@ public interface orderinfoapi {
             @Field("totalbill") String grandtotal,
             @Field("shopId") String shopid,
             @Field("tax") String tax,
+            @Field("deliveryCharges") int deliveryCharges,
             @Field("longnitude") String longnitude,
             @Field("latitude") String latitude,
             @Field("paymentMethod") String paymentmethod,

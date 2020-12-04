@@ -102,6 +102,8 @@ int d=0;
         cashondel=view.findViewById(R.id.cashondel);
 
 
+
+
         pay=view.findViewById(R.id.payment);
         pay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,6 +196,7 @@ int d=0;
         lon=editor.getString("longitude", "");
 
 
+
         SharedPreferences preferences=getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
 
         dbhandler dbhandler=new dbhandler(getContext());
@@ -207,7 +210,7 @@ int d=0;
 
 
         orderinfoapi api = retrofit.create(orderinfoapi.class);
-        Call<modelreturnoforderinfo> listCall = api.response(preferences.getString("name","name"),preferences.getString("customerid",""),preferences.getString("address","address"),preferences.getString("phone","123"),tot,dis,delcharge,grand,shopid,"0",lon,lat,paymentmethodorder,paymentstatusorder);
+        Call<modelreturnoforderinfo> listCall = api.response(getArguments().getString("name"),preferences.getString("customerid",""),getArguments().getString("address"),getArguments().getString("phone"),tot,dis,delcharge,grand,shopid,"0",Integer.parseInt(delcharge),lon,lat,paymentmethodorder,paymentstatusorder);
 
         listCall.enqueue(new Callback<modelreturnoforderinfo>() {
             @Override

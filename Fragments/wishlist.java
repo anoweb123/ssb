@@ -1,12 +1,14 @@
 package com.ali.ssb.Fragments;
 
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,6 +34,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import ru.nikartm.support.ImageBadgeView;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
@@ -45,6 +48,8 @@ public class wishlist extends Fragment implements holderwishlist.ondel,holderwis
 
     RecyclerView recyclerView;
     List<modelwishlist> list;
+    ImageBadgeView cart;
+    int count;
 
     holderwishlist adapter;
     private static final String ARG_PARAM1 = "param1";
@@ -75,10 +80,33 @@ public class wishlist extends Fragment implements holderwishlist.ondel,holderwis
         View view = inflater.inflate(R.layout.fragment_wishlist, container, false);
         recyclerView=view.findViewById(R.id.rec);
 
+
+        cart=view.findViewById(R.id.cart);
+
+
+
         dbhandler dbhandler=new dbhandler(getContext());
+        count=dbhandler.countitems();
         list=dbhandler.retrievewishlist();
         Toast.makeText(getContext(), String.valueOf(list.size()), Toast.LENGTH_SHORT).show();
         dbhandler.close();
+
+        cart.setBadgeValue(count)
+                .setBadgeOvalAfterFirst(true)
+                .setMaxBadgeValue(999)
+                .setBadgeTextStyle(Typeface.NORMAL)
+                .setShowCounter(true);
+
+        cart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cart cart = new cart();
+                FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+                fragmentTransactionpro.replace(R.id.fragment, cart);
+                fragmentTransactionpro.commit();
+            }
+        });
 
         recyclerView.hasFixedSize();
         adapter=new holderwishlist(list,getContext());
