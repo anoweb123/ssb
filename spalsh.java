@@ -79,8 +79,6 @@ public class spalsh extends AppCompatActivity {
                     startActivity(new Intent(spalsh.this, dashboardcustomer.class));
                 }
             }, 1000);
-
-
         }
     }
 }
