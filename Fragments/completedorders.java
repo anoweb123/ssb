@@ -110,7 +110,7 @@ public class completedorders extends Fragment implements holdercompleted.onitems
             @Override
             public void onClick(View v) {
                 morefragment productfragment = new morefragment();
-                FragmentManager fragmentManagerpro =getChildFragmentManager();
+                FragmentManager fragmentManagerpro =getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
                 fragmentTransactionpro.replace(R.id.fragment, productfragment);
                 fragmentTransactionpro.commit();
@@ -193,7 +193,7 @@ public class completedorders extends Fragment implements holdercompleted.onitems
                     for (int i=0;i<list.size();i++){
 
                         if (Integer.parseInt(list.get(i).getProductId().getQuantity())>0){
-                        if (list.get(i).getProductId().getPromotionStatus().equals("accepted")){
+                            if (list.get(i).getProductId().getPromotionStatus().equals("accepted")){
 
                                 LocalDate currentDate = null;
                                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -211,28 +211,28 @@ public class completedorders extends Fragment implements holdercompleted.onitems
                                 }
                             }
 
-                        else {
-                            dbhandler.addtocart(list.get(i).getProductId().get_id(),list.get(i).getProductName(),list.get(i).getImage(),list.get(i).getProductId().getDetail(),list.get(i).getProductId().getPrice(),"0",list.get(i).getProductId().getColor(),list.get(i).getProductId().getSize(),"1", Integer.parseInt(list.get(i).getProductId().getQuantity()));
-                        }
+                            else {
+                                dbhandler.addtocart(list.get(i).getProductId().get_id(),list.get(i).getProductName(),list.get(i).getImage(),list.get(i).getProductId().getDetail(),list.get(i).getProductId().getPrice(),"0",list.get(i).getProductId().getColor(),list.get(i).getProductId().getSize(),"1", Integer.parseInt(list.get(i).getProductId().getQuantity()));
+                            }
 
-                    shopincartid=list.get(i).getProductId().getUserId();
+                            shopincartid=list.get(i).getProductId().getUserId();
                         }
                         else {
                             Toast.makeText(getContext(), "Product "+String.valueOf(i+1)+" is out of stock", Toast.LENGTH_SHORT).show();
                         }
                     }
                     dbhandler.close();
-                       SharedPreferences.Editor editor = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE).edit();
-                        editor.putString("shopincartid", shopincartid);
-                        editor.putString("deliverycharges","200");
-                        editor.apply();
+                    SharedPreferences.Editor editor = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE).edit();
+                    editor.putString("shopincartid", shopincartid);
+                    editor.putString("deliverycharges","200");
+                    editor.apply();
 
 
-                        cart productfragment = new cart();
-                        FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
-                        FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
-                        fragmentTransactionpro.replace(R.id.fragment, productfragment);
-                        fragmentTransactionpro.commit();
+                    cart productfragment = new cart();
+                    FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
+                    FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+                    fragmentTransactionpro.replace(R.id.fragment, productfragment);
+                    fragmentTransactionpro.commit();
 
 
 

@@ -50,7 +50,7 @@ public class spalsh extends AppCompatActivity {
                     //The following code will execute after the 5 seconds.
                     try {
                         if (a == 0) {
-//                            Go to next page i.e, start the next activity.
+                            //Go to next page i.e, start the next activity.
                             Intent intent = new Intent(getApplicationContext(), splashscreen.class);
                             startActivity(intent);
                         }
@@ -62,7 +62,6 @@ public class spalsh extends AppCompatActivity {
                 }
             }, 5000);
         }
-//    }
     @Override
     protected void onStart() {
         super.onStart();
@@ -70,15 +69,23 @@ public class spalsh extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
         status = prefs.getString("loginstatus", "Null");
         if (status.equals("true")) {
+            a=1;
 
             findViewById(R.id.next).setVisibility(View.INVISIBLE);
-            a=1;
             mWaitHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    startActivity(new Intent(spalsh.this, dashboardcustomer.class));
+                    //The following code will execute after the 5 seconds.
+                    try {
+
+                        startActivity(new Intent(spalsh.this, dashboardcustomer.class));
+                        //Let's Finish Splash Activity since we don't want to show this when user press back button.
+                        finish();
+                    } catch (Exception ignored) {
+                        ignored.printStackTrace();
+                    }
                 }
             }, 1000);
         }
+        }
     }
-}

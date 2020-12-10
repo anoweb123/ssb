@@ -1,80 +1,122 @@
 package com.ali.ssb.Fragments;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.SearchView;
+import android.widget.Toast;
 
+import com.ali.ssb.Models.modelallpro;
+import com.ali.ssb.Models.modelslider;
 import com.ali.ssb.R;
 import com.ali.ssb.dbhandler;
+import com.ali.ssb.holderclasses.adaperslider;
+import com.ali.ssb.holderclasses.holderallpro;
+import com.ali.ssb.interfacesapi.allproductsapi;
+import com.ali.ssb.interfacesapi.shopsapi;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link searchfragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static android.content.Context.MODE_PRIVATE;
+import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
+
+
 public class searchfragment extends Fragment {
 
     EditText search;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public searchfragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment searchfragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static searchfragment newInstance(String param1, String param2) {
-        searchfragment fragment = new searchfragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    SearchView searchView;
+    RecyclerView recyclerView;
+    ArrayList<modelallpro> list;
+    holderallpro adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-
         View view= inflater.inflate(R.layout.fragment_searchfragment, container, false);
-        search=view.findViewById(R.id.search);
-        search.requestFocus();
 
 
-//        dbhandler dbhandler1=new dbhandler(getContext());
-//        dbhandler1.deleteallwishlist();
-//        dbhandler1.close();
+        recyclerView=view.findViewById(R.id.rec);
+        searchView=view.findViewById(R.id.searchview);
+        searchView.requestFocus();
+
+
+
+        list = new ArrayList<>();
+        SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://"+prefs.getString("ipv4","10.0.2.2")+":5000/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        final allproductsapi api=retrofit.create(allproductsapi.class);
+        Call<List<modelallpro>> listCall=api.listCall();
+
+        listCall.enqueue(new Callback<List<modelallpro>>() {
+            @Override
+            public void onResponse(Call<List<modelallpro>> call, Response<List<modelallpro>> response) {
+                Toast.makeText(getContext(), String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
+                if (response.isSuccessful()){
+                    list.addAll(response.body());
+                    adapter = new holderallpro(list, getContext());
+                    recyclerView.setHasFixedSize(true);
+                    final LinearLayoutManager manager=new GridLayoutManager(getContext(),2);
+                    recyclerView.setLayoutManager(manager);
+                    recyclerView.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                        @Override
+                        public boolean onQueryTextSubmit(String query) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onQueryTextChange(String newText) {
+                            if (adapter!=null){
+                                adapter.getFilter().filter(newText);
+                            }
+                            else
+                            {
+                                Toast.makeText(getActivity(), "work", Toast.LENGTH_SHORT).show();
+                            }
+                            return false;
+                        }
+                    });
+                    adapter.notifyDataSetChanged();
+//                    adapter.setonshopclicklistener(mainDashboardFragment.this);
+//                    load.setVisibility(View.INVISIBLE);
+//                    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+//                    frag.setAlpha((float) 1.0);
+
+                }
+            }
+            @Override
+            public void onFailure(Call<List<modelallpro>> call, Throwable t) {
+                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+//                shopsapi();
+            }
+        });
+
+
+
 
         return view;
     }

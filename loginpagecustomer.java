@@ -135,8 +135,8 @@ public static final String MY_PREFS_NAME = "mydetails";
                             editor.putString("image", response.body().getAddress());
                             editor.putString("loginstatus","true");
                             editor.putString("image",response.body().getImage());
-                            editor.putString("ssbbalance","300");
                             editor.putString("phone", response.body().getCell());
+                            editor.putString("notification", "");
 
                             editor.apply();
 
@@ -169,39 +169,4 @@ public static final String MY_PREFS_NAME = "mydetails";
             }
         });
     }
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if(resultCode==1)
-//        {
-//
-//            String name = data.getStringExtra("name");
-//            String email = data.getStringExtra("email");
-//            String password = data.getStringExtra("password");
-//
-//            app.getEmailPasswordAuth().registerUserAsync(email, password, new App.Callback<Void>() {
-//                @Override
-//                public void onResult(App.Result<Void> it) {
-//                    if (it.isSuccess()) {
-//                        Toast.makeText(loginpagecustomer.this, "Email sent", Toast.LENGTH_SHORT).show();
-//                    } else {
-//                        Toast.makeText(loginpagecustomer.this, it.getError().toString(), Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//            });
-//
-//            app.getEmailPasswordAuth().confirmUserAsync("haiderzafar055@gmail.com", "5f43c0dcd1f4112edeca7463", new App.Callback<Void>() {
-//                @Override
-//                public void onResult(App.Result<Void> it) {
-//                    if (it.isSuccess()) {
-//                        Toast.makeText(loginpagecustomer.this, "", Toast.LENGTH_SHORT).show();
-//                    } else {
-//                        Toast.makeText(loginpagecustomer.this, it.getError().toString(), Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//            });
-
-
-
-//        }
     }

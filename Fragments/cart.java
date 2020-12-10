@@ -43,7 +43,7 @@ public class cart extends Fragment implements holdercart.ondel{
     RecyclerView recyclerView;
     List<modelcart> modelcarts;
     holdercart adapter;
-    TextView totalprice,totalpayable,totaldiscount,payable,delcharge;
+    TextView totalprice,totalpayable,totaldiscount,payable,delcharge,withoutdiscount;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -102,6 +102,7 @@ public class cart extends Fragment implements holdercart.ondel{
 
         recyclerView=view.findViewById(R.id.rec);
         totalprice=view.findViewById(R.id.totalprice);
+        withoutdiscount=view.findViewById(R.id.without);
         totaldiscount=view.findViewById(R.id.totaldiscount);
         totalpayable=view.findViewById(R.id.totalpayable);
         payable=view.findViewById(R.id.payable);
@@ -124,6 +125,7 @@ public class cart extends Fragment implements holdercart.ondel{
         int tprice=dbhandler1.totalprice();
         totalprice.setText("Rs. "+String.valueOf(tprice));
         totaldiscount.setText("Rs. "+String.valueOf(dbhandler1.totaldiscount()));
+        withoutdiscount.setText("Rs. "+String.valueOf(dbhandler1.totalpricewithoutdiscount()));
         dbhandler1.close();
 //
         totalpayable.setText("Rs. "+String.valueOf(tprice+Integer.parseInt(delcharges)));
@@ -199,6 +201,7 @@ public class cart extends Fragment implements holdercart.ondel{
             int tprice=dbhandler.totalprice();
             totalprice.setText("Rs. "+String.valueOf(tprice));
             totaldiscount.setText("Rs. "+String.valueOf(dbhandler.totaldiscount()));
+            withoutdiscount.setText("Rs. "+String.valueOf(dbhandler.totalpricewithoutdiscount()));
             dbhandler.close();
 
 
@@ -220,7 +223,9 @@ public class cart extends Fragment implements holdercart.ondel{
                 SharedPreferences.Editor editor = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE).edit();
                 editor.putString("shopincartid", "");
                 editor.apply();
+
             }
+
         }
         else {
             modelcarts.remove(position);
@@ -239,6 +244,7 @@ public class cart extends Fragment implements holdercart.ondel{
             int tprice=dbhandler.totalprice();
             totalprice.setText("Rs. "+String.valueOf(tprice));
             totaldiscount.setText("Rs. "+String.valueOf(dbhandler.totaldiscount()));
+            withoutdiscount.setText("Rs. "+String.valueOf(dbhandler.totalpricewithoutdiscount()));
             dbhandler.close();
 
             SharedPreferences preferences=getContext().getSharedPreferences(MY_PREFS_forcart,MODE_PRIVATE);
@@ -248,7 +254,6 @@ public class cart extends Fragment implements holdercart.ondel{
 
             totalpayable.setText("Rs. "+String.valueOf(tprice+Integer.parseInt(delcharges)));
             payable.setText("Rs. "+String.valueOf(tprice+Integer.parseInt(delcharges)));
-
             if (modelcarts.isEmpty() && recyclerView.getChildCount()==0){
                 nullcart productfragment = new nullcart();
                 FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();

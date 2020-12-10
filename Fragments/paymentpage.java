@@ -17,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
+import com.ali.ssb.Fragments.summary;
 import com.ali.ssb.Models.modelcart;
 import com.ali.ssb.Models.modelreturnoforderinfo;
 import com.ali.ssb.R;
@@ -44,7 +45,7 @@ import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
  */
 public class paymentpage extends Fragment {
     ssbprice ssbprice;
-int d=0;
+    int d=0;
     String shopid,orderid;
     public static String MY_PREFS_forcart="MY_PREFS_forcart";
     Button pay;
@@ -97,7 +98,7 @@ int d=0;
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_paymentpage, container, false);
-        checkBoxssb=view.findViewById(R.id.ssbcheck);
+//        checkBoxssb=view.findViewById(R.id.ssbcheck);
         checkBoxcredit=view.findViewById(R.id.creditcardcheck);
         cashondel=view.findViewById(R.id.cashondel);
 
@@ -108,9 +109,6 @@ int d=0;
         pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-
 
 //                summary productfragment = new summary();
 //                FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
@@ -123,28 +121,31 @@ int d=0;
                 Toast.makeText(getContext(), "Ordering please wait", Toast.LENGTH_SHORT).show();
                 getinfoapi();
 
-
-
-
-
             }
         });
-        checkBoxssb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-
-                    paymentmethodorder="Creditcard";
-                    paymentstatusorder="Paid by ssb";
-
-                    ssbprice = new ssbprice();
-                    FragmentManager fragmentManagerpro =getActivity().getSupportFragmentManager();
-                    FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
-                    fragmentTransactionpro.replace(R.id.ssb, ssbprice);
-                    fragmentTransactionpro.commit();
-                }
-            }
-        });
+//        checkBoxssb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked){
+//
+//                    paymentmethodorder="Creditcard";
+//                    paymentstatusorder="Paid by ssb";
+//
+//                    ssbprice = new ssbprice();
+//                    FragmentManager fragmentManagerpro =getActivity().getSupportFragmentManager();
+//                    FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+//                    fragmentTransactionpro.replace(R.id.ssb, ssbprice);
+//                    fragmentTransactionpro.commit();
+//                }
+//                else {
+//                    ssbprice = new ssbprice();
+//                    FragmentManager fragmentManagerpro =getActivity().getSupportFragmentManager();
+//                    FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+//                    fragmentTransactionpro.remove(ssbprice);
+//                    fragmentTransactionpro.commit();
+//                }
+//            }
+//        });
 
         checkBoxcredit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -152,7 +153,6 @@ int d=0;
                 if (isChecked){
                     paymentmethodorder="Creditcard";
                     paymentstatusorder="Paid by creditcard";
-//                    creditcardprice = new creditcardprice();
 //                    FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
 //                    FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
 //                    fragmentTransactionpro.add(R.id.credit, creditcardprice);
@@ -163,8 +163,8 @@ int d=0;
 //                    getChildFragmentManager().beginTransaction().remove(fragment).commit();
 //                }
 
-                Intent intent=new Intent(getActivity(),checkoutpaymentstipe.class);
-                startActivity(intent);
+                    Intent intent=new Intent(getActivity(),checkoutpaymentstipe.class);
+                    startActivity(intent);
                 }
 
             }
@@ -208,9 +208,12 @@ int d=0;
 
         String grand=String.valueOf(Integer.valueOf(tot)+Integer.valueOf(delcharge));
 
+        dbhandler dbhandler1=new dbhandler(getContext());
+        String tax_actualprice=String.valueOf(dbhandler1.totalpricewithoutdiscount());
 
         orderinfoapi api = retrofit.create(orderinfoapi.class);
-        Call<modelreturnoforderinfo> listCall = api.response(getArguments().getString("name"),preferences.getString("customerid",""),getArguments().getString("address"),getArguments().getString("phone"),tot,dis,delcharge,grand,shopid,"0",Integer.parseInt(delcharge),lon,lat,paymentmethodorder,paymentstatusorder);
+        Call<modelreturnoforderinfo> listCall = api.response(getArguments().getString("name"),preferences.getString("customerid",""),getArguments().getString("address"),getArguments().getString("phone"),tot,dis,delcharge,grand,shopid,tax_actualprice,Integer.parseInt(delcharge),lon,lat,paymentmethodorder,paymentstatusorder);
+        dbhandler1.close();
 
         listCall.enqueue(new Callback<modelreturnoforderinfo>() {
             @Override
@@ -234,7 +237,6 @@ int d=0;
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-
         dbhandler dbhandler=new dbhandler(getContext());
         List<modelcart> list=dbhandler.retrievecart();
         dbhandler.close();
@@ -249,14 +251,15 @@ int d=0;
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.isSuccessful()){
                         Toast.makeText(getContext(), "Ordered", Toast.LENGTH_SHORT).show();
-                        }
+                    }
 
-                    if (response.isSuccessful()&&d==list.size()-1){
+                    if (response.isSuccessful() && d==list.size()-1){
                         summary productfragment = new summary();
                         FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
                         FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
                         fragmentTransactionpro.replace(R.id.fragment, productfragment);
                         fragmentTransactionpro.commit();
+
                     }
                 }
                 @Override

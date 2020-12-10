@@ -1,7 +1,6 @@
 package com.ali.ssb.Fragments;
 
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -20,7 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ali.ssb.R;
-import com.ali.ssb.dbhandler;
 import com.ali.ssb.holderclasses.holdercategoryinshop;
 import com.ali.ssb.holderclasses.holderproductbyshop;
 import com.ali.ssb.interfacesapi.categoryinshopapi;
@@ -36,7 +34,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import ru.nikartm.support.ImageBadgeView;
 
 import static android.content.Context.MODE_PRIVATE;
 import static androidx.constraintlayout.motion.utils.Oscillator.TAG;
@@ -62,9 +59,7 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
     List<modelproductbyshop> modelpro;
     List<modelcategoryinshop> modellist;
     RecyclerView recyclercat;
-    int count;
 
-    ImageBadgeView cart;
 
     RecyclerView recyclerView;
     // TODO: Rename and change types of parameters
@@ -115,34 +110,11 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
         modelpro = new ArrayList<>();
         modellist = new ArrayList<>();
 
-        cart=view.findViewById(R.id.cart);
-
         idd=getArguments().getString("shopid");
         namee=getArguments().getString("shopname");
         catt=getArguments().getString("shopcat");
         delcharges=getArguments().getString("delcharges");
         promorate=getArguments().getString("promorate");
-
-        dbhandler dbhandler=new dbhandler(getContext());
-        count=dbhandler.countitems();
-        dbhandler.close();
-
-        cart.setBadgeValue(count)
-                .setBadgeOvalAfterFirst(true)
-                .setMaxBadgeValue(999)
-                .setBadgeTextStyle(Typeface.NORMAL)
-                .setShowCounter(true);
-
-        cart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cart cart = new cart();
-                FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
-                fragmentTransactionpro.replace(R.id.fragment, cart);
-                fragmentTransactionpro.commit();
-            }
-        });
 
         cat.setText(catt);
         name.setText(namee);
@@ -211,6 +183,7 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
         productfragment.setArguments(bundle);
         fragmentTransactionpro.replace(R.id.fragment, productfragment);
         fragmentTransactionpro.commit();
+        Toast.makeText(getContext(), proid, Toast.LENGTH_SHORT).show();
     }
     @Override
     public void onshopqclick(String id, String name, final String offrate) {

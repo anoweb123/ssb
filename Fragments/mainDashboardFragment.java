@@ -1,10 +1,19 @@
 package com.ali.ssb.Fragments;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -12,6 +21,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.renderscript.RenderScript;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +34,7 @@ import android.widget.Toast;
 
 import com.ali.ssb.Models.modelbaner;
 import com.ali.ssb.R;
+import com.ali.ssb.dashboardcustomer;
 import com.ali.ssb.dbhandler;
 import com.ali.ssb.holderclasses.adaperslider;
 import com.ali.ssb.holderclasses.holdercategory;
@@ -61,12 +72,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import ru.nikartm.support.ImageBadgeView;
 
 import static android.content.Context.MODE_PRIVATE;
+import static android.content.Context.NOTIFICATION_SERVICE;
 import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
 
 public class mainDashboardFragment extends Fragment implements holderclassproducts.onproclicklistener,adaperslider.onshopclicklistener,holderproslider.onproclicklistener,holdercategory.oncatclicklistener,sliderbanneradapter.onbanerclicklistener {
     ImageView menu;
+    String notify_count;
     ImageBadgeView cart,notification;
     ProgressBar load;
+
+    public static String CHannel_ID="my id";
 
     String category="";
     BottomNavigationView bottomNavigationView;
@@ -108,6 +123,10 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
         dbhandler dbhandler=new dbhandler(getContext());
         count=dbhandler.countitems();
         dbhandler.close();
+
+        SharedPreferences sharedPreferences=getContext().getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE);
+        notify_count= sharedPreferences.getString("notification","");
+
 
         String dateStr = "04/05/2010";
 
@@ -165,6 +184,37 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
                         .setShowCounter(true)
                         .setBadgePadding(4);
 
+                if (notify_count.equals("")){}
+                else {
+                    if (Integer.valueOf(notify_count)<Integer.valueOf(response.body())){
+
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            NotificationChannel notificationChannel = new NotificationChannel(CHannel_ID, "personal", NotificationManager.IMPORTANCE_DEFAULT);
+                            notificationChannel.setDescription("heloo");
+                            NotificationManager notificationManager=(NotificationManager)getActivity().getSystemService(NOTIFICATION_SERVICE);
+                            notificationManager.createNotificationChannel(notificationChannel);
+                        }
+
+                        //        Intent mintent=new Intent(getContext(),dashboardcustomer.class);
+                        //        mintent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK & Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        //
+                        //        PendingIntent pendingIntent=PendingIntent.getActivities(getActivity(),0, new Intent[]{mintent},PendingIntent.FLAG_ONE_SHOT);
+
+                        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext(),CHannel_ID)
+                                .setSmallIcon(R.drawable.notification)
+                                .setContentTitle("SSB Notification")
+                                .setPriority(Notification.PRIORITY_DEFAULT)
+                                .setContentText("You may have a new notification, Go and check for latest deals and discounts");
+
+                        //        mBuilder.setContentIntent(pendingIntent);
+
+                        NotificationManager mNotificationManager = (NotificationManager)getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                        mNotificationManager.notify(001, mBuilder.build());
+
+
+                    }
+                }
             }
 
             @Override
@@ -172,6 +222,11 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
 
             }
         });
+
+
+
+
+
         notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -267,17 +322,9 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
             @Override
             public void onResponse(Call<List<modelbaner>> call, Response<List<modelbaner>> response) {
                 if (response.isSuccessful()){
+
                     modelsliders=response.body();
-
-                    List<modelbaner> modelsliders2 = new ArrayList<>();
-
-                    for (int i=0;i<modelsliders.size();i++){
-                    if (!response.body().get(i).getStatus().equals("Approved")){}
-                    else {
-                        modelsliders2.add(modelsliders.get(i));
-                    }
-                    }
-                    sliderbanneradapter= new sliderbanneradapter(modelsliders2,getContext());
+                    sliderbanneradapter= new sliderbanneradapter(modelsliders,getContext());
                     sliderView.setSliderAdapter(sliderbanneradapter);
                     sliderbanneradapter.setonbanerclicklistener(mainDashboardFragment.this);
 
@@ -299,19 +346,19 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
 
 
 //productsondashboardslider
-        list.add(new modelproductslider(R.drawable.shirt,"Brochur","1500","2000"));
-        list.add(new modelproductslider(R.drawable.shirt,"Brochur","1500","2000"));
-        list.add(new modelproductslider(R.drawable.shirt,"nickie","1500","2000"));
-        list.add(new modelproductslider(R.drawable.shirt,"nickie","1500","2000"));
-        list.add(new modelproductslider(R.drawable.shirt,"Brochurenickienickienickie","1500","2000"));
-        list.add(new modelproductslider(R.drawable.shirt,"Brochur","1500","2000"));
-
-        recsliderpro.setHasFixedSize(true);
-        recsliderpro.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
-        holderproslider = new holderproslider(list, getContext());
-        recsliderpro.setAdapter(holderproslider);
-        holderproslider.notifyDataSetChanged();
-        holderproslider.setoncartclicklistener(this);
+//        list.add(new modelproductslider(R.drawable.shirt,"Brochur","1500","2000"));
+//        list.add(new modelproductslider(R.drawable.shirt,"Brochur","1500","2000"));
+//        list.add(new modelproductslider(R.drawable.shirt,"nickie","1500","2000"));
+//        list.add(new modelproductslider(R.drawable.shirt,"nickie","1500","2000"));
+//        list.add(new modelproductslider(R.drawable.shirt,"Brochurenickienickienickie","1500","2000"));
+//        list.add(new modelproductslider(R.drawable.shirt,"Brochur","1500","2000"));
+//
+//        recsliderpro.setHasFixedSize(true);
+//        recsliderpro.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+//        holderproslider = new holderproslider(list, getContext());
+//        recsliderpro.setAdapter(holderproslider);
+//        holderproslider.notifyDataSetChanged();
+//        holderproslider.setoncartclicklistener(this);
 //discount_banner
 //        modelsliders = new ArrayList<>();
 //        modelsliders.add(new modelbanner(R.drawable.shop));

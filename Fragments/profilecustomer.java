@@ -125,7 +125,7 @@ public class profilecustomer extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     public static final String MY_PREFS_NAME = "mydetails";
-    TextView names,emails,cells,addresss,ssbbalance;
+    TextView names,emails,cells,addresss;
     int count;
     String sname,semail,scell,saddress,sid,spass,simage;
 
@@ -315,10 +315,6 @@ public class profilecustomer extends Fragment {
 //        editor.putString("onback","profile");
 //        editor.apply();
 
-        ssbbalance=view.findViewById(R.id.ssbbalance);
-
-
-
             frag=view.findViewById(R.id.frag);
             address = view.findViewById(R.id.addressupdate);
             name = view.findViewById(R.id.nameupdate);
@@ -340,7 +336,6 @@ public class profilecustomer extends Fragment {
             saddress = prefs.getString("address", "Null"); //0 is the default value.
             spass = prefs.getString("password", "Null");
             sid = prefs.getString("customerid", "Null");
-            ssbbalance.setText(prefs.getString("ssbbalance","0"));
 
             names.setText(sname);
             emails.setText(semail);

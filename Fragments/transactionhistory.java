@@ -57,7 +57,6 @@ public class transactionhistory extends Fragment {
     public transactionhistory() {
         // Required empty public constructor
     }
-
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -96,7 +95,7 @@ public class transactionhistory extends Fragment {
             @Override
             public void onClick(View v) {
                 morefragment productfragment = new morefragment();
-                FragmentManager fragmentManagerpro = getChildFragmentManager();
+                FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
                 fragmentTransactionpro.replace(R.id.fragment, productfragment);
                 fragmentTransactionpro.commit();
@@ -136,12 +135,6 @@ public class transactionhistory extends Fragment {
 
             }
         });
-
-
-
-
-
-
 
 
         return view;

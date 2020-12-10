@@ -120,7 +120,7 @@ public class adaperslider extends RecyclerView.Adapter<adaperslider.holder> {
             holder.promo.setVisibility(View.INVISIBLE);
         }
         else{
-            holder.promo.setText(" Flat "+promorate.concat("% off "));
+            holder.promo.setText("Flat "+promorate.concat("%")+" off");
         }
 
         }

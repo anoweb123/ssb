@@ -204,6 +204,16 @@ public class dbhandler extends SQLiteOpenHelper {
         }
         return total;
     }
+
+    public int totalpricewithoutdiscount(){
+        int total=0;
+        String colomn[]=new String[]{ID_COLUMN,Title_COLUMN,Price_COLUMN,Desc_COLUMN,DISCOUNTED_COLUMN,COLOR_COLUMN,SIZE_COLUMN,Image_COLUMN,Quantity_COLUMN};
+        Cursor query= db.query(CARTTABLE_NAME,colomn,null,null,null,null,null,null);
+        while (query.moveToNext()){
+            total=Integer.parseInt(query.getString(query.getColumnIndex(Quantity_COLUMN)))*Integer.parseInt(query.getString(query.getColumnIndex(DISCOUNTED_COLUMN)))+total;
+        }
+        return total;
+    }
     public int countitems(){
         int total=0;
         String colomn[]=new String[]{ID_COLUMN,Title_COLUMN,Price_COLUMN,Desc_COLUMN,DISCOUNTED_COLUMN,COLOR_COLUMN,SIZE_COLUMN,Image_COLUMN,Quantity_COLUMN};

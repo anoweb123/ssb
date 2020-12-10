@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,13 +34,12 @@ public class holdertrans extends RecyclerView.Adapter<holdertrans.holder> {
 
     @Override
     public void onBindViewHolder(@NonNull holder holder, int position) {
-        holder.name.setText("Paid by: "+modeltrans.get(position).getName());
-        holder.discount.setText("Discount: Rs."+modeltrans.get(position).getDiscount());
-        holder.shipping.setText("Shipping fee: Rs."+modeltrans.get(position).getShipping());
-        holder.price.setText("Total Amount: Rs."+modeltrans.get(position).getTotal());
-        holder.trantype.setText("Payment Method: "+modeltrans.get(position).getPaymentMethod());
-        holder.status.setText("Order Status: "+modeltrans.get(position).getStatus());
-        holder.idd.setText("Order ID: "+modeltrans.get(position).get_id());
+        holder.time.setText(modeltrans.get(position).getTime());
+        holder.date.setText(modeltrans.get(position).getDate());
+        holder.name.setText(modeltrans.get(position).getName());
+        holder.price.setText(modeltrans.get(position).getPrice());
+        holder.type.setText(modeltrans.get(position).getType());
+
     }
 
     @Override
@@ -48,16 +48,14 @@ public class holdertrans extends RecyclerView.Adapter<holdertrans.holder> {
     }
 
     public class holder extends RecyclerView.ViewHolder{
-        TextView name,price,shipping,discount,idd,trantype,status;
+        TextView name,price,time,date,type;
         public holder(@NonNull View itemView) {
             super(itemView);
             name=itemView.findViewById(R.id.name);
-            idd=itemView.findViewById(R.id.idd);
-            shipping=itemView.findViewById(R.id.shipping);
-            discount=itemView.findViewById(R.id.discount);
+            time=itemView.findViewById(R.id.time);
+            date=itemView.findViewById(R.id.date);
             price=itemView.findViewById(R.id.price);
-            status=itemView.findViewById(R.id.status);
-            trantype=itemView.findViewById(R.id.type);
+            type=itemView.findViewById(R.id.type);
         }
     }
 }

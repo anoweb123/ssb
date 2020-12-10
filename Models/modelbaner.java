@@ -2,23 +2,13 @@ package com.ali.ssb.Models;
 
 public class modelbaner {
     shopId shopId;
-String _id,image,status;
+String _id,image;
 
-    public modelbaner(com.ali.ssb.Models.shopId shopId, String _id, String image, String status) {
+    public modelbaner(shopId modeluserId, String _id, String image) {
         this.shopId = shopId;
         this._id = _id;
         this.image = image;
-        this.status = status;
     }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public shopId getShopId() {
         return shopId;
     }

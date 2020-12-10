@@ -1,7 +1,5 @@
 package com.ali.ssb.Fragments;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -15,19 +13,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.ali.ssb.R;
 import com.ali.ssb.dbhandler;
 import com.ali.ssb.holderclasses.holderreclast;
 import com.ali.ssb.Models.modellastrec;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.content.Context.MODE_PRIVATE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,11 +29,9 @@ import static android.content.Context.MODE_PRIVATE;
  */
 public class summary extends Fragment {
 
-    TextView name,method,total;
     Button backto;
     List<modellastrec> list;
     holderreclast adapter;
-    public static final String MY_PREFS_NAME = "mydetails";
     RecyclerView rec;
     ImageView back;
     // TODO: Rename parameter arguments, choose names that match
@@ -89,16 +80,6 @@ public class summary extends Fragment {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_summary, container, false);
 
-
-        total=view.findViewById(R.id.total);
-        name=view.findViewById(R.id.name);
-        method=view.findViewById(R.id.method);
-
-        SharedPreferences sharedPreferences=getContext().getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE);
-        name.setText(sharedPreferences.getString("name","no name"));
-
-
-
         back=view.findViewById(R.id.back);
         backto=view.findViewById(R.id.backto);
         backto.setOnClickListener(new View.OnClickListener() {
@@ -132,6 +113,10 @@ public class summary extends Fragment {
         rec.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
+
+        dbhandler dbhandler1=new dbhandler(getContext());
+        dbhandler1.deleteallincart();
+        dbhandler1.close();
 
         return view;
     }

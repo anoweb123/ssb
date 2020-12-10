@@ -104,12 +104,7 @@ String sname,semail,spassword,sconpass,saddres,scell;
                 if (scell.isEmpty()){
                     cell.setError("Enter Phone No");
                 }
-
-                if (scell.length()<11){
-                    address.setError("Phone number must be of 11 digits");
-                }
-
-                if (scell.length()<11||sname.isEmpty()|| semail.isEmpty()||spassword.isEmpty()||sconpass.isEmpty()||saddres.isEmpty()||scell.isEmpty()){bar.setVisibility(View.INVISIBLE);}
+                if (sname.isEmpty()|| semail.isEmpty()||spassword.isEmpty()||sconpass.isEmpty()||saddres.isEmpty()||scell.isEmpty()){bar.setVisibility(View.INVISIBLE);}
 
                 else {
 
