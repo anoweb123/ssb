@@ -1,6 +1,5 @@
 package com.ali.ssb.interfacesapi;
 
-import com.ali.ssb.Models.modelcompleted;
 import com.ali.ssb.Models.modeltran;
 
 import java.util.List;
