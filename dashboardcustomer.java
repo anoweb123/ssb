@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.ali.ssb.Fragments.mainDashboardFragment;
 import com.ali.ssb.Fragments.morefragment;
+import com.ali.ssb.Fragments.notifications;
 import com.ali.ssb.Fragments.profilecustomer;
 import com.ali.ssb.Fragments.searchfragment;
 import com.ali.ssb.Fragments.wishlist;
@@ -35,6 +36,7 @@ import java.util.List;
 
 
 public class dashboardcustomer extends AppCompatActivity implements profilecustomer.onexitclicklistener{
+
 
 
 
@@ -76,9 +78,6 @@ public class dashboardcustomer extends AppCompatActivity implements profilecusto
 //        fragmentTransactions.commit();
 //        }
 
-
-
-
 //        if (count==1){
 //            mainDashboardFragment mainDashboardFragment = new mainDashboardFragment();
 //            FragmentManager fragmentManagers = getSupportFragmentManager();
@@ -115,59 +114,73 @@ public class dashboardcustomer extends AppCompatActivity implements profilecusto
 
         bottomNavigationView=findViewById(R.id.botnav);
 
-        mainDashboardFragment mainDashboardFragment = new mainDashboardFragment();
 
-        FragmentManager fragmentManagers = getSupportFragmentManager();
-        FragmentTransaction fragmentTransactions = fragmentManagers.beginTransaction();
-        fragmentTransactions.add(R.id.fragment, mainDashboardFragment);
-        fragmentTransactions.commit();
-        bottomNavigationView.setSelectedItemId(R.id.navigation_home);
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId())
-                {
-                    case R.id.navigation_pro:
-                        profilecustomer details = new profilecustomer();
-                        FragmentManager fragmentManager = getSupportFragmentManager();
-                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        fragmentTransaction.replace(R.id.fragment, details);
-                        fragmentTransaction.commit();
+        int notifycheck = getIntent().getIntExtra("checkfornotify",0);
 
-                        break;
-                    case R.id.navigation_home:
-                        mainDashboardFragment mainDashboardFragment = new mainDashboardFragment();
-                        FragmentManager fragmentManagers = getSupportFragmentManager();
-                        FragmentTransaction fragmentTransactions = fragmentManagers.beginTransaction();
-                        fragmentTransactions.replace(R.id.fragment, mainDashboardFragment);
-                        fragmentTransactions.commit();
-                        break;
-                    case R.id.navigation_search:
-                        searchfragment searchfragment = new searchfragment();
-                        FragmentManager fragmentManagersea = getSupportFragmentManager();
-                        FragmentTransaction fragmentTransactionssea = fragmentManagersea.beginTransaction();
-                        fragmentTransactionssea.replace(R.id.fragment, searchfragment);
-                        fragmentTransactionssea.commit();
-                        break;
-                    case R.id.navigation_more:
-                        morefragment morefragment = new morefragment();
-                        FragmentManager fragmentManager1 = getSupportFragmentManager();
-                        FragmentTransaction fragmentTransaction1 = fragmentManager1.beginTransaction();
-                        fragmentTransaction1.replace(R.id.fragment, morefragment);
-                        fragmentTransaction1.commit();
-                        break;
-                    case R.id.navigation_wish:
-                        wishlist morefragmentwish = new wishlist();
-                        FragmentManager fragmentManagerwish = getSupportFragmentManager();
-                        FragmentTransaction fragmentTransactionwish1 = fragmentManagerwish.beginTransaction();
-                        fragmentTransactionwish1.replace(R.id.fragment, morefragmentwish);
-                        fragmentTransactionwish1.commit();
-                        break;
+        if (notifycheck==1) {
+            notifications mainDashboardFragments = new notifications();
+            FragmentManager fragmentManagerss = getSupportFragmentManager();
+            FragmentTransaction fragmentTransactionss = fragmentManagerss.beginTransaction();
+            fragmentTransactionss.replace(R.id.fragment, mainDashboardFragments);
+            fragmentTransactionss.commit();
+        }
+
+
+        else {
+            mainDashboardFragment mainDashboardFragment = new mainDashboardFragment();
+            FragmentManager fragmentManagers = getSupportFragmentManager();
+            FragmentTransaction fragmentTransactions = fragmentManagers.beginTransaction();
+            fragmentTransactions.add(R.id.fragment, mainDashboardFragment);
+            fragmentTransactions.commit();
+        }
+
+            bottomNavigationView.setSelectedItemId(R.id.navigation_home);
+            bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.navigation_pro:
+                            profilecustomer details = new profilecustomer();
+                            FragmentManager fragmentManager = getSupportFragmentManager();
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            fragmentTransaction.replace(R.id.fragment, details);
+                            fragmentTransaction.commit();
+
+                            break;
+                        case R.id.navigation_home:
+                            mainDashboardFragment mainDashboardFragment = new mainDashboardFragment();
+                            FragmentManager fragmentManagers = getSupportFragmentManager();
+                            FragmentTransaction fragmentTransactions = fragmentManagers.beginTransaction();
+                            fragmentTransactions.replace(R.id.fragment, mainDashboardFragment);
+                            fragmentTransactions.commit();
+                            break;
+                        case R.id.navigation_search:
+                            searchfragment searchfragment = new searchfragment();
+                            FragmentManager fragmentManagersea = getSupportFragmentManager();
+                            FragmentTransaction fragmentTransactionssea = fragmentManagersea.beginTransaction();
+                            fragmentTransactionssea.replace(R.id.fragment, searchfragment);
+                            fragmentTransactionssea.commit();
+                            break;
+                        case R.id.navigation_more:
+                            morefragment morefragment = new morefragment();
+                            FragmentManager fragmentManager1 = getSupportFragmentManager();
+                            FragmentTransaction fragmentTransaction1 = fragmentManager1.beginTransaction();
+                            fragmentTransaction1.replace(R.id.fragment, morefragment);
+                            fragmentTransaction1.commit();
+                            break;
+                        case R.id.navigation_wish:
+                            wishlist morefragmentwish = new wishlist();
+                            FragmentManager fragmentManagerwish = getSupportFragmentManager();
+                            FragmentTransaction fragmentTransactionwish1 = fragmentManagerwish.beginTransaction();
+                            fragmentTransactionwish1.replace(R.id.fragment, morefragmentwish);
+                            fragmentTransactionwish1.commit();
+                            break;
+                    }
+                    return true;
                 }
-                return true;
-            }
-        });
+            });
+
 //        cart.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {

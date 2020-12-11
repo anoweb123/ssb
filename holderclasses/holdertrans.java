@@ -34,11 +34,12 @@ public class holdertrans extends RecyclerView.Adapter<holdertrans.holder> {
 
     @Override
     public void onBindViewHolder(@NonNull holder holder, int position) {
-        holder.time.setText(modeltrans.get(position).getTime());
-        holder.date.setText(modeltrans.get(position).getDate());
-        holder.name.setText(modeltrans.get(position).getName());
-        holder.price.setText(modeltrans.get(position).getPrice());
-        holder.type.setText(modeltrans.get(position).getType());
+        holder.name.setText("Customer: "+modeltrans.get(position).getName());
+        holder.orderid.setText("Order Id: "+modeltrans.get(position).get_id());
+        holder.amount.setText("Amount: Rs "+modeltrans.get(position).getGrandTotal());
+        holder.status.setText("Status: "+modeltrans.get(position).getPaymentStatus());
+        holder.method.setText("Method: "+modeltrans.get(position).getPaymentMethod());
+
 
     }
 
@@ -48,14 +49,15 @@ public class holdertrans extends RecyclerView.Adapter<holdertrans.holder> {
     }
 
     public class holder extends RecyclerView.ViewHolder{
-        TextView name,price,time,date,type;
+        TextView name,orderid,status,amount,method;
         public holder(@NonNull View itemView) {
             super(itemView);
             name=itemView.findViewById(R.id.name);
-            time=itemView.findViewById(R.id.time);
-            date=itemView.findViewById(R.id.date);
-            price=itemView.findViewById(R.id.price);
-            type=itemView.findViewById(R.id.type);
+            method=itemView.findViewById(R.id.method);
+            status=itemView.findViewById(R.id.status);
+            amount=itemView.findViewById(R.id.amount);
+            orderid=itemView.findViewById(R.id.orderid);
+//            type=itemView.findViewById(R.id.type);
         }
     }
 }
