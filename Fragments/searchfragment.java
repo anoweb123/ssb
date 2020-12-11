@@ -4,6 +4,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,7 +40,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
 
 
-public class searchfragment extends Fragment {
+public class searchfragment extends Fragment implements holderallpro.onproclicklistener{
 
     EditText search;
 
@@ -82,6 +84,7 @@ public class searchfragment extends Fragment {
                     recyclerView.setLayoutManager(manager);
                     recyclerView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
+                    adapter.setoncartclicklistener(searchfragment.this);
                     searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                         @Override
                         public boolean onQueryTextSubmit(String query) {
@@ -119,5 +122,28 @@ public class searchfragment extends Fragment {
 
 
         return view;
+    }
+
+    @Override
+    public void onproclick(String title, String desc, String price, String discounted, String image, String color, String size, String days, String qtyleft, String proid, String delcharges,String shopid) {
+        productfragment productfragment = new productfragment();
+        FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+        Bundle bundle=new Bundle();
+        bundle.putString("titlekey",title);
+        bundle.putString("desckey",desc);
+        bundle.putString("pricekey",price);
+        bundle.putString("discountedkey",discounted);
+        bundle.putString("colorkey",color);
+        bundle.putString("sizekey",size);
+        bundle.putString("dayskey",days);
+        bundle.putString("qtyleftkey",qtyleft);
+        bundle.putString("proid",proid);
+        bundle.putString("imagekey",image);
+        bundle.putString("shopid",shopid);
+        bundle.putString("delcharges",delcharges);
+        productfragment.setArguments(bundle);
+        fragmentTransactionpro.replace(R.id.fragment, productfragment);
+        fragmentTransactionpro.commit();
     }
 }

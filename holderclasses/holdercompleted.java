@@ -73,8 +73,8 @@ public class holdercompleted extends RecyclerView.Adapter<holdercompleted.holder
 
         holder.price.setText("Amount Paid: Rs. "+modelcompleteds.get(position).getGrandTotal());
         holder.status.setText("Status: "+modelcompleteds.get(position).getStatus());
-        holder.date.setText("Ordered at: "+modelcompleteds.get(position).getOrderTime().substring(0,25));
-        holder.deldate.setText("Recieved at: "+modelcompleteds.get(position).getDeliveryTime().substring(0,25));
+        holder.date.setText("Ordered at: "+modelcompleteds.get(position).getOrderTime());
+        holder.deldate.setText("Recieved at: "+modelcompleteds.get(position).getDeliveryTime());
         holder.id.setText("Order#: "+modelcompleteds.get(position).get_id());
         holder.name.setText("Customer: "+modelcompleteds.get(position).getName());
         holder.address.setText("Addresss: "+modelcompleteds.get(position).getAddress());

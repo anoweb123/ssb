@@ -1,22 +1,54 @@
 package com.ali.ssb.Models;
 
 public class modelallpro {
-    String name, detail,price,promotionRate,promotionTill,quantity,size,color,categoryType;
+    String name, detail,price,promotionRate,promotionTill,quantity,size,color,categoryType,promotionStatus;
     String image;
-    public modelallpro(String name, String detail, String price, String promotionRate, String promotionTill, String quantity, String size, String color, String categoryType, String image) {
+    String _id;
+    userId userId;
+
+    public modelallpro(String name, String detail, String price, String promotionRate, String promotionTill, String quantity, String size, String color, String categoryType, String promotionStatus, String image, String _id, com.ali.ssb.Models.userId userId) {
         this.name = name;
         this.detail = detail;
         this.price = price;
-        this.promotionTill = promotionTill;
         this.promotionRate = promotionRate;
+        this.promotionTill = promotionTill;
         this.quantity = quantity;
         this.size = size;
         this.color = color;
         this.categoryType = categoryType;
+        this.promotionStatus = promotionStatus;
         this.image = image;
+        this._id = _id;
+        this.userId = userId;
     }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
+    }
+
+    public com.ali.ssb.Models.userId getUserId() {
+        return userId;
+    }
+
+    public void setUserId(com.ali.ssb.Models.userId userId) {
+        this.userId = userId;
+    }
+
     public modelallpro() {
     }
+
+    public String getPromotionStatus() {
+        return promotionStatus;
+    }
+
+    public void setPromotionStatus(String promotionStatus) {
+        this.promotionStatus = promotionStatus;
+    }
+
     public String getPromotionRate() {
         return promotionRate;
     }

@@ -18,19 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class dbhandler extends SQLiteOpenHelper {
-//    public dbhandler(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
-//        super(context, name, factory, version);
-//    }
-//
-//    @Override
-//    public void onCreate(SQLiteDatabase db) {
-//
-//    }
-//
-//    @Override
-//    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-//
-//    }
 
     SQLiteDatabase db;
     public static final int DATABASE_VERSION = 1;
@@ -210,7 +197,12 @@ public class dbhandler extends SQLiteOpenHelper {
         String colomn[]=new String[]{ID_COLUMN,Title_COLUMN,Price_COLUMN,Desc_COLUMN,DISCOUNTED_COLUMN,COLOR_COLUMN,SIZE_COLUMN,Image_COLUMN,Quantity_COLUMN};
         Cursor query= db.query(CARTTABLE_NAME,colomn,null,null,null,null,null,null);
         while (query.moveToNext()){
+            if (query.getString(query.getColumnIndex(DISCOUNTED_COLUMN)).equals("0")){
+                total=Integer.parseInt(query.getString(query.getColumnIndex(Quantity_COLUMN)))*Integer.parseInt(query.getString(query.getColumnIndex(Price_COLUMN)))+total;
+            }
+            else {
             total=Integer.parseInt(query.getString(query.getColumnIndex(Quantity_COLUMN)))*Integer.parseInt(query.getString(query.getColumnIndex(DISCOUNTED_COLUMN)))+total;
+        }
         }
         return total;
     }

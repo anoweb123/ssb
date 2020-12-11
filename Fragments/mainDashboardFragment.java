@@ -128,6 +128,9 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
         notify_count= sharedPreferences.getString("notification","");
 
 
+
+
+
         String dateStr = "04/05/2010";
 
         SimpleDateFormat curFormater = new SimpleDateFormat("yyyy/MM/dd");
@@ -184,37 +187,41 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
                         .setShowCounter(true)
                         .setBadgePadding(4);
 
-                if (notify_count.equals("")){}
+                if (notify_count.equals("")){
+                }
                 else {
                     if (Integer.valueOf(notify_count)<Integer.valueOf(response.body())){
 
-
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            NotificationChannel notificationChannel = new NotificationChannel(CHannel_ID, "personal", NotificationManager.IMPORTANCE_DEFAULT);
+                            NotificationChannel notificationChannel = new NotificationChannel(CHannel_ID, "personal", NotificationManager.IMPORTANCE_HIGH);
                             notificationChannel.setDescription("heloo");
                             NotificationManager notificationManager=(NotificationManager)getActivity().getSystemService(NOTIFICATION_SERVICE);
                             notificationManager.createNotificationChannel(notificationChannel);
                         }
 
-                        //        Intent mintent=new Intent(getContext(),dashboardcustomer.class);
-                        //        mintent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK & Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        //
-                        //        PendingIntent pendingIntent=PendingIntent.getActivities(getActivity(),0, new Intent[]{mintent},PendingIntent.FLAG_ONE_SHOT);
+                                Intent mintent=new Intent(getContext(),dashboardcustomer.class);
+                                mintent.putExtra("checkfornotify",1);
+                                mintent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK & Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                                PendingIntent pendingIntent=PendingIntent.getActivities(getActivity(),0, new Intent[]{mintent},PendingIntent.FLAG_ONE_SHOT);
 
                         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext(),CHannel_ID)
                                 .setSmallIcon(R.drawable.notification)
-                                .setContentTitle("SSB Notification")
-                                .setPriority(Notification.PRIORITY_DEFAULT)
-                                .setContentText("You may have a new notification, Go and check for latest deals and discounts");
+                                .setContentTitle("May have new notifications")
+                                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                                .setAutoCancel(true)
+                                .setContentText("Checkout the latest deals and discounts!");
 
-                        //        mBuilder.setContentIntent(pendingIntent);
+                                mBuilder.setContentIntent(pendingIntent);
 
                         NotificationManager mNotificationManager = (NotificationManager)getContext().getSystemService(Context.NOTIFICATION_SERVICE);
                         mNotificationManager.notify(001, mBuilder.build());
 
-
                     }
                 }
+                SharedPreferences.Editor editor =getContext().getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE).edit();
+                editor.putString("notification",String.valueOf(response.body()));
+                editor.apply();
             }
 
             @Override
@@ -345,44 +352,6 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
         });
 
 
-//productsondashboardslider
-//        list.add(new modelproductslider(R.drawable.shirt,"Brochur","1500","2000"));
-//        list.add(new modelproductslider(R.drawable.shirt,"Brochur","1500","2000"));
-//        list.add(new modelproductslider(R.drawable.shirt,"nickie","1500","2000"));
-//        list.add(new modelproductslider(R.drawable.shirt,"nickie","1500","2000"));
-//        list.add(new modelproductslider(R.drawable.shirt,"Brochurenickienickienickie","1500","2000"));
-//        list.add(new modelproductslider(R.drawable.shirt,"Brochur","1500","2000"));
-//
-//        recsliderpro.setHasFixedSize(true);
-//        recsliderpro.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
-//        holderproslider = new holderproslider(list, getContext());
-//        recsliderpro.setAdapter(holderproslider);
-//        holderproslider.notifyDataSetChanged();
-//        holderproslider.setoncartclicklistener(this);
-//discount_banner
-//        modelsliders = new ArrayList<>();
-//        modelsliders.add(new modelbanner(R.drawable.shop));
-//        modelsliders.add(new modelbanner(R.drawable.shop));
-//        modelsliders.add(new modelbanner(R.drawable.shop));
-//        modelsliders.add(new modelbanner(R.drawable.shop));
-//        modelsliders.add(new modelbanner(R.drawable.shop));
-//        modelsliders.add(new modelbanner(R.drawable.shop));
-//        modelsliders.add(new modelbanner(R.drawable.shop));
-//        modelsliders.add(new modelbanner(R.drawable.shop));
-//        modelsliders.add(new modelbanner(R.drawable.shop));
-//        modelsliders.add(new modelbanner(R.drawable.shop));
-//
-//        sliderbanneradapter= new sliderbanneradapter(modelsliders,getContext());
-//
-//        sliderView.setSliderAdapter(sliderbanneradapter);
-//
-//        sliderView.setIndicatorAnimation(IndicatorAnimationType.WORM);//set indicator animation by using IndicatorAnimationType. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
-//        sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
-//        sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_BACK_AND_FORTH);
-//        sliderView.setIndicatorSelectedColor(Color.WHITE);
-//        sliderView.setIndicatorUnselectedColor(Color.GRAY);
-//        sliderView.setScrollTimeInSec(4); //set scroll delay in seconds :
-//        sliderView.startAutoCycle();
         return view;
     }
 

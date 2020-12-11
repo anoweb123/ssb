@@ -39,7 +39,7 @@ public class holderpending extends RecyclerView.Adapter<holderpending.holder> {
     public void onBindViewHolder(@NonNull holder holder, int position) {
         holder.price.setText("Rs. "+list.get(position).getGrandTotal());
         holder.status.setText(list.get(position).getStatus());
-        holder.date.setText(list.get(position).getOrderTime().substring(0,24));
+        holder.date.setText(list.get(position).getOrderTime());
         holder.id.setText("Order# "+list.get(position).get_id());
 
         holder.id.setOnClickListener(new View.OnClickListener() {
