@@ -13,7 +13,6 @@ import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
 
 
 import com.ali.ssb.Models.modelbaner;
-import com.ali.ssb.Models.modelbanner;
 import com.ali.ssb.R;
 import com.smarteist.autoimageslider.SliderViewAdapter;
 import com.squareup.picasso.Picasso;

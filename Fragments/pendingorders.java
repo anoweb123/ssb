@@ -14,13 +14,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.ali.ssb.Models.modelbaner;
 import com.ali.ssb.R;
 import com.ali.ssb.holderclasses.holderpending;
 import com.ali.ssb.Models.modelpending;
-import com.ali.ssb.interfacesapi.banerapi;
 import com.ali.ssb.interfacesapi.pendingorderapi;
 
 import java.util.ArrayList;
@@ -39,7 +36,7 @@ import static com.ali.ssb.Fragments.profilecustomer.MY_PREFS_NAME;
  * Use the {@link pendingorders#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class pendingorders extends Fragment {
+public class pendingorders extends Fragment implements holderpending.onitemsclicklistener{
 
 
     RecyclerView recyclerView;
@@ -93,18 +90,6 @@ public class pendingorders extends Fragment {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_pendingorders, container, false);
 
-        back=view.findViewById(R.id.back);
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                morefragment productfragment = new morefragment();
-                FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
-                fragmentTransactionpro.replace(R.id.fragment, productfragment);
-                fragmentTransactionpro.commit();
-            }
-        });
-
         recyclerView=view.findViewById(R.id.rec);
 
         SharedPreferences prefss=getContext().getSharedPreferences(MY_PREFS_NAME, Context.MODE_PRIVATE);
@@ -123,24 +108,31 @@ public class pendingorders extends Fragment {
             public void onResponse(Call<List<modelpending>> call, Response<List<modelpending>> response) {
 
                 List<modelpending> list1=new ArrayList<>();
-                Toast.makeText(getContext(), String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
-                if (response.isSuccessful()){
-                list = response.body();
-                for (int i=0;i<list.size();i++){
-                    if (!list.get(i).getStatus().equals("delivered")){
-                        list1.add(list.get(i));
-                    }
-                    else {
+                if (response.isSuccessful()) {
+                    list = response.body();
+
+                    if (list.isEmpty()) {
+                        nopendingorder mainDashboardFragments = new nopendingorder();
+                        FragmentManager fragmentManagerss = getActivity().getSupportFragmentManager();
+                        FragmentTransaction fragmentTransactionss = fragmentManagerss.beginTransaction();
+                        fragmentTransactionss.replace(R.id.fragment, mainDashboardFragments);
+                        fragmentTransactionss.commit();
+                    } else {
+
+                        for (int i = 0; i < list.size(); i++) {
+                            if (!list.get(i).getStatus().equals("delivered")) {
+                                list1.add(list.get(i));
+                            } else {
+                            }
+                        }
+                        adapter = new holderpending(list1, getContext());
+                        recyclerView.setHasFixedSize(true);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+                        recyclerView.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+                        adapter.onitemsclicklistener(pendingorders.this);
                     }
                 }
-
-                adapter = new holderpending(list1, getContext());
-                recyclerView.setHasFixedSize(true);
-                recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false));
-                recyclerView.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
-                }
-
             }
 
             @Override
@@ -150,5 +142,18 @@ public class pendingorders extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onshowitems(String id) {
+            orderitems productfragment = new orderitems();
+            FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
+            FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+            fragmentTransactionpro.replace(R.id.fragment, productfragment);
+            Bundle bundle=new Bundle();
+            bundle.putString("orderid",id);
+            productfragment.setArguments(bundle);
+            fragmentTransactionpro.commit();
+
     }
 }

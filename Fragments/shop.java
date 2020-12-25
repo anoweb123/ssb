@@ -1,8 +1,10 @@
 package com.ali.ssb.Fragments;
 
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -10,7 +12,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,8 @@ import com.ali.ssb.interfacesapi.productsbycatinshopapi;
 import com.ali.ssb.Models.modelcategoryinshop;
 import com.ali.ssb.Models.modelproductbyshop;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +39,6 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.content.Context.MODE_PRIVATE;
-import static androidx.constraintlayout.motion.utils.Oscillator.TAG;
 import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
 
 /**
@@ -119,7 +121,6 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
         cat.setText(catt);
         name.setText(namee);
 
-
         SharedPreferences prefss = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
 
         Retrofit retrofitcat = new Retrofit.Builder()
@@ -130,14 +131,60 @@ public class shop extends Fragment implements holderproductbyshop.onproinshopcli
         categoryinshopapi apicat = retrofitcat.create(categoryinshopapi.class);
         Call<List<modelcategoryinshop>> listCall = apicat.list();
 
-
         listCall.enqueue(new Callback<List<modelcategoryinshop>>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onResponse(Call<List<modelcategoryinshop>> call, Response<List<modelcategoryinshop>> response) {
                 if (response.isSuccessful()) {
 
                     modellist = response.body();
-                    adaptershop = new holdercategoryinshop(modellist,getContext(),promorate);
+                    List<modelcategoryinshop> list2=new ArrayList<>();
+                    List<modelcategoryinshop> listfinal=new ArrayList<>();
+                    for (int i=0;i<response.body().size();i++){
+
+                        String prostatus=modellist.get(i).getPromotionStatus();
+
+                        Boolean promos =false;
+
+                        if (modellist.get(i).getPromotionTill().isEmpty()||modellist.get(i).getPromotionTill().equals("")||modellist.get(i).getPromotionTill().equals("none")||modellist.get(i).getPromotionTill().equals("N/A")){}
+                        else {
+
+                            LocalDate currentDate = null;
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                                currentDate = LocalDate.now(ZoneId.systemDefault());
+                            }
+
+                            LocalDate getDates = null;
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                                if (modellist.get(i).getPromotionTill().isEmpty() ||modellist.get(i).getPromotionTill().equals("none")) {
+                                } else {
+                                    getDates = LocalDate.parse(modellist.get(i).getPromotionTill());
+                                }
+                            }
+
+                            if (currentDate.minusDays(1).isBefore(getDates)){
+                                if (prostatus.equals("accepted")){
+                                promos=true;
+                                }
+                            }
+
+                            else {
+                                promos=false;
+                            }
+                        }
+
+                        if (promos){
+                            list2.add(response.body().get(i));
+                            modellist.remove(i);
+                        }
+
+                    }
+
+                    listfinal.addAll(list2);
+                    listfinal.addAll(modellist);
+                    Toast.makeText(getContext(), String.valueOf(list2.size()), Toast.LENGTH_SHORT).show();
+
+                    adaptershop = new holdercategoryinshop(listfinal,getContext(),promorate);
                     recyclercat.setHasFixedSize(true);
                     recyclercat.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
                     recyclercat.setAdapter(adaptershop);

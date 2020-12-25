@@ -1,7 +1,6 @@
 package com.ali.ssb.Fragments;
 
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -13,16 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.ali.ssb.Models.modelbaner;
 import com.ali.ssb.Models.modelnotification;
 import com.ali.ssb.R;
 import com.ali.ssb.holderclasses.holdernoti;
-import com.ali.ssb.holderclasses.sliderbanneradapter;
-import com.ali.ssb.interfacesapi.banerapi;
 import com.ali.ssb.interfacesapi.notiapi;
-import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
-import com.smarteist.autoimageslider.SliderAnimations;
-import com.smarteist.autoimageslider.SliderView;
+import com.ali.ssb.interfacesapi.notificationcount;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,6 +92,7 @@ public class notifications extends Fragment {
 
         recyclerView=view.findViewById(R.id.rec);
 
+
         SharedPreferences prefss = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
 
         list = new ArrayList<>();
@@ -127,6 +122,32 @@ public class notifications extends Fragment {
 
             }
         });
+
+
+        //countnotiapi
+        SharedPreferences prefsss = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+
+        Retrofit retrofitpros = new Retrofit.Builder()
+                .baseUrl("http://"+prefsss.getString("ipv4","10.0.2.2")+":5000/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        notificationcount apipros=retrofitpros.create(notificationcount.class);
+        Call<String> listCallpros=apipros.list("notifications/countCustomer");
+
+        listCallpros.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                SharedPreferences.Editor editor =getContext().getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE).edit();
+                editor.putString("notification",String.valueOf(response.body()));
+                editor.apply();
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
 
 

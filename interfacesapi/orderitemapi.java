@@ -15,6 +15,7 @@ public interface orderitemapi {
             @Field("image") String image,
             @Field("quantity") String quan,
             @Field("discount") String dis,
-            @Field("productId") String proid
+            @Field("productId") String proid,
+            @Field("price") String price
     );
 }

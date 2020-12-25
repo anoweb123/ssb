@@ -1,6 +1,5 @@
 package com.ali.ssb;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
@@ -16,6 +15,7 @@ import android.widget.Toast;
 
 import com.ali.ssb.Models.getdatabyloginmodel;
 import com.ali.ssb.interfacesapi.apilogin;
+import com.ali.ssb.interfacesapi.notificationcount;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -97,10 +97,7 @@ public static final String MY_PREFS_NAME = "mydetails";
             public void onClick(View v) {
                 Intent intent=new Intent(loginpagecustomer.this,signuppage.class);
                 startActivity(intent);
-
             }
-
-
         });
 
         login.setOnClickListener(new View.OnClickListener() {
@@ -110,9 +107,7 @@ public static final String MY_PREFS_NAME = "mydetails";
                 semail=email.getText().toString();
                 spass=pass.getText().toString();
 
-
                 SharedPreferences prefs =getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-
 
                 Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl("http://"+prefs.getString("ipv4","10.0.2.2")+":5000/")
@@ -136,9 +131,33 @@ public static final String MY_PREFS_NAME = "mydetails";
                             editor.putString("loginstatus","true");
                             editor.putString("image",response.body().getImage());
                             editor.putString("phone", response.body().getCell());
-                            editor.putString("notification", "");
-
                             editor.apply();
+
+                            //countnotiapi
+                            SharedPreferences prefsss = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+
+                            Retrofit retrofitpros = new Retrofit.Builder()
+                                    .baseUrl("http://"+prefsss.getString("ipv4","10.0.2.2")+":5000/")
+                                    .addConverterFactory(GsonConverterFactory.create())
+                                    .build();
+                            notificationcount apipros=retrofitpros.create(notificationcount.class);
+                            Call<String> listCallpros=apipros.list("notifications/countCustomer");
+
+                            listCallpros.enqueue(new Callback<String>() {
+                                @Override
+                                public void onResponse(Call<String> call, Response<String> response) {
+
+                                    SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
+                                    editor.putString("notification", response.body());
+                                    editor.apply();
+
+                                }
+
+                                @Override
+                                public void onFailure(Call<String> call, Throwable t) {
+                                    Toast.makeText(loginpagecustomer.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
 
                             Toast.makeText(loginpagecustomer.this, "Logged In", Toast.LENGTH_SHORT).show();
                             Intent intent=new Intent(loginpagecustomer.this,dashboardcustomer.class);
@@ -152,8 +171,8 @@ public static final String MY_PREFS_NAME = "mydetails";
                     }
                     @Override
                     public void onFailure(Call<getdatabyloginmodel> call, Throwable t) {
+                        bar.setVisibility(View.INVISIBLE);
                         Toast.makeText(loginpagecustomer.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-
                     }
                 });
 //                Call<ResponseBody> call= loginretrofitclass.getapi().response(semail,spass);

@@ -7,8 +7,6 @@ import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,25 +21,23 @@ import com.squareup.picasso.Picasso;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
+import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
+public class holderdiscountpro extends RecyclerView.Adapter<holderdiscountpro.holder> {
 
-public class holderallpro extends RecyclerView.Adapter<holderallpro.holder> implements Filterable {
-
-    ArrayList<modelallpro> list;
-    ArrayList<modelallpro> filterlistArray;
     onproclicklistener monproclicklistener;
     Context context;
+    List<modelallpro> list;
 
-    public holderallpro(ArrayList<modelallpro> list, Context context) {
-        this.list = list;
+    public holderdiscountpro(Context context, List<modelallpro> list){
         this.context = context;
-        filterlistArray=new ArrayList<>(list);
+        this.list = list;
     }
 
-    public void setoncartclicklistener(onproclicklistener listener){
+
+    public void setonproclicklistener(onproclicklistener listener){
         monproclicklistener=  listener;
     }
     public interface onproclicklistener{
@@ -50,24 +46,25 @@ public class holderallpro extends RecyclerView.Adapter<holderallpro.holder> impl
 
     @NonNull
     @Override
-    public holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public holderdiscountpro.holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.productondashboardlayout,parent,false);
-        return new holderallpro.holder(itemView);
-
+                .inflate(R.layout.layoutdiscountondash,parent,false);
+        return new holderdiscountpro.holder(itemView);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public void onBindViewHolder(@NonNull holder holder, int position) {
+    public void onBindViewHolder(@NonNull holderdiscountpro.holder holder, int position) {
+
 
         Boolean promo = false;
 
         SharedPreferences prefs = context.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-        holder.price.setText("Rs " + list.get(position).getPromotionRate());
+        holder.price.setText("Rs " + list.get(position).getPrice());
+
         holder.title.setText(list.get(position).getName());
         Picasso.get().load(list.get(position).getImage().replaceFirst("localhost", prefs.getString("ipv4", "10.0.2.2"))).networkPolicy(NetworkPolicy.NO_STORE).into(holder.imageView);
-        holder.discount.setText("Rs " + list.get(position).getPrice());
+        holder.discount.setText("Rs " + list.get(position).getPromotionRate());
         holder.discount.setPaintFlags(holder.discount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         holder.type.setText(list.get(position).getCategoryType());
 
@@ -82,11 +79,9 @@ public class holderallpro extends RecyclerView.Adapter<holderallpro.holder> impl
         final String days = list.get(position).getPromotionTill();
 
 
-        if (list.get(position).getPromotionStatus().equals("accepted")){
+        if (list.get(position).getPromotionStatus().equals("accepted")) {
             if (list.get(position).getPromotionTill().isEmpty() || list.get(position).getPromotionTill().equals("N/A") || list.get(position).getPromotionTill().equals("none") || list.get(position).getPromotionTill().equals("")) {
-                promo=false;
-                discount="0";
-                holder.discount.setVisibility(View.INVISIBLE);
+
             } else {
 
                 LocalDate currentDate = null;
@@ -96,7 +91,7 @@ public class holderallpro extends RecyclerView.Adapter<holderallpro.holder> impl
 
                 LocalDate getDates = null;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    if (list.get(position).getPromotionTill().isEmpty() ||  list.get(position).getPromotionTill().equals("N/A") || list.get(position).getPromotionTill().equals("none") || list.get(position).getPromotionTill().equals("")) {
+                    if (list.get(position).getPromotionTill().isEmpty() || list.get(position).getPromotionTill().equals("N/A") || list.get(position).getPromotionTill().equals("none") || list.get(position).getPromotionTill().equals("")) {
                     } else {
                         getDates = LocalDate.parse(list.get(position).getPromotionTill());
                     }
@@ -105,24 +100,23 @@ public class holderallpro extends RecyclerView.Adapter<holderallpro.holder> impl
                 if (currentDate.minusDays(1).isBefore(getDates)) {
                     promo = true;
                 }
-            }
-        } else {
-            holder.discount.setVisibility(View.INVISIBLE);
-            discount = "0";
-        }
-            if (promo) {
 
+            }
+            if (promo) {
                 holder.price.setText("Rs " + list.get(position).getPromotionRate());
                 holder.discount.setText("Rs " + list.get(position).getPrice());
                 price = list.get(position).getPromotionRate();
                 discount = list.get(position).getPrice();
-
             } else {
                 holder.discount.setVisibility(View.INVISIBLE);
-                holder.price.setText("Rs " + list.get(position).getPrice());
                 discount = "0";
 
             }
+        } else {
+
+            holder.discount.setVisibility(View.INVISIBLE);
+            discount = "0";
+        }
 
         if (list.get(position).getName().length() > 16) {
             holder.title.setText(list.get(position).getName().substring(0, 18).concat("..."));
@@ -144,45 +138,13 @@ public class holderallpro extends RecyclerView.Adapter<holderallpro.holder> impl
             }
         });
     }
+
     @Override
     public int getItemCount() {
         return list.size();
     }
 
-    private Filter listFilter=new Filter() {
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            ArrayList<modelallpro> filteredList=new ArrayList<>();
-            if(constraint==null || constraint.length()==0)
-            {
-                filteredList.addAll(filterlistArray);
-            }
-            else
-            {
-                String filterInput=constraint.toString().toLowerCase().trim();
-                for(modelallpro listModel:filterlistArray){
-                    if(listModel.getName().toLowerCase().contains(filterInput))
-                    {
-                        filteredList.add(listModel);
-                    }
-                }        }
-            FilterResults filterResults=new FilterResults();
-            filterResults.values=filteredList;
-            return filterResults;
-        }    @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            list.clear();
-            list.addAll((ArrayList)results.values);
-            notifyDataSetChanged();
-        }
-    };
-
-    @Override
-    public Filter getFilter() {
-        return listFilter;
-    }
-
-    public class holder extends RecyclerView.ViewHolder {
+    public class holder extends RecyclerView.ViewHolder{
         ImageView imageView;
         TextView price,title,discount,type;
         public holder(@NonNull View itemView) {
@@ -194,5 +156,5 @@ public class holderallpro extends RecyclerView.Adapter<holderallpro.holder> impl
             type = itemView.findViewById(R.id.type);
             discount = itemView.findViewById(R.id.discountprice);
         }
-        }
+    }
 }

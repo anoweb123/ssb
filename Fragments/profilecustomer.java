@@ -1,15 +1,12 @@
 package com.ali.ssb.Fragments;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,56 +20,30 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.os.FileUtils;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ali.ssb.Models.modelbaner;
-import com.ali.ssb.Models.modelgetresultofimageupdate;
-import com.ali.ssb.Models.modelreturnoforderinfo;
 import com.ali.ssb.R;
-import com.ali.ssb.dbhandler;
-import com.ali.ssb.holderclasses.sliderbanneradapter;
-import com.ali.ssb.interfacesapi.banerapi;
-import com.ali.ssb.interfacesapi.completedorderapi;
-import com.ali.ssb.interfacesapi.imageupdateapi;
-import com.ali.ssb.interfacesapi.nameupdateapi;
-import com.ali.ssb.interfacesapi.orderinfoapi;
 import com.ali.ssb.interfacesapi.updateimageurl;
-import com.google.android.gms.common.util.Base64Utils;
+import com.ali.ssb.showimage;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
-import com.smarteist.autoimageslider.SliderAnimations;
-import com.smarteist.autoimageslider.SliderView;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.ResponseBody;
@@ -84,9 +55,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
-import static android.content.Context.PRINT_SERVICE;
-import static androidx.constraintlayout.motion.utils.Oscillator.TAG;
-import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -187,7 +155,6 @@ public class profilecustomer extends Fragment {
                             editor.putString("image",uri.toString());
                             editor.apply();
 
-
                             SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
                             Retrofit retrofit = new Retrofit.Builder()
                                     .baseUrl("http://" + prefs.getString("ipv4", "10.0.2.2") + ":5000/customer/updateimage/")
@@ -209,10 +176,8 @@ public class profilecustomer extends Fragment {
 
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-
                                 }
                             });
-
 
                             bar.setVisibility(View.INVISIBLE);
                             getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
@@ -398,6 +363,14 @@ public class profilecustomer extends Fragment {
             choseimg = view.findViewById(R.id.floatingActionButton);
             profileimage = view.findViewById(R.id.imageview_account_profile);
 
+            profileimage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(getContext().getApplicationContext(), showimage.class);
+                    intent.putExtra("image",simage);
+                    startActivity(intent);
+                }
+            });
 
         getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
@@ -405,11 +378,12 @@ public class profilecustomer extends Fragment {
 
             bar.setVisibility(View.VISIBLE);
             simage = prefs.getString("image", "no");//"No name defined" is the default value.
-            if (simage.equals("")||simage.equals("no")){
+            if (simage.equals("")||simage.equals("no")||simage.equals("http:/localhost:5000/users.jpg")){
 
             }
             else {
-            Picasso.get().load(simage).into(profileimage);}
+            Picasso.get().load(simage).into(profileimage);
+            }
 
             bar.setVisibility(View.INVISIBLE);
         getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);

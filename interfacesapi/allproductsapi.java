@@ -1,7 +1,6 @@
 package com.ali.ssb.interfacesapi;
 
 import com.ali.ssb.Models.modelallpro;
-import com.ali.ssb.Models.modelproducts;
 
 import java.util.List;
 

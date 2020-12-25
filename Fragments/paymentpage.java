@@ -17,11 +17,10 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
-import com.ali.ssb.Fragments.summary;
 import com.ali.ssb.Models.modelcart;
 import com.ali.ssb.Models.modelreturnoforderinfo;
 import com.ali.ssb.R;
-import com.ali.ssb.checkoutpaymentstipe;
+import com.ali.ssb.checkoutpaymentstripe;
 import com.ali.ssb.dbhandler;
 import com.ali.ssb.interfacesapi.orderinfoapi;
 import com.ali.ssb.interfacesapi.orderitemapi;
@@ -46,6 +45,7 @@ import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
 public class paymentpage extends Fragment {
     ssbprice ssbprice;
     int d=0;
+    String grand;
     String shopid,orderid;
     public static String MY_PREFS_forcart="MY_PREFS_forcart";
     Button pay;
@@ -101,8 +101,6 @@ public class paymentpage extends Fragment {
 //        checkBoxssb=view.findViewById(R.id.ssbcheck);
         checkBoxcredit=view.findViewById(R.id.creditcardcheck);
         cashondel=view.findViewById(R.id.cashondel);
-
-
 
 
         pay=view.findViewById(R.id.payment);
@@ -162,8 +160,15 @@ public class paymentpage extends Fragment {
 //                    Fragment fragment =getChildFragmentManager().findFragmentById(R.id.credit);
 //                    getChildFragmentManager().beginTransaction().remove(fragment).commit();
 //                }
+                    SharedPreferences editor = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE);
 
-                    Intent intent=new Intent(getActivity(),checkoutpaymentstipe.class);
+                    Intent intent=new Intent(getActivity(), checkoutpaymentstripe.class);
+                    intent.putExtra("name",getArguments().getString("name"));
+                    intent.putExtra("address",getArguments().getString("address"));
+                    intent.putExtra("phone",getArguments().getString("phone"));
+                    intent.putExtra("method",paymentmethodorder);
+                    intent.putExtra("status",paymentstatusorder);
+
                     startActivity(intent);
                 }
 
@@ -189,12 +194,9 @@ public class paymentpage extends Fragment {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-
-
         SharedPreferences editor = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE);
         lat=editor.getString("latitude","");
         lon=editor.getString("longitude", "");
-
 
 
         SharedPreferences preferences=getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
@@ -206,7 +208,7 @@ public class paymentpage extends Fragment {
         SharedPreferences pref2 = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE);
         String delcharge=pref2.getString("deliverycharges","nocharge");
 
-        String grand=String.valueOf(Integer.valueOf(tot)+Integer.valueOf(delcharge));
+        grand=String.valueOf(Integer.valueOf(tot)+Integer.valueOf(delcharge));
 
         dbhandler dbhandler1=new dbhandler(getContext());
         String tax_actualprice=String.valueOf(dbhandler1.totalpricewithoutdiscount());
@@ -245,8 +247,9 @@ public class paymentpage extends Fragment {
 
         for (int i=0;i<list.size();i++){
             d=i;
-            Call<ResponseBody> listCall = api.response(orderid,list.get(i).getTitle(),list.get(i).getImage(),list.get(i).getQuantity(),list.get(i).getDiscounted(),list.get(i).getProid());
-            listCall.enqueue(new Callback<ResponseBody>() {
+
+            Call<ResponseBody> listCall = api.response(orderid,list.get(i).getTitle(),list.get(i).getImage(),list.get(i).getQuantity(),list.get(i).getPrice(),list.get(i).getProid(),list.get(i).getPrice());
+            listCall.enqueue(new Callback<ResponseBody>(){
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.isSuccessful()){
@@ -255,11 +258,15 @@ public class paymentpage extends Fragment {
 
                     if (response.isSuccessful() && d==list.size()-1){
                         summary productfragment = new summary();
+                        Bundle bundle=new Bundle();
+                        bundle.putString("name",getArguments().getString("name"));
+                        bundle.putString("total",grand);
+                        bundle.putString("method",paymentmethodorder);
+                        productfragment.setArguments(bundle);
                         FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
                         FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
                         fragmentTransactionpro.replace(R.id.fragment, productfragment);
                         fragmentTransactionpro.commit();
-
                     }
                 }
                 @Override

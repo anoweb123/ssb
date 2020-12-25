@@ -19,19 +19,15 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.ali.ssb.Models.modelorderitems;
-import com.ali.ssb.Models.modelpending;
 import com.ali.ssb.R;
 import com.ali.ssb.dbhandler;
 import com.ali.ssb.holderclasses.holdercompleted;
 import com.ali.ssb.Models.modelcompleted;
-import com.ali.ssb.holderclasses.holderpending;
 import com.ali.ssb.interfacesapi.completedorderapi;
 import com.ali.ssb.interfacesapi.orderitemsapi;
-import com.ali.ssb.interfacesapi.pendingorderapi;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -135,15 +131,24 @@ public class completedorders extends Fragment implements holdercompleted.onitems
             public void onResponse(Call<List<modelcompleted>> call, Response<List<modelcompleted>> response) {
                 if (response.isSuccessful()){
                     list=response.body();
+                    if (list.isEmpty()){
+                        Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
+                        nocompletedorder mainDashboardFragments = new nocompletedorder();
+                        FragmentManager fragmentManagerss = getActivity().getSupportFragmentManager();
+                        FragmentTransaction fragmentTransactionss = fragmentManagerss.beginTransaction();
+                        fragmentTransactionss.replace(R.id.fragment, mainDashboardFragments);
+                        fragmentTransactionss.commit();
+                    }
+                    else {
 
-                    adapter = new holdercompleted(list, getContext());
-                    recyclerView.setHasFixedSize(true);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false));
-                    recyclerView.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
-                    adapter.onreordersclicklistener(completedorders.this);
-                    adapter.onitemsclicklistener(completedorders.this);
-
+                        adapter = new holdercompleted(list, getContext());
+                        recyclerView.setHasFixedSize(true);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+                        recyclerView.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+                        adapter.onreordersclicklistener(completedorders.this);
+                        adapter.onitemsclicklistener(completedorders.this);
+                    }
                 }
             }
 

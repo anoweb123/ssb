@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import com.ali.ssb.R;
 import com.ali.ssb.interfacesapi.updateemailapi;
-import com.ali.ssb.signuppage;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

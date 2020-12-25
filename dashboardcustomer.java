@@ -8,20 +8,19 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.ali.ssb.Fragments.mainDashboardFragment;
 import com.ali.ssb.Fragments.morefragment;
 import com.ali.ssb.Fragments.notifications;
 import com.ali.ssb.Fragments.profilecustomer;
 import com.ali.ssb.Fragments.searchfragment;
+import com.ali.ssb.Fragments.summary;
 import com.ali.ssb.Fragments.wishlist;
 import com.ali.ssb.Models.modelbanner;
 import com.ali.ssb.Models.modelproducts;
@@ -85,9 +84,7 @@ public class dashboardcustomer extends AppCompatActivity implements profilecusto
 //            fragmentTransactions.add(R.id.fragment, mainDashboardFragment);
 //            fragmentTransactions.commit();
 //        }
-
-//        finishAffinity();
-
+        finishAffinity();
     }
 
     @Override
@@ -117,6 +114,7 @@ public class dashboardcustomer extends AppCompatActivity implements profilecusto
 
 
         int notifycheck = getIntent().getIntExtra("checkfornotify",0);
+        int checkpay = getIntent().getIntExtra("pay",0);
 
         if (notifycheck==1) {
             notifications mainDashboardFragments = new notifications();
@@ -124,6 +122,20 @@ public class dashboardcustomer extends AppCompatActivity implements profilecusto
             FragmentTransaction fragmentTransactionss = fragmentManagerss.beginTransaction();
             fragmentTransactionss.replace(R.id.fragment, mainDashboardFragments);
             fragmentTransactionss.commit();
+        }
+        else if(checkpay==7){
+            summary productfragment = new summary();
+            FragmentManager fragmentManagerpro =getSupportFragmentManager();
+            FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+            fragmentTransactionpro.replace(R.id.fragment, productfragment);
+            Bundle bundle=new Bundle();
+            bundle.putString("name",getIntent().getExtras().getString("name"));
+            bundle.putString("method",getIntent().getExtras().getString("method"));
+            bundle.putString("total",getIntent().getExtras().getString("total"));
+            productfragment.setArguments(bundle);
+
+            fragmentTransactionpro.commit();
+
         }
 
 

@@ -14,7 +14,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.ali.ssb.interfacesapi.apilogin;
 import com.ali.ssb.interfacesapi.forgetpassapi;
 
 import okhttp3.ResponseBody;
@@ -24,7 +23,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
 import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
 
 public class forgetpassword extends AppCompatActivity {

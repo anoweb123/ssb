@@ -15,15 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.ali.ssb.Models.modelcompleted;
 import com.ali.ssb.R;
-import com.ali.ssb.holderclasses.holdercompleted;
 import com.ali.ssb.holderclasses.holdertrans;
 import com.ali.ssb.Models.modeltran;
 import com.ali.ssb.interfacesapi.apifortrans;
-import com.ali.ssb.interfacesapi.completedorderapi;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -120,6 +116,15 @@ public class transactionhistory extends Fragment {
             public void onResponse(Call<List<modeltran>> call, Response<List<modeltran>> response) {
 
                 list=response.body();
+
+                if (list.isEmpty()){
+                    notransaction mainDashboardFragments = new notransaction();
+                    FragmentManager fragmentManagerss = getActivity().getSupportFragmentManager();
+                    FragmentTransaction fragmentTransactionss = fragmentManagerss.beginTransaction();
+                    fragmentTransactionss.replace(R.id.fragment, mainDashboardFragments);
+                    fragmentTransactionss.commit();
+                }
+                else {
                 recyclerView=view.findViewById(R.id.rectran);
                 recyclerView.hasFixedSize();
                 recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -127,6 +132,7 @@ public class transactionhistory extends Fragment {
                 holdertrans=new holdertrans(list,getContext());
                 recyclerView.setAdapter(holdertrans);
                 holdertrans.notifyDataSetChanged();
+                }
 
             }
 

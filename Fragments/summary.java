@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.ali.ssb.R;
 import com.ali.ssb.dashboardcustomer;
@@ -40,7 +41,9 @@ import static android.content.Context.NOTIFICATION_SERVICE;
  */
 public class summary extends Fragment {
 
+
     Button backto;
+    TextView name,method,total;
     List<modellastrec> list;
     holderreclast adapter;
     RecyclerView rec;
@@ -88,51 +91,57 @@ public class summary extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_summary, container, false);
 
-        String CHannel_ID="order";
-        back=view.findViewById(R.id.back);
-        backto=view.findViewById(R.id.backto);
-        backto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mainDashboardFragment ssbpric = new mainDashboardFragment();
-                FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
-                fragmentTransactionpro.replace(R.id.fragment, ssbpric);
-                fragmentTransactionpro.commit();
-            }
-        });
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                paymentpage pay = new paymentpage();
-                FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
-                fragmentTransactionpro.replace(R.id.fragment, pay);
-                fragmentTransactionpro.commit();
-            }
-        });
-        list=new ArrayList<>();
-        dbhandler dbhandler=new dbhandler(getContext());
-        list=dbhandler.retrievecartforsum();
-        dbhandler.close();
-        rec=view.findViewById(R.id.reclast);
-        rec.setHasFixedSize(true);
-        rec.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
-        adapter=new holderreclast(list,getContext());
-        rec.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        View view= inflater.inflate(R.layout.fragment_summary, container, false);
 
 
         try {
 
+            String CHannel_ID = "order";
+            back = view.findViewById(R.id.back);
+            backto = view.findViewById(R.id.backto);
+            name = view.findViewById(R.id.name);
+            method = view.findViewById(R.id.method);
+            total = view.findViewById(R.id.total);
+            backto.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mainDashboardFragment ssbpric = new mainDashboardFragment();
+                    FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
+                    FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+                    fragmentTransactionpro.replace(R.id.fragment, ssbpric);
+                    fragmentTransactionpro.commit();
+                }
+            });
+            back.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    paymentpage pay = new paymentpage();
+                    FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
+                    FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+                    fragmentTransactionpro.replace(R.id.fragment, pay);
+                    fragmentTransactionpro.commit();
+                }
+            });
+            list = new ArrayList<>();
+            dbhandler dbhandler = new dbhandler(getContext());
+            list = dbhandler.retrievecartforsum();
+            dbhandler.close();
+            rec = view.findViewById(R.id.reclast);
+            rec.setHasFixedSize(true);
+            rec.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+            adapter = new holderreclast(list, getContext());
+            rec.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+
+
+            name.setText(getArguments().getString("name", "name"));
+            method.setText(getArguments().getString("method", "method"));
+            total.setText("Rs "+getArguments().getString("total", "total"));
 
             dbhandler dbhandler1 = new dbhandler(getContext());
             dbhandler1.deleteallincart();
             dbhandler1.close();
-
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 NotificationChannel notificationChannel = new NotificationChannel(CHannel_ID, "personal", NotificationManager.IMPORTANCE_HIGH);

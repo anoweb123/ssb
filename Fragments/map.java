@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -29,12 +30,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import static android.content.Context.LOCATION_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
 import static com.ali.ssb.Fragments.paymentpage.MY_PREFS_forcart;
 
@@ -43,21 +44,32 @@ import static com.ali.ssb.Fragments.paymentpage.MY_PREFS_forcart;
  * Use the {@link map#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class map extends Fragment implements OnMapReadyCallback {
+public class map extends Fragment implements OnMapReadyCallback, LocationListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    String lat,lon;
+    String lat, lon;
     ImageView back;
     Button pick;
+
+    boolean isGPSEnabled = false;
+    boolean isNetworkEnabled = false;
+    private boolean canGetLocation = false;
+
+    Location mLocation;
+
 
     FusedLocationProviderClient fusedLocationProviderClient;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATE = 10;
+
+    private static final long MIN_TIME_BW_UPDATE = 1000 * 60 * 1;
 
     public map() {
         // Required empty public constructor
@@ -96,8 +108,8 @@ public class map extends Fragment implements OnMapReadyCallback {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_map, container, false);
 
-        back=view.findViewById(R.id.back);
-        pick=view.findViewById(R.id.confirmloc);
+        back = view.findViewById(R.id.back);
+        pick = view.findViewById(R.id.confirmloc);
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,9 +146,9 @@ public class map extends Fragment implements OnMapReadyCallback {
         mapFragment.getMapAsync(map.this);
 
 
-
         return view;
     }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         googleMap.isMyLocationEnabled();
@@ -144,6 +156,7 @@ public class map extends Fragment implements OnMapReadyCallback {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
+            ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},100);
             // TODO: Consider calling
 //                ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -151,30 +164,34 @@ public class map extends Fragment implements OnMapReadyCallback {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-
         }
-
 
         Task<Location> task = fusedLocationProviderClient.getLastLocation();
         task.addOnSuccessListener(new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
+                    LocationManager locationManager;
+                    locationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
 
-                MarkerOptions markerOptions=new MarkerOptions();
-                LatLng latLng=new LatLng(location.getLatitude(),location.getLongitude());
-                markerOptions.position(latLng);
+                    if (location!=null && task.isSuccessful()) {
 
-                googleMap.addMarker(markerOptions);
+                        MarkerOptions markerOptions = new MarkerOptions();
+                        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                        markerOptions.position(latLng);
 
-                LatLng coordinate = new LatLng(location.getLatitude(),location.getLongitude()); //Store these lat lng values somewhere. These should be constant.
-                CameraUpdate locations = CameraUpdateFactory.newLatLngZoom(
-                        coordinate, 15);
-                googleMap.animateCamera(locations);
+                        googleMap.addMarker(markerOptions);
 
-                lat=String.valueOf(latLng.latitude);
-                lon=String.valueOf(latLng.longitude);
+                        LatLng coordinate = new LatLng(location.getLatitude(), location.getLongitude()); //Store these lat lng values somewhere. These should be constant.
+                        CameraUpdate locations = CameraUpdateFactory.newLatLngZoom(
+                                coordinate, 15);
+                        googleMap.animateCamera(locations);
 
-
+                        lat = String.valueOf(latLng.latitude);
+                        lon = String.valueOf(latLng.longitude);
+                    }
+                    else {
+                        Toast.makeText(getContext(), "PLease enable mobile location", Toast.LENGTH_SHORT).show();
+                    }
             }
         });
 
@@ -184,32 +201,30 @@ public class map extends Fragment implements OnMapReadyCallback {
 
                 googleMap.clear();
 
-                MarkerOptions markerOptions=new MarkerOptions();
+                MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
                 googleMap.addMarker(markerOptions);
 
                 Toast.makeText(getContext(), "Location Updated", Toast.LENGTH_SHORT).show();
 
-                lat=String.valueOf(latLng.latitude);
-                lon=String.valueOf(latLng.longitude);
+                lat = String.valueOf(latLng.latitude);
+                lon = String.valueOf(latLng.longitude);
 
 
-
-//                LatLng coordinate = new LatLng(latLng.latitude,latLng.longitude); //Store these lat lng values somewhere. These should be constant.
-//                CameraUpdate locations = CameraUpdateFactory.newLatLngZoom(
-//                        coordinate, 15);
-//                googleMap.animateCamera(locations);
-
-
-//                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//                    @Override
-//                    public boolean onMarkerClick(Marker marker) {
-//                        return false;
-//                    }
-//                });
+                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+                        return false;
+                    }
+                });
 
             }
         });
         
+    }
+
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+
     }
 }

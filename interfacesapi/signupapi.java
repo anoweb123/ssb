@@ -14,6 +14,7 @@ public interface signupapi {
             @Field("password") String password,
             @Field("name") String name,
             @Field("address") String address,
-            @Field("cell") String cell
+            @Field("cell") String cell,
+            @Field("gender") String gender
             );
 }

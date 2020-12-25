@@ -18,6 +18,7 @@ import com.ali.ssb.Models.modelcart;
 import com.ali.ssb.dbhandler;
 import com.chauthai.swipereveallayout.SwipeRevealLayout;
 import com.chauthai.swipereveallayout.ViewBinderHelper;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -64,7 +65,7 @@ public class holdercart extends RecyclerView.Adapter<holdercart.holder>
 
 
         SharedPreferences prefs = context.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-        Picasso.get().load(modelcarts.get(position).getImage().replaceFirst("localhost",prefs.getString("ipv4","10.0.2.2"))).into(holder.imageView);
+        Picasso.get().load(modelcarts.get(position).getImage().replaceFirst("localhost",prefs.getString("ipv4","10.0.2.2"))).networkPolicy(NetworkPolicy.NO_STORE).into(holder.imageView);
         holder.title.setText(modelcarts.get(position).getTitle());
         holder.price.setText("Rs "+modelcarts.get(position).getPrice());
         if (modelcarts.get(position).getDiscounted().equals("0")){

@@ -9,16 +9,12 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ali.ssb.R;
-import com.ali.ssb.dbhandler;
 import com.ali.ssb.loginpagecustomer;
 import com.squareup.picasso.Picasso;
 

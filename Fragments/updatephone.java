@@ -19,8 +19,6 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.ali.ssb.R;
-import com.ali.ssb.interfacesapi.addressupdateapi;
-import com.ali.ssb.interfacesapi.nameupdateapi;
 import com.ali.ssb.interfacesapi.updatephoneapi;
 
 import okhttp3.ResponseBody;
@@ -136,56 +134,64 @@ public class updatephone extends Fragment {
                     frag.setAlpha((float) 1.0);
 
 
-                } else {
-                    bar.setVisibility(View.VISIBLE);
-
-                    SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-                    sid = prefs.getString("customerid", "Null");
-                    spass = prefs.getString("password", "Null");
-
-                    if (pass.getText().toString().equals(spass)){
-                    Retrofit retrofit = new Retrofit.Builder()
-                            .baseUrl("http://"+prefs.getString("ipv4","10.0.2.2")+":5000/customer/updateprofile/")
-                            .addConverterFactory(GsonConverterFactory.create())
-                            .build();
-                    updatephoneapi api = retrofit.create(updatephoneapi.class);
-                    Call<ResponseBody> listCall = api.updatephone(sid, phone.getText().toString());
-                    listCall.enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            if (response.isSuccessful()) {
-                                Toast.makeText(getContext(), "Phone No updated", Toast.LENGTH_SHORT).show();
-
-                                SharedPreferences.Editor editor = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-                                editor.putString("phone", phone.getText().toString());
-                                editor.apply();
-
-                                phone.setText("");
-                                pass.setText("");
-
-                                getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                                frag.setAlpha((float) 1.0);
-
-
-                                bar.setVisibility(View.INVISIBLE);
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });}
-                    else {
+                }
+                else {
+                    if (phone.getText().length()<11){
                         bar.setVisibility(View.INVISIBLE);
                         getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                         frag.setAlpha((float) 1.0);
-
-
-                        Toast.makeText(getContext(), "Wrong password", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Enter 11 digit phone Number", Toast.LENGTH_SHORT).show();
                     }
+                    else {
+                        bar.setVisibility(View.VISIBLE);
+
+                        SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+                        sid = prefs.getString("customerid", "Null");
+                        spass = prefs.getString("password", "Null");
+
+                        if (pass.getText().toString().equals(spass)) {
+                            Retrofit retrofit = new Retrofit.Builder()
+                                    .baseUrl("http://" + prefs.getString("ipv4", "10.0.2.2") + ":5000/customer/updateprofile/")
+                                    .addConverterFactory(GsonConverterFactory.create())
+                                    .build();
+                            updatephoneapi api = retrofit.create(updatephoneapi.class);
+                            Call<ResponseBody> listCall = api.updatephone(sid, phone.getText().toString());
+                            listCall.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    if (response.isSuccessful()) {
+                                        Toast.makeText(getContext(), "Phone No updated", Toast.LENGTH_SHORT).show();
+
+                                        SharedPreferences.Editor editor = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
+                                        editor.putString("phone", phone.getText().toString());
+                                        editor.apply();
+
+                                        phone.setText("");
+                                        pass.setText("");
+
+                                        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                        frag.setAlpha((float) 1.0);
 
 
+                                        bar.setVisibility(View.INVISIBLE);
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else {
+                            bar.setVisibility(View.INVISIBLE);
+                            getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                            frag.setAlpha((float) 1.0);
+
+
+                            Toast.makeText(getContext(), "Wrong password", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
                 }
             }
         });

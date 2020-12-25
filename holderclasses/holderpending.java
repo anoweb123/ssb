@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ali.ssb.R;
 import com.ali.ssb.Models.modelpending;
+import com.google.android.material.chip.Chip;
 
 import java.util.List;
 
@@ -23,9 +24,19 @@ public class holderpending extends RecyclerView.Adapter<holderpending.holder> {
     List<modelpending> list;
     Context context;
 
+    onitemsclicklistener monitemsclicklistener;
+
     public holderpending(List<modelpending> list, Context context) {
         this.list = list;
         this.context = context;
+    }
+
+
+    public void onitemsclicklistener(onitemsclicklistener listener){
+        monitemsclicklistener=  listener;
+    }
+    public interface onitemsclicklistener{
+        void onshowitems(String id);
     }
 
     @NonNull
@@ -51,6 +62,13 @@ public class holderpending extends RecyclerView.Adapter<holderpending.holder> {
                 Toast.makeText(context, "Order ID copied", Toast.LENGTH_SHORT).show();
             }
         });
+
+        holder.chip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                monitemsclicklistener.onshowitems(list.get(position).get_id());
+            }
+        });
     }
 
     @Override
@@ -60,13 +78,14 @@ public class holderpending extends RecyclerView.Adapter<holderpending.holder> {
 
     public class holder extends RecyclerView.ViewHolder {
         TextView status,date,price,id;
+        Chip chip;
         public holder(@NonNull View itemView) {
             super(itemView);
             id=itemView.findViewById(R.id.id);
             status=itemView.findViewById(R.id.status);
             date=itemView.findViewById(R.id.date);
             price=itemView.findViewById(R.id.price);
-
+            chip=itemView.findViewById(R.id.showitems);
         }
     }
 }

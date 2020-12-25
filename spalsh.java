@@ -26,7 +26,7 @@ public class spalsh extends AppCompatActivity {
         setContentView(R.layout.activity_spalsh);
 
         SharedPreferences.Editor editor =getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
-        editor.putString("ipv4","192.168.43.148");
+        editor.putString("ipv4","10.0.2.2");
         editor.putString("onback","");
         editor.apply();
 
@@ -85,7 +85,7 @@ public class spalsh extends AppCompatActivity {
                         ignored.printStackTrace();
                     }
                 }
-            }, 1000);
+            }, 600);
         }
         }
     }

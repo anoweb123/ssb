@@ -1,6 +1,5 @@
 package com.ali.ssb.Fragments;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -14,6 +13,7 @@ import android.os.Bundle;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.renderscript.RenderScript;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +31,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.ali.ssb.Models.modelallpro;
 import com.ali.ssb.Models.modelbaner;
 import com.ali.ssb.R;
 import com.ali.ssb.dashboardcustomer;
@@ -39,12 +39,14 @@ import com.ali.ssb.dbhandler;
 import com.ali.ssb.holderclasses.adaperslider;
 import com.ali.ssb.holderclasses.holdercategory;
 import com.ali.ssb.holderclasses.holderclassproducts;
+import com.ali.ssb.holderclasses.holderdiscountpro;
 import com.ali.ssb.holderclasses.holderproslider;
+import com.ali.ssb.holderclasses.holdertopshops;
 import com.ali.ssb.interfacesapi.allproductsapi;
+import com.ali.ssb.interfacesapi.apitopshops;
 import com.ali.ssb.interfacesapi.banerapi;
 import com.ali.ssb.interfacesapi.notificationcount;
 import com.ali.ssb.interfacesapi.shopsapi;
-import com.ali.ssb.Models.modelbanner;
 import com.ali.ssb.Models.modelcateg;
 import com.ali.ssb.Models.modelproducts;
 import com.ali.ssb.Models.modelproductslider;
@@ -58,12 +60,13 @@ import com.smarteist.autoimageslider.SliderView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -75,11 +78,12 @@ import static android.content.Context.MODE_PRIVATE;
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
 
-public class mainDashboardFragment extends Fragment implements holderclassproducts.onproclicklistener,adaperslider.onshopclicklistener,holderproslider.onproclicklistener,holdercategory.oncatclicklistener,sliderbanneradapter.onbanerclicklistener {
+public class mainDashboardFragment extends Fragment implements holderclassproducts.onproclicklistener,adaperslider.onshopclicklistener,holderproslider.onproclicklistener,holdercategory.oncatclicklistener,sliderbanneradapter.onbanerclicklistener,holderdiscountpro.onproclicklistener,holdertopshops.ontopshopclicklistener {
     ImageView menu;
     String notify_count;
     ImageBadgeView cart,notification;
     ProgressBar load;
+    NestedScrollView scrollView;
 
     public static String CHannel_ID="my id";
 
@@ -94,6 +98,11 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
     holdercategory holdercategory;
     List<modelcateg> modelcat;
 
+
+    RecyclerView recyclerdiscountpro;
+    holderdiscountpro holderdiscountpro;
+    List<modelallpro> listallpro;
+
     int count;
     Spinner categories;
 //    EditText searchView;
@@ -102,6 +111,12 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
     RecyclerView recsliderpro;
     holderproslider holderproslider;
     List<modelproductslider> list;
+
+
+    RecyclerView rectopshops;
+    holdertopshops holdertopshops;
+    List<modelslider> listtopshop;
+
 
     holderclassproducts adapterproduct;
     List<modelproducts> modelpro;
@@ -124,10 +139,9 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
         count=dbhandler.countitems();
         dbhandler.close();
 
-        SharedPreferences sharedPreferences=getContext().getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE);
-        notify_count= sharedPreferences.getString("notification","");
 
 
+        scrollView=view.findViewById(R.id.scrollView);
 
 
 
@@ -180,17 +194,29 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
 //                Toast.makeText(getContext(), String.valueOf(response.body()),Toast.LENGTH_SHORT).show();
-                notification.setBadgeValue(Integer.valueOf(response.body()))
+
+                SharedPreferences sharedPreferences=getContext().getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE);
+                notify_count= sharedPreferences.getString("notification","0");
+
+                notification.setBadgeValue(Integer.valueOf(response.body())-Integer.valueOf(notify_count))
                         .setBadgeOvalAfterFirst(true)
                         .setMaxBadgeValue(999)
                         .setBadgeTextStyle(Typeface.NORMAL)
                         .setShowCounter(true)
                         .setBadgePadding(4);
 
+
                 if (notify_count.equals("")){
                 }
                 else {
                     if (Integer.valueOf(notify_count)<Integer.valueOf(response.body())){
+
+//                        notification.setBadgeValue(Integer.valueOf(response.body())-Integer.valueOf(notify_count))
+//                                .setBadgeOvalAfterFirst(true)
+//                                .setMaxBadgeValue(999)
+//                                .setBadgeTextStyle(Typeface.NORMAL)
+//                                .setShowCounter(true)
+//                                .setBadgePadding(4);
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             NotificationChannel notificationChannel = new NotificationChannel(CHannel_ID, "personal", NotificationManager.IMPORTANCE_HIGH);
@@ -219,9 +245,6 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
 
                     }
                 }
-                SharedPreferences.Editor editor =getContext().getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE).edit();
-                editor.putString("notification",String.valueOf(response.body()));
-                editor.apply();
             }
 
             @Override
@@ -287,6 +310,54 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
                 fragmentTransactionpro.commit();
             }
         });
+//topsshops
+
+        rectopshops=view.findViewById(R.id.rectopshops);
+
+        listtopshop = new ArrayList<>();
+        SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://"+prefs.getString("ipv4","10.0.2.2")+":5000/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        final apitopshops api=retrofit.create(apitopshops.class);
+        Call<List<modelslider>> listCall=api.list();
+
+        listCall.enqueue(new Callback<List<modelslider>>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onResponse(Call<List<modelslider>> call, Response<List<modelslider>> response) {
+                if (response.isSuccessful()){
+                    listtopshop=response.body();
+
+                    holdertopshops = new holdertopshops(listtopshop, getContext());
+                    rectopshops.setHasFixedSize(true);
+                    rectopshops.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+                    rectopshops.setAdapter(holdertopshops);
+                    holdertopshops.notifyDataSetChanged();
+                    holdertopshops.setontopshopclicklistener(mainDashboardFragment.this);
+
+//                    load.setVisibility(View.INVISIBLE);
+//                    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+//                    frag.setAlpha((float) 1.0);
+
+                }
+                else {
+//                    shopsapi();
+                }
+                if (response.code()==500){
+//                    shopsapi();
+                }
+            }
+            @Override
+            public void onFailure(Call<List<modelslider>> call, Throwable t) {
+                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+//                shopsapi();
+            }
+        });
+
+
+
         recyclerView=view.findViewById(R.id.rec);
 //shopss
         shopsapi();
@@ -347,9 +418,89 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
 
             @Override
             public void onFailure(Call<List<modelbaner>> call, Throwable t) {
-
             }
         });
+//discountproducts
+        listallpro = new ArrayList<>();
+        recyclerdiscountpro=view.findViewById(R.id.recdiscount);
+
+        SharedPreferences preferences = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        Retrofit retrofits = new Retrofit.Builder()
+                .baseUrl("http://"+preferences.getString("ipv4","10.0.2.2")+":5000/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        final allproductsapi mapi=retrofits.create(allproductsapi.class);
+        Call<List<modelallpro>> listCallm=mapi.listCall();
+
+        listCallm.enqueue(new Callback<List<modelallpro>>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onResponse(Call<List<modelallpro>> call, Response<List<modelallpro>> response) {
+                if (response.isSuccessful()){
+                    listallpro.addAll(response.body());
+
+                        List<modelallpro> list2=new ArrayList<>();
+                    for (int i=0;i<listallpro.size();i++){
+
+                        Boolean promo=false;
+                        if (listallpro.get(i).getPromotionStatus().equals("accepted")) {
+                            if (listallpro.get(i).getPromotionTill().isEmpty() || listallpro.get(i).getPromotionTill().equals("N/A") || listallpro.get(i).getPromotionTill().equals("none") || listallpro.get(i).getPromotionTill().equals("")) {
+
+                            } else {
+
+                                LocalDate currentDate = null;
+                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                                    currentDate = LocalDate.now(ZoneId.systemDefault());
+                                }
+
+                                LocalDate getDates = null;
+                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                                    if (listallpro.get(i).getPromotionTill().isEmpty() || listallpro.get(i).getPromotionTill().equals("N/A") || listallpro.get(i).getPromotionTill().equals("none") || listallpro.get(i).getPromotionTill().equals("")) {
+                                    } else {
+                                        getDates = LocalDate.parse(listallpro.get(i).getPromotionTill());
+                                    }
+                                }
+
+                                if (currentDate.minusDays(1).isBefore(getDates)) {
+                                    promo = true;
+                                }
+
+                            }
+                            if (promo){
+                                list2.add(listallpro.get(i));
+                            }
+                    }
+
+                    holderdiscountpro = new holderdiscountpro(getContext(),list2);
+                    recyclerdiscountpro.setHasFixedSize(true);
+                    recyclerdiscountpro.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+                    recyclerdiscountpro.setAdapter(holderdiscountpro);
+                    holderdiscountpro.notifyDataSetChanged();
+                    holderdiscountpro.setonproclicklistener(mainDashboardFragment.this);
+
+
+                        load.setVisibility(View.INVISIBLE);
+                        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        frag.setAlpha((float) 1.0);
+
+
+//                    adapter.setonshopclicklistener(mainDashboardFragment.this);
+//                    load.setVisibility(View.INVISIBLE);
+//                    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+//                    frag.setAlpha((float) 1.0);
+
+                }
+            }
+            }
+            @Override
+            public void onFailure(Call<List<modelallpro>> call, Throwable t) {
+                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+//                shopsapi();
+            }
+        });
+
+
+
 
 
         return view;
@@ -420,20 +571,60 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
         Call<List<modelslider>> listCall=api.list();
 
         listCall.enqueue(new Callback<List<modelslider>>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onResponse(Call<List<modelslider>> call, Response<List<modelslider>> response) {
                 if (response.isSuccessful()){
                     models=response.body();
-                    adapter = new adaperslider(models, getContext());
+                    List<modelslider> modeloff = new ArrayList<>();
+                    for (int i=0;i<response.body().size();i++){
+
+                        Boolean promos=false;
+
+                        String prostatus=models.get(i).getPromotionStatus();
+
+                        if (models.get(i).getPromotionTill().isEmpty()||models.get(i).getPromotionTill().equals("")||models.get(i).getPromotionTill().equals("none")||models.get(i).getPromotionTill().equals("N/A")){}
+                        else {
+
+                            LocalDate currentDate = null;
+                            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                currentDate = LocalDate.now(ZoneId.systemDefault());
+                            }
+
+                            LocalDate getDates = null;
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                                if (models.get(i).getPromotionTill().isEmpty() || models.get(i).getPromotionTill().equals("none")) {
+                                } else {
+                                    getDates = LocalDate.parse(models.get(i).getPromotionTill());
+                                }
+                            }
+                            if (currentDate.minusDays(1).isBefore(getDates)){
+                                if (prostatus.equals("accepted")){
+                                    promos=true;
+                                }
+                            }
+                            else {
+                                promos=false;
+                            }
+                        }
+                        if (promos){
+                                modeloff.add(response.body().get(i));
+                                models.remove(i);
+                        }
+                    }
+
+                    List<modelslider> shops=new ArrayList<>();
+                    shops.addAll(modeloff);
+                    shops.addAll(models);
+
+                    adapter = new adaperslider(shops, getContext());
                     recyclerView.setHasFixedSize(true);
                     final LinearLayoutManager manager=new GridLayoutManager(getContext(),2);
                     recyclerView.setLayoutManager(manager);
                     recyclerView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                     adapter.setonshopclicklistener(mainDashboardFragment.this);
-                    load.setVisibility(View.INVISIBLE);
-                    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                    frag.setAlpha((float) 1.0);
+
 
                 }
                 else {
@@ -481,7 +672,7 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
                         }
                     }
                     if (modelsliders.size()==0||modelsliders==null){
-                        Toast.makeText(getContext(), "NO Products", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "NO shops avaiable", Toast.LENGTH_SHORT).show();
                         load.setVisibility(View.INVISIBLE);
                     }
                     else {
@@ -492,7 +683,15 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
                         recyclerView.setLayoutManager(manager);
                         recyclerView.setAdapter(adapter);
                         adapter.notifyDataSetChanged();
+                        Toast.makeText(getContext(), cat, Toast.LENGTH_SHORT).show();
                         adapter.setonshopclicklistener(mainDashboardFragment.this);
+
+                        scrollView.post(new Runnable() {
+                            public void run() {
+                                scrollView.smoothScrollTo(0, recyclerView.getTop());
+                            }
+                        });
+
                         load.setVisibility(View.INVISIBLE);}
 
                 }
@@ -511,5 +710,49 @@ public class mainDashboardFragment extends Fragment implements holderclassproduc
     @Override
     public void onbanerclick(String id, String name, String cat, String type) {
         //here to continue
+    }
+
+    @Override
+    public void onproclick(String title, String desc, String price, String discounted, String image, String color, String size, String days, String qtyleft, String proid, String delcharges, String shopidd) {
+
+        productfragment productfragment = new productfragment();
+        FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+        Bundle bundle=new Bundle();
+        bundle.putString("titlekey",title);
+        bundle.putString("desckey",desc);
+        bundle.putString("pricekey",price);
+        bundle.putString("discountedkey",discounted);
+        bundle.putString("colorkey",color);
+        bundle.putString("sizekey",size);
+        bundle.putString("dayskey",days);
+        bundle.putString("qtyleftkey",qtyleft);
+        bundle.putString("proid",proid);
+        bundle.putString("imagekey",image);
+        bundle.putString("shopid",shopidd);
+        bundle.putString("delcharges",delcharges);
+        productfragment.setArguments(bundle);
+        fragmentTransactionpro.replace(R.id.fragment, productfragment);
+        fragmentTransactionpro.commit();
+
+    }
+
+    @Override
+    public void ontopshopclick(String id, String name, String cat, String delcharges, String promorate) {
+
+        shop shop = new shop();
+        FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
+        Bundle bundle=new Bundle();
+        bundle.putString("shopid",id);
+        bundle.putString("shopname",name);
+        bundle.putString("shopcat",cat);
+        bundle.putString("delcharges",delcharges);
+        bundle.putString("promorate",promorate);
+        shop.setArguments(bundle);
+        fragmentTransactionpro.replace(R.id.fragment,shop);
+        fragmentTransactionpro.commit();
+
+
     }
 }

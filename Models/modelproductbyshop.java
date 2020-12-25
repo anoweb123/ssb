@@ -1,8 +1,5 @@
 package com.ali.ssb.Models;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class modelproductbyshop {
     String name,detail,price,image,promotionRate,promotionTill,categorytype,size,color,quantity,type,_id;
 

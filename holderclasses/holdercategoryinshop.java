@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -121,6 +120,22 @@ public class holdercategoryinshop extends RecyclerView.Adapter<holdercategoryins
         int ran= rnd.nextInt(17);
         holder.chip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor(color[ran])));
         String finalCatoffrate = catoffrate;
+
+        if (shoppromo.equals("0")){
+                if (catoffrate.equals("0")){
+                    holder.linearLayout.setVisibility(View.INVISIBLE);
+                }
+                else {
+                    holder.linearLayout.setVisibility(View.VISIBLE);
+                }
+
+            }
+        else {
+            holder.linearLayout.setVisibility(View.INVISIBLE);
+        }
+
+
+
         holder.chip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

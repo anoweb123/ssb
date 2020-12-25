@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ali.ssb.R;
 import com.ali.ssb.dbhandler;
@@ -82,7 +81,6 @@ public class cart extends Fragment implements holdercart.ondel{
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -120,18 +118,15 @@ public class cart extends Fragment implements holdercart.ondel{
 
         delcharge.setText("Rs."+delcharges);
 
-
         dbhandler dbhandler1=new dbhandler(getContext());
         int tprice=dbhandler1.totalprice();
         totalprice.setText("Rs. "+String.valueOf(tprice));
         totaldiscount.setText("Rs. "+String.valueOf(dbhandler1.totaldiscount()));
         withoutdiscount.setText("Rs. "+String.valueOf(dbhandler1.totalpricewithoutdiscount()));
         dbhandler1.close();
-//
+
         totalpayable.setText("Rs. "+String.valueOf(tprice+Integer.parseInt(delcharges)));
         payable.setText("Rs. "+String.valueOf(tprice+Integer.parseInt(delcharges)));
-//
-
 
         adapter = new holdercart(modelcarts, getContext());
         recyclerView.setHasFixedSize(true);
@@ -141,6 +136,11 @@ public class cart extends Fragment implements holdercart.ondel{
         adapter.onclick(this);
 
         if (modelcarts.isEmpty()){
+
+            SharedPreferences.Editor prefs = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE).edit();
+            prefs.putString("shopincartid","");
+            prefs.apply();
+
             nullcart productfragment = new nullcart();
             FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
             FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
@@ -204,16 +204,19 @@ public class cart extends Fragment implements holdercart.ondel{
             withoutdiscount.setText("Rs. "+String.valueOf(dbhandler.totalpricewithoutdiscount()));
             dbhandler.close();
 
-
             SharedPreferences preferences=getContext().getSharedPreferences(MY_PREFS_forcart,MODE_PRIVATE);
             delcharges=preferences.getString("deliverycharges","0");
-
 
             delcharge.setText("Rs."+delcharges);
 
             totalpayable.setText("Rs. "+String.valueOf(tprice+Integer.parseInt(delcharges)));
             payable.setText("Rs. "+String.valueOf(tprice+Integer.parseInt(delcharges)));
             if (modelcarts.isEmpty() && recyclerView.getChildCount()==0){
+
+                SharedPreferences.Editor prefs = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE).edit();
+                prefs.putString("shopincartid","");
+                prefs.apply();
+
                 nullcart productfragment = new nullcart();
                 FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();
@@ -223,9 +226,7 @@ public class cart extends Fragment implements holdercart.ondel{
                 SharedPreferences.Editor editor = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE).edit();
                 editor.putString("shopincartid", "");
                 editor.apply();
-
             }
-
         }
         else {
             modelcarts.remove(position);
@@ -255,6 +256,12 @@ public class cart extends Fragment implements holdercart.ondel{
             totalpayable.setText("Rs. "+String.valueOf(tprice+Integer.parseInt(delcharges)));
             payable.setText("Rs. "+String.valueOf(tprice+Integer.parseInt(delcharges)));
             if (modelcarts.isEmpty() && recyclerView.getChildCount()==0){
+
+
+                SharedPreferences.Editor prefs = getContext().getSharedPreferences(MY_PREFS_forcart, MODE_PRIVATE).edit();
+                prefs.putString("shopincartid","");
+                prefs.apply();
+
                 nullcart productfragment = new nullcart();
                 FragmentManager fragmentManagerpro = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransactionpro = fragmentManagerpro.beginTransaction();

@@ -2,7 +2,6 @@ package com.ali.ssb.Fragments;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -21,7 +20,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.ali.ssb.R;
-import com.ali.ssb.checkoutpaymentstipe;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;

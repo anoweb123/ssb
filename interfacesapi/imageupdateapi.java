@@ -1,10 +1,7 @@
 package com.ali.ssb.interfacesapi;
 
-import android.widget.Toast;
-
 import com.ali.ssb.Models.modelgetresultofimageupdate;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;

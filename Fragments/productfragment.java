@@ -1,9 +1,7 @@
 package com.ali.ssb.Fragments;
 
 import android.animation.Animator;
-import android.app.Activity;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -15,8 +13,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.transition.Transition;
-import android.transition.TransitionValues;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;

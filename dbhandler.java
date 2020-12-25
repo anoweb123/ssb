@@ -5,13 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.net.wifi.WifiManager;
 
 import androidx.annotation.Nullable;
 
 import com.ali.ssb.Models.modelcart;
 import com.ali.ssb.Models.modellastrec;
-import com.ali.ssb.Models.modelsinglepro;
 import com.ali.ssb.Models.modelwishlist;
 
 import java.util.ArrayList;

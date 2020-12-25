@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,8 +36,8 @@ public class holdertrans extends RecyclerView.Adapter<holdertrans.holder> {
         holder.name.setText("Customer: "+modeltrans.get(position).getName());
         holder.orderid.setText("Order Id: "+modeltrans.get(position).get_id());
         holder.amount.setText("Amount: Rs "+modeltrans.get(position).getGrandTotal());
-        holder.status.setText("Status: "+modeltrans.get(position).getPaymentStatus());
-        holder.method.setText("Method: "+modeltrans.get(position).getPaymentMethod());
+        holder.status.setText("Payment Status: "+modeltrans.get(position).getPaymentStatus());
+        holder.method.setText("Payment Method: "+modeltrans.get(position).getPaymentMethod());
 
 
     }

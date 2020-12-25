@@ -20,8 +20,6 @@ import android.widget.Toast;
 
 import com.ali.ssb.R;
 import com.ali.ssb.interfacesapi.updatepasswordapi;
-import com.ali.ssb.interfacesapi.updatephoneapi;
-import com.ali.ssb.signuppage;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,8 +33,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.ali.ssb.loginpagecustomer.MY_PREFS_NAME;
-import static com.ali.ssb.signuppage.VALID_EMAIL_ADDRESS_REGEX;
-import static com.ali.ssb.signuppage.validatepass;
 
 /**
  * A simple {@link Fragment} subclass.
