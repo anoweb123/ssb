@@ -34,7 +34,7 @@ public class holderadaptersliderinsearch  extends RecyclerView.Adapter<holderada
     Boolean promos=false;
     List<modelslider> models;
     List<modelslider> filterlistArray;
-//    onshopclicklistener monshopclicklistener;
+    onshopclicklistener monshopclicklistener;
 
     public holderadaptersliderinsearch(Context context, List<modelslider> models) {
         this.context = context;
@@ -42,11 +42,20 @@ public class holderadaptersliderinsearch  extends RecyclerView.Adapter<holderada
         this.filterlistArray = new ArrayList<>(models);
     }
 
+    public void setonshopclicklistener(onshopclicklistener listener){
+        monshopclicklistener=  listener;
+    }
+
+
+    public interface onshopclicklistener{
+        void onshopqclick(String id,String name,String cat,String delcharges,String promorate);
+    }
+
     @NonNull
     @Override
     public holderadaptersliderinsearch.holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.layoutshopinsearch,parent,false);
+                .inflate(R.layout.sliderlayout,parent,false);
         return new holderadaptersliderinsearch.holder(itemView);
 
     }
@@ -115,28 +124,25 @@ public class holderadaptersliderinsearch  extends RecyclerView.Adapter<holderada
                 holder.promo.setVisibility(View.INVISIBLE);
             }
             else{
+                holder.promo.setVisibility(View.VISIBLE);
                 holder.promo.setText("Flat "+promorate.concat("%")+" off");
             }
-
-
         }
         else {
             promorate="0";
             holder.promo.setVisibility(View.INVISIBLE);
         }
-
         delcharge1 =models.get(position).getDeliveryCharges();
         if (models.get(position).getDeliveryCharges().equals("N/A")){
             delcharge1 ="0";
         }
-
 
         delcharge = delcharge1;
         String finalPromorate = promorate;
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                monshopclicklistener.onshopqclick(String.valueOf(models.get(position).get_id()),models.get(position).getShopName(),models.get(position).getShopCategory(),delcharge, finalPromorate);
+                monshopclicklistener.onshopqclick(String.valueOf(models.get(position).get_id()),models.get(position).getShopName(),models.get(position).getShopCategory(),delcharge, finalPromorate);
             }
         });
 

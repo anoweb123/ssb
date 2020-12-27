@@ -21,7 +21,7 @@ public class spalsh extends AppCompatActivity {
     private final Handler mWaitHandler = new Handler();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spalsh);
 
